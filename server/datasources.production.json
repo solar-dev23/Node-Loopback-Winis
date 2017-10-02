@@ -1,0 +1,8 @@
+{
+  "db": {
+    "database": "winis",
+    "name": "db",
+    host: 'winis-monogodb',
+    "connector": "mongodb"
+  }
+}
