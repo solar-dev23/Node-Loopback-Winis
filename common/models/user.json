@@ -1,0 +1,42 @@
+{
+  "name": "user",
+  "plural": "users",
+  "base": "User",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "scope": {
+    "order": "createdAt DESC",
+    "include": [
+      "user"
+    ]
+  },
+  "mixins": {
+    "TimeStamp": true
+  },
+  "properties": {
+    "winis": {
+      "type": "number",
+      "default": 500
+    },
+    "diamonds": {
+      "type": "number",
+      "default": 1
+    },
+    "spins": {
+      "type": "number",
+      "default": 2
+    },
+    "scratches": {
+      "type": "number"
+    },
+    "avatar": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

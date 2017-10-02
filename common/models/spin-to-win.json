@@ -1,0 +1,41 @@
+{
+  "name": "spinToWin",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "result": {
+      "type": "string"
+    },
+    "user": {
+      "type": "user",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {
+    "spin": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Get the result of a spin-to-win spin for this user, and update user model",
+      "http": {
+        "path": "/spin",
+        "verb": "post"
+      }
+    }
+  }
+}
