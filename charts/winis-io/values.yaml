@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: gcr.io/winis-be/winis-be
-  tag: 2
+  repository: gcr.io/winis-be/winis-io
+  tag: 73bc3aee6d7e7a90ee0e4d68b773b3e3b65d1e05
   pullPolicy: IfNotPresent
 service:
   name: winsi-be

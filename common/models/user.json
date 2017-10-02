@@ -6,12 +6,6 @@
   "options": {
     "validateUpsert": true
   },
-  "scope": {
-    "order": "createdAt DESC",
-    "include": [
-      "user"
-    ]
-  },
   "mixins": {
     "TimeStamp": true
   },
@@ -29,14 +23,24 @@
       "default": 2
     },
     "scratches": {
-      "type": "number"
+      "type": "number",
+      "default": 0
     },
     "avatar": {
       "type": "string"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "spinToWins": {
+      "type": "hasMany",
+      "model": "spinToWin",
+      "foreignKey": "spinToWinId",
+      "options": {
+        "disableInclude": true
+      }
+    }
+  },
   "acls": [],
   "methods": {}
 }

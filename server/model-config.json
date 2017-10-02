@@ -11,11 +11,13 @@
       "loopback/server/mixins",
       "../common/mixins",
       "../node_modules/loopback-ds-timestamp-mixin",
+      "../node_modules/loopback-setup-remote-methods-mixin",
       "./mixins"
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "db",
+    "public": false
   },
   "AccessToken": {
     "dataSource": "db",

@@ -1,6 +1,7 @@
 {
   "db": {
+    "database": "winis",
     "name": "db",
-    "connector": "memory"
+    "connector": "mongodb"
   }
 }
