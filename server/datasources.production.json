@@ -2,7 +2,7 @@
   "db": {
     "database": "winis",
     "name": "db",
-    "host": "winis-monogodb",
+    "host": "winis-mongodb",
     "connector": "mongodb"
   }
 }
