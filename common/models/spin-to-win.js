@@ -41,7 +41,7 @@ module.exports = function(SpinToWin) {
     return {
       spinResult: spinResult,
       spin: spin,
-      user: user
+      user: user,
     };
   };
 };

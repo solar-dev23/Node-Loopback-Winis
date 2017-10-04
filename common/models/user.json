@@ -16,7 +16,8 @@
       "required": false
     },
     "phoneNumber": {
-      "type": "string"
+      "type": "string",
+      "unique": true
     },
     "winis": {
       "type": "number",
@@ -72,10 +73,7 @@
         {
           "arg": "method",
           "type": "string",
-          "require": true,
-          "http": {
-            "source": "query"
-          }
+          "require": true
         },
         {
           "arg": "credentials",
