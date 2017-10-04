@@ -2,9 +2,6 @@
   "name": "scratch",
   "base": "PersistedModel",
   "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
   "mixins": {
     "TimeStamp": true,
     "SetupRemoteMethods": {

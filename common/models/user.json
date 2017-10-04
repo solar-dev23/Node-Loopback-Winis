@@ -3,13 +3,21 @@
   "plural": "users",
   "base": "User",
   "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
   "mixins": {
     "TimeStamp": true
   },
   "properties": {
+    "externalUserId": {
+      "type": "string",
+      "required": false
+    },
+    "externalAuthMethod": {
+      "type": "string",
+      "required": false
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
     "winis": {
       "type": "number",
       "default": 500
@@ -39,8 +47,56 @@
       "options": {
         "disableInclude": true
       }
+    },
+    "friends": {
+      "type": "referencesMany",
+      "model": "user",
+      "foreignKey": "friendIds",
+      "options": {
+        "nestRemoting": true
+      }
     }
   },
-  "acls": [],
-  "methods": {}
+  "acls": [
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "authenticate"
+    }
+  ],
+  "methods": {
+    "authenticate": {
+      "accepts": [
+        {
+          "arg": "method",
+          "type": "string",
+          "require": true,
+          "http": {
+            "source": "query"
+          }
+        },
+        {
+          "arg": "credentials",
+          "type": "object",
+          "required": true,
+          "http": {
+            "source": "body"
+          }
+        }
+      ],
+      "returns": {
+        "arg": "accessToken",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "Authenticate a user.",
+      "http": {
+        "path": "/authenticate/:method",
+        "verb": "post"
+      }
+    }
+  }
 }

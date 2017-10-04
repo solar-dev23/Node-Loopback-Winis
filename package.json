@@ -25,6 +25,8 @@
     "loopback-ds-timestamp-mixin": "^3.4.1",
     "loopback-setup-remote-methods-mixin": "^1.0.4",
     "passport-accountkit-token": "^1.0.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^2.0.0"
   },

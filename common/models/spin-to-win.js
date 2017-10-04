@@ -24,7 +24,7 @@ module.exports = function(SpinToWin) {
     const UserModel = SpinToWin.app.models.user;
 
     const user = await UserModel.findById(userId);
-    if (user.spins == 0) {
+    if (user.spins === 0) {
       throw new Error('User has no spins');
     }
 
@@ -36,7 +36,7 @@ module.exports = function(SpinToWin) {
     user.handlePrize(spinResult);
     user.spins--;
 
-    await UserModel.save(user);
+    await user.save(user);
 
     return {
       spinResult: spinResult,
