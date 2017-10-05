@@ -65,35 +65,42 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "authenticate"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__get__friends"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__findById__friends"
     }
   ],
   "methods": {
     "authenticate": {
       "accepts": [
-        {
-          "arg": "method",
-          "type": "string",
-          "require": true
-        },
-        {
-          "arg": "credentials",
-          "type": "object",
-          "required": true,
-          "http": {
-            "source": "body"
-          }
-        }
+        { "arg": "method", "type": "string", "require": true },
+        { "arg": "credentials", "type": "object", "required": true, "http": { "source": "body" } }
       ],
       "returns": {
-        "arg": "accessToken",
-        "type": "object",
-        "root": true,
+        "arg": "accessToken", "type": "object", "root": true,
         "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
       },
       "description": "Authenticate a user.",
-      "http": {
-        "path": "/authenticate/:method",
-        "verb": "post"
+      "http": { "path": "/authenticate/:method", "verb": "post" }
+    },
+    "prototype.sendWinis": {
+      "accepts": [
+        { "arg": "userId", "type": "string", "require": true },
+        { "arg": "amount", "type": "number", "require": true },
+        { "arg": "options", "type": "object", "http": "optionsFromRequest" }
+      ],
+      "returns": {
+        "arg": "result", "type": "object", "root": true,
+        "description": "Return the result of the operation and the two users after update"
       }
     }
   }

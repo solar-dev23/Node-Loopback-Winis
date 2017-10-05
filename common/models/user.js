@@ -44,6 +44,10 @@ module.exports = function(User) {
     }
   };
 
+  User.prototype.sendWinis = function(amount, userID, options) {
+    debug(`Sending ${amount} of winis to ${userID}`);
+  };
+
   User.prototype.handlePrize = function(prize) {
     debug(`Handle prize ${prize}`);
 
