@@ -44,6 +44,11 @@ module.exports = function(User) {
     }
   };
 
+  User.findByPhones = async (phones) => {
+    const users = await User.find({phoneNumber: {in: phones}});
+    return users;
+  };
+
   User.prototype.sendWinis = function(amount, userID, options) {
     debug(`Sending ${amount} of winis to ${userID}`);
   };

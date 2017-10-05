@@ -67,6 +67,13 @@
       "property": "authenticate"
     },
     {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "findByPhones"
+    },
+    {
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
@@ -91,6 +98,15 @@
       },
       "description": "Authenticate a user.",
       "http": { "path": "/authenticate/:method", "verb": "post" }
+    },
+    "findByPhones": {
+      "accepts": [
+        { "arg": "numbers", "type": "array", "require": true, "http": { "source": "body" } }
+      ],
+      "returns": {
+        "arg": "result", "type": "object", "root": true,
+        "description": "Return all the users found by the phone numbers uploaded"
+      }
     },
     "prototype.sendWinis": {
       "accepts": [
