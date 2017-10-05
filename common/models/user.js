@@ -45,7 +45,7 @@ module.exports = function(User) {
   };
 
   User.findByPhones = async (phones) => {
-    return await User.find({phoneNumber: {in: phones}});
+    return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 
   User.prototype.sendWinis = async function (amount, options) {
