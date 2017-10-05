@@ -74,6 +74,13 @@
       "property": "findByPhones"
     },
     {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "sendWinis"
+    },
+    {
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
@@ -110,14 +117,14 @@
     },
     "prototype.sendWinis": {
       "accepts": [
-        { "arg": "userId", "type": "string", "require": true },
         { "arg": "amount", "type": "number", "require": true },
         { "arg": "options", "type": "object", "http": "optionsFromRequest" }
       ],
       "returns": {
         "arg": "result", "type": "object", "root": true,
         "description": "Return the result of the operation and the two users after update"
-      }
+      },
+      "http": { "verb": "post", "path": "/sendWinis/:amount" }
     }
   }
 }

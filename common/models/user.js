@@ -45,12 +45,28 @@ module.exports = function(User) {
   };
 
   User.findByPhones = async (phones) => {
-    const users = await User.find({phoneNumber: {in: phones}});
-    return users;
+    return await User.find({phoneNumber: {in: phones}});
   };
 
-  User.prototype.sendWinis = function(amount, userID, options) {
-    debug(`Sending ${amount} of winis to ${userID}`);
+  User.prototype.sendWinis = async function (amount, options) {
+    const token = options && options.accessToken;
+    const senderId = token && token.userId;
+
+    const recipient = this;
+    const sender = await User.findById(senderId);
+
+    debug(`Sending ${amount} winis from ${sender.id} to ${recipient.id}`);
+    if (sender.winis < amount) throw new Error('Not enough winis');
+
+    const updatedRecipient = await recipient.updateAttribute('winis', recipient.winis + amount);
+    const updatedSender = await sender.updateAttribute('winis', sender.winis - amount);
+
+    return {
+      status: 'success',
+      amount: amount,
+      sender: updatedSender,
+      recipient: updatedRecipient,
+    };
   };
 
   User.prototype.handlePrize = function(prize) {
