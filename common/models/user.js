@@ -2,6 +2,7 @@
 
 const debug = require('debug')('winis:user-model');
 const request = require('request-promise');
+const namor = require('namor');
 
 module.exports = function(User) {
   delete User.validations.email;
@@ -68,4 +69,11 @@ module.exports = function(User) {
       recipient: updatedRecipient,
     };
   };
+
+  User.observe('before save', function addRandomName(ctx, next) {
+    if (ctx.instance && !ctx.instance.username) {
+      ctx.instance.username = namor.generate();
+    }
+    next();
+  });
 };
