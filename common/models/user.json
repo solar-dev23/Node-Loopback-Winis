@@ -7,6 +7,13 @@
     "TimeStamp": true
   },
   "properties": {
+    "username": {
+      "type": "string",
+      "required": true,
+      "index": {
+        "unique": true
+      }
+    },
     "externalUserId": {
       "type": "string",
       "required": false
@@ -17,19 +24,21 @@
     },
     "phoneNumber": {
       "type": "string",
-      "unique": true
+      "index": {
+        "unique": true
+      }
     },
     "winis": {
       "type": "number",
-      "default": 500
+      "default": 10
     },
     "diamonds": {
       "type": "number",
-      "default": 1
+      "default": 0
     },
     "spins": {
       "type": "number",
-      "default": 2
+      "default": 1
     },
     "scratches": {
       "type": "number",
@@ -84,6 +93,12 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
+      "property": "addFriends"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
       "property": "__get__friends"
     },
     {
@@ -91,6 +106,12 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "property": "__findById__friends"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__link__friends"
     }
   ],
   "methods": {
@@ -114,6 +135,17 @@
         "arg": "result", "type": "object", "root": true,
         "description": "Return all the users found by the phone numbers uploaded"
       }
+    },
+    "prototype.addFriends": {
+      "accepts": [
+        { "arg": "friendIds", "type": "array", "require": true },
+        { "arg": "options", "type": "object", "http": "optionsFromRequest" }
+      ],
+      "returns": {
+        "arg": "result", "type": "object", "root": true,
+        "description": "Returns the updated user with all his friends"
+      },
+      "http": { "verb": "post", "path": "/friends/add" }
     },
     "prototype.sendWinis": {
       "accepts": [
