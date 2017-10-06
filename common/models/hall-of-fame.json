@@ -1,7 +1,7 @@
 {
   "name": "hallOfFame",
   "base": "Model",
-  "plural": "hallfOfFame",
+  "plural": "hallOfFame",
   "idInjection": true,
   "options": {
     "validateUpsert": true

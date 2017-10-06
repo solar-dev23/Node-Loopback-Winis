@@ -1,0 +1,7 @@
+{
+  "db": {
+    "database": "winis-test",
+    "name": "db",
+    "connector": "mongodb"
+  }
+}

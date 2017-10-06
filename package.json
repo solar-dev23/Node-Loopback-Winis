@@ -8,7 +8,8 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "posttest": "npm run lint && nsp check"
+    "posttest": "npm run lint && nsp check",
+    "test": "mocha"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
@@ -32,9 +33,13 @@
     "strong-error-handler": "^2.0.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
     "eslint": "^3.17.1",
     "eslint-config-loopback": "^8.0.0",
-    "nsp": "^2.1.0"
+    "mocha": "^4.0.1",
+    "nsp": "^2.1.0",
+    "nyc": "^11.2.1"
   },
   "repository": {
     "type": "",
