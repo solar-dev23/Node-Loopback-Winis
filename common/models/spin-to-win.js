@@ -1,5 +1,7 @@
 'use strict';
+
 const Ivoire = require('ivoire-weighted-choice');
+const debug = require('debug')('winis:spin-to-win');
 
 const spinOptions = [
   'diamond', 'present', 'double_spin', '5_winis', 'double_diamond',
@@ -15,6 +17,46 @@ module.exports = function(SpinToWin) {
   SpinToWin.calculateSpin = () => {
     const ivoire = new Ivoire();
     return ivoire.weighted_choice(spinOptions, spinWeights);
+  };
+
+  SpinToWin.handlePrize = (user, prize) => {
+    debug(`Handle prize ${prize}`);
+
+    let attributes = {};
+
+    switch(prize) {
+      case 'diamond':
+        attributes['diamonds'] = user.diamonds + 1;
+        break;
+      case 'present':
+        debug('Need to handle present');
+        break;
+      case 'double_spin':
+        attributes['spins'] = user.spins + 2;
+        break;
+      case '5_winis':
+        attributes['winis'] = user.winis + 5;
+        break;
+      case 'double_diamond':
+        attributes['diamonds'] = user.diamonds + 2;
+        break;
+      case '2_winis':
+        attributes['winis'] = user.winis + 2;
+        break;
+      case 'double_scratch':
+        attributes['scratches'] = user.scratches + 2;
+        break;
+      case 'scratch':
+        attributes['scratches'] = user.scratches + 1;
+        break;
+      case 'spin':
+        attributes['spins'] = user.spins + 1;
+        break;
+      default:
+        break;
+    }
+
+    return attributes;
   };
 
   SpinToWin.spin = async (options) => {
@@ -33,15 +75,16 @@ module.exports = function(SpinToWin) {
       userId: user.id,
     });
 
-    user.handlePrize(spinResult);
-    user.spins--;
-
-    await user.save(user);
+    let userAttributes = SpinToWin.handlePrize(user, spinResult);
+    if (typeof userAttributes['spins'] === 'undefined')
+      userAttributes['spins'] = user.spins;
+    userAttributes['spins']--;
+    const updatedUser = await user.updateAttributes(userAttributes);
 
     return {
       spinResult: spinResult,
       spin: spin,
-      user: user,
+      user: updatedUser,
     };
   };
 };
