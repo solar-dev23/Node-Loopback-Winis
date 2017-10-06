@@ -136,17 +136,6 @@
         "description": "Return all the users found by the phone numbers uploaded"
       }
     },
-    "prototype.addFriends": {
-      "accepts": [
-        { "arg": "friendIds", "type": "array", "require": true },
-        { "arg": "options", "type": "object", "http": "optionsFromRequest" }
-      ],
-      "returns": {
-        "arg": "result", "type": "object", "root": true,
-        "description": "Returns the updated user with all his friends"
-      },
-      "http": { "verb": "post", "path": "/friends/add" }
-    },
     "prototype.sendWinis": {
       "accepts": [
         { "arg": "amount", "type": "number", "require": true },
