@@ -49,7 +49,7 @@ module.exports = function(User) {
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 
-  User.prototype.sendWinis = async function (amount, options) {
+  User.prototype.sendWinis = async function(amount, options) {
     const token = options && options.accessToken;
     const senderId = token && token.userId;
 

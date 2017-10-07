@@ -24,7 +24,7 @@ module.exports = function(SpinToWin) {
 
     let attributes = {};
 
-    switch(prize) {
+    switch (prize) {
       case 'diamond':
         attributes['diamonds'] = user.diamonds + 1;
         break;

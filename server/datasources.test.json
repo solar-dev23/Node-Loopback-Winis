@@ -2,6 +2,6 @@
   "db": {
     "database": "winis-test",
     "name": "db",
-    "connector": "mongodb"
+    "connector": "memory"
   }
 }

@@ -1,57 +1,47 @@
 'use strict';
 
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../server/server');
-const should = chai.should();
-
-chai.use(chaiHttp);
+const app = require('../server/server');
+const expect = require('chai').expect;
+const request = require('supertest')(app);
 
 describe('Hall Of Fame', function() {
   before(function(done) {
-    server.dataSources.db.connector.connect(function(err, db) {
-      db.dropDatabase();
+    const UserModel = app.models.user;
 
-      const UserModel = server.models.user;
-
-      UserModel.create([
-        {
-          username: 'test-user-1',
-          winis: 25
-        },
-        {
-          username: 'test-user-2',
-          winis: 50
-        },
-        {
-          username: 'test-user-3',
-          winis: 600
-        },
-        {
-          username: 'test-user-4',
-          winis: 5
-        },
-        {
-          username: 'test-user-5',
-          winis: 0
-        },
-      ], function(err, result) {
-        done();
-      });
+    UserModel.create([
+      {
+        username: 'test-user-1',
+        winis: 25
+      },
+      {
+        username: 'test-user-2',
+        winis: 50
+      },
+      {
+        username: 'test-user-3',
+        winis: 650
+      },
+      {
+        username: 'test-user-4',
+        winis: 5
+      },
+      {
+        username: 'test-user-5',
+        winis: 0
+      },
+    ], function (err, result) {
+      done();
     });
   });
 
   it('should return a properly sorted result from users', function(done) {
-    chai.request(server)
+    request
       .get('/api/hallOfFame')
+      .expect(200)
+      .expect('Content-Type', /json/)
       .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.have.lengthOf(5);
+        expect(res.body).to.have.lengthOf(5);
         done();
       });
-  });
-
-  it('should just return something', function() {
-
   });
 });

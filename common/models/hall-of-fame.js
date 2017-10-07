@@ -6,7 +6,7 @@ module.exports = function(HallOfFame) {
 
     return await UserModel.find({
       where: whereQuery, limit: 20, order: 'winis DESC',
-      fields: { username: true, winis: true, id: true, avatar: true }
+      fields: {username: true, winis: true, id: true, avatar: true},
     });
   };
 
@@ -25,5 +25,5 @@ module.exports = function(HallOfFame) {
     const whereQuery = {inq: friendIds};
 
     return HallOfFame.findTopScores(whereQuery);
-  }
+  };
 };
