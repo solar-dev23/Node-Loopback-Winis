@@ -22,8 +22,9 @@ module.exports = function(HallOfFame) {
     const user = await UserModel.findById(userId);
     const friendIds = user.friendIds;
 
-    const whereQuery = {inq: friendIds};
+    const whereQuery = {id: {inq: friendIds}};
 
-    return HallOfFame.findTopScores(whereQuery);
+    const result = await HallOfFame.findTopScores(whereQuery);
+    return result;
   };
 };

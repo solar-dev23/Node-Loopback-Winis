@@ -9,7 +9,15 @@
   "properties": {},
   "validations": [],
   "relations": {},
-  "acls": [],
+  "acls": [
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "getFriendsTopScores"
+    }
+  ],
   "methods": {
     "getTopScores": {
       "returns": {
