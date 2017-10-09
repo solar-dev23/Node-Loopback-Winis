@@ -6,9 +6,10 @@ const request = require('supertest')(app);
 
 describe('Hall Of Fame', function() {
   let accessToken;
-
   before(async () => {
     const UserModel = app.models.user;
+    await UserModel.deleteAll();
+
     const users = await UserModel.create([
       {
         username: 'test-user-1',
@@ -38,12 +39,16 @@ describe('Hall Of Fame', function() {
     accessToken = accessTokenModel.id;
   });
 
+  after(async function() {
+    await app.dataSources.db.connector.disconnect();
+  });
+
   it('should return a properly sorted result from users', function(done) {
     request
       .get('/api/hallOfFame')
-      .expect(200)
       .expect('Content-Type', /json/)
       .end((err, res) => {
+        expect(res.statusCode).to.be.equal(200);
         expect(res.body).to.have.lengthOf(5);
         done();
       });
@@ -53,9 +58,9 @@ describe('Hall Of Fame', function() {
     request
       .post('/api/hallOfFame/friends')
       .set('Authorization', accessToken)
-      .expect(200)
       .expect('Content-Type', /json/)
       .end((err, res) => {
+        expect(res.statusCode).to.be.equal(200);
         expect(res.body).to.have.lengthOf(1);
         done();
       })

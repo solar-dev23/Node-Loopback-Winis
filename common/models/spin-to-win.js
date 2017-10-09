@@ -67,7 +67,9 @@ module.exports = function(SpinToWin) {
 
     const user = await UserModel.findById(userId);
     if (user.spins === 0) {
-      throw new Error('User has no spins');
+      const error = new Error('User has no more spins');
+      error.status = 507;
+      throw error;
     }
 
     const spin = await SpinToWin.create({
