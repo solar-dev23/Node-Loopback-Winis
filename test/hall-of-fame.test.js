@@ -48,8 +48,14 @@ describe('Hall Of Fame', function() {
       .get('/api/hallOfFame')
       .expect('Content-Type', /json/)
       .end((err, res) => {
+        const result = res.body;
+
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body).to.have.lengthOf(5);
+        expect(result).to.have.lengthOf(5);
+
+        const [firstResult, secondResult] = result;
+        expect(firstResult.username).to.be.equal('test-user-3');
+        expect(secondResult.username).to.be.equal('test-user-2');
         done();
       });
   });
@@ -60,8 +66,13 @@ describe('Hall Of Fame', function() {
       .set('Authorization', accessToken)
       .expect('Content-Type', /json/)
       .end((err, res) => {
+        const result = res.body;
+
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body).to.have.lengthOf(1);
+        expect(result).to.have.lengthOf(1);
+
+        const [firstResult] = result;
+        expect(firstResult.username).to.be.equal('test-user-2');
         done();
       })
   });
