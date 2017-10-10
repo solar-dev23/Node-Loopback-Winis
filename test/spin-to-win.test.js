@@ -79,7 +79,7 @@ describe('Spin To Win', function () {
             .post('/api/spinsToWin/spin')
             .set('Authorization', accessToken.id)
             .end((err, res) => {
-              expect(res.statusCode).to.be.equal(507);
+              expect(res.statusCode).to.be.equal(409);
               expect(res.body.error).to.not.equal(null);
               unmute();
               done();
@@ -119,9 +119,7 @@ describe('Spin To Win', function () {
 
             expect(res.statusCode).to.be.equal(200);
             expect(spinResult).to.be.equal(roll.prize);
-            Object.keys(expectedResult).forEach((key) => {
-              expect(responseUser[key]).to.be.equal(expectedResult[key]);
-            });
+            expect(responseUser).to.include(expectedResult);
             done();
           })
       });

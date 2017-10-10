@@ -57,7 +57,11 @@ module.exports = function(User) {
     const sender = await User.findById(senderId);
 
     debug(`Sending ${amount} winis from ${sender.id} to ${recipient.id}`);
-    if (sender.winis < amount) throw new Error('Not enough winis');
+    if (sender.winis < amount) {
+      const error = new Error('Not enough winis');
+      error.status = 409;
+      throw error;
+    }
 
     const updatedRecipient = await recipient.updateAttribute('winis', recipient.winis + amount);
     const updatedSender = await sender.updateAttribute('winis', sender.winis - amount);
