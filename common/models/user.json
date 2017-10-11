@@ -136,7 +136,7 @@
     },
     "findByPhones": {
       "accepts": [
-        { "arg": "numbers", "type": "array", "require": true, "http": { "source": "body" } }
+        { "arg": "numbers", "type": ["string"], "require": true, "http": { "source": "body" } }
       ],
       "returns": {
         "arg": "result", "type": "object", "root": true,
