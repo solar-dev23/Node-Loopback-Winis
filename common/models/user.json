@@ -151,7 +151,7 @@
         "arg": "user", "type": "object", "root": true,
         "description": "Returns a user by username"
       },
-      "http": { "verb": "post", "path": "/findByUsername/:username" }
+      "http": { "verb": "get", "path": "/findByUsername/:username" }
     },
     "prototype.sendWinis": {
       "accepts": [

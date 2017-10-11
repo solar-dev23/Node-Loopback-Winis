@@ -50,7 +50,13 @@ module.exports = function(User) {
   };
 
   User.findByUsername = async(username) => {
-    return await User.findOne({where: {'username': username}});
+    const user = await User.findOne({where: {'username': username}});
+    if (user === null) {
+      const error = new Error('No user found');
+      error.statusCode = 404;
+      throw error;
+    }
+    return user;
   };
 
   User.prototype.sendWinis = async function(amount, options) {

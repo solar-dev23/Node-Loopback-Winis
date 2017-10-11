@@ -121,7 +121,7 @@ describe('User', function() {
 
     it('should find a friend by username', function(done) {
       request
-        .post('/api/users/findByUsername/username-test')
+        .get('/api/users/findByUsername/username-test')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -130,6 +130,20 @@ describe('User', function() {
           done();
         })
     });
+
+    it('should return a 404 for a non-existent user', function(done) {
+      const unmute = mute();
+      request
+        .get('/api/users/findByUsername/no-idea')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          expect(res.statusCode).to.be.equal(404);
+          expect(res.body.error).to.not.be.a('null');
+          unmute();
+          done();
+        });
+    })
   });
 
   describe('SendWinis', function() {
