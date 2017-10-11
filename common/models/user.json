@@ -69,55 +69,39 @@
   },
   "acls": [
     {
-      "accessType": "EXECUTE",
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "ALLOW",
+      "accessType": "EXECUTE", "principalType": "ROLE",
+      "principalId": "$everyone", "permission": "ALLOW",
       "property": "authenticate"
     },
     {
-      "accessType": "EXECUTE",
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
+      "accessType": "EXECUTE", "principalType": "ROLE",
+      "principalId": "$authenticated", "permission": "ALLOW",
       "property": "findByPhones"
     },
     {
-      "accessType": "EXECUTE",
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
+      "accessType": "EXECUTE", "principalType": "ROLE",
+      "principalId": "$authenticated", "permission": "ALLOW",
       "property": "sendWinis"
     },
     {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
-      "property": "addFriends"
+      "principalType": "ROLE", "principalId": "$owner",
+      "permission": "ALLOW", "property": "addFriends"
     },
     {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
-      "property": "__get__friends"
+      "principalType": "ROLE", "principalId": "$owner",
+      "permission": "ALLOW", "property": "__get__friends"
     },
     {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
-      "property": "__findById__friends"
+      "principalType": "ROLE", "principalId": "$owner",
+      "permission": "ALLOW", "property": "__findById__friends"
     },
     {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
-      "property": "__link__friends"
+      "principalType": "ROLE", "principalId": "$owner",
+      "permission": "ALLOW", "property": "__link__friends"
     },
     {
-      "accessType": "EXECUTE",
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
+      "accessType": "EXECUTE", "principalType": "ROLE",
+      "principalId": "$authenticated", "permission": "ALLOW",
       "property": "findByUsername"
     }
   ],
