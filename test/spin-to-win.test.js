@@ -26,6 +26,10 @@ describe('Spin To Win', function () {
 
   describe('Logic', function() {
     it('should substract the amount of spins for the user', function(done) {
+      app.models.spinToWin.calculateSpin = () => {
+        return '5_winis';
+      };
+
       request
         .post('/api/spinsToWin/spin')
         .set('Authorization', accessToken.id)
@@ -74,7 +78,7 @@ describe('Spin To Win', function () {
         .then((user) => {
           return user.updateAttribute('spins', 0);
         })
-        .then((user) => {
+        .then(() => {
           request
             .post('/api/spinsToWin/spin')
             .set('Authorization', accessToken.id)
