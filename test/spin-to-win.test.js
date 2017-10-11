@@ -84,7 +84,7 @@ describe('Spin To Win', function () {
             .set('Authorization', accessToken.id)
             .end((err, res) => {
               expect(res.statusCode).to.be.equal(409);
-              expect(res.body.error).to.not.equal(null);
+              expect(res.body.error).to.not.be.a('null');
               unmute();
               done();
             });
