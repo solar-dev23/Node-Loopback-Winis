@@ -36,6 +36,7 @@
     "chai": "^4.1.2",
     "eslint": "^3.17.1",
     "eslint-config-loopback": "^8.0.0",
+    "faker": "^4.1.0",
     "mocha": "^4.0.1",
     "mute": "^2.0.6",
     "nsp": "^2.1.0",

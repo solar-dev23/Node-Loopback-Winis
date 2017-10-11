@@ -1,7 +1,7 @@
 {
   "name": "hallOfFame",
-  "base": "Model",
   "plural": "hallOfFame",
+  "base": "Model",
   "idInjection": true,
   "options": {
     "validateUpsert": true
@@ -19,20 +19,34 @@
   "methods": {
     "getTopScores": {
       "returns": {
-        "arg": "users", "type": "array", "root": "true",
+        "arg": "users",
+        "type": "array",
+        "root": "true",
         "description": "The list of the top 20 users sorted by the amount of winis"
       },
-      "http": { "path": "/", "verb": "get" }
+      "http": {
+        "path": "/",
+        "verb": "get"
+      }
     },
     "getFriendsTopScores": {
       "accepts": [
-        { "arg": "options", "type": "object", "http": "optionsFromRequest" }
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
       ],
       "returns": {
-        "arg": "users", "type": "array", "root": true,
+        "arg": "users",
+        "type": "array",
+        "root": true,
         "description": "Returns the hall of fame for the friends of this user"
       },
-      "http": { "path": "/friends", "verb": "post" }
+      "http": {
+        "path": "/friends",
+        "verb": "post"
+      }
     }
   }
 }

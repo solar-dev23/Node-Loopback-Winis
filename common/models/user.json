@@ -101,6 +101,11 @@
     },
     {
       "accessType": "EXECUTE", "principalType": "ROLE",
+      "principalId": "$owner", "permission": "ALLOW",
+      "property": "uploadAvatar"
+    },
+    {
+      "accessType": "EXECUTE", "principalType": "ROLE",
       "principalId": "$authenticated", "permission": "ALLOW",
       "property": "findByUsername"
     }
@@ -125,6 +130,34 @@
       "returns": {
         "arg": "result", "type": "object", "root": true,
         "description": "Return all the users found by the phone numbers uploaded"
+      }
+    },
+    "prototype.uploadAvatar": {
+      "accepts": [
+        {
+          "arg": "req",
+          "type": "object",
+          "http": {
+            "source": "req"
+          }
+        },
+        {
+          "arg": "res",
+          "type": "object",
+          "http": {
+            "source": "res"
+          }
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true,
+        "description": "Update user's avatar"
+      },
+      "http": {
+        "path": "/avatar",
+        "verb": "post"
       }
     },
     "findByUsername": {

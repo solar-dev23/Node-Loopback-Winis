@@ -49,6 +49,24 @@ module.exports = function(User) {
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 
+  User.prototype.uploadAvatar = async function(res, req) {
+    let container;
+
+    try {
+      container = await User.getContainer('avatars');
+    } catch (err) {
+      if (err.code === 'ENOENT' || err.code == 404) {
+        container = await User.createContainer({name: 'avatars'});
+      }
+    }
+
+    this.upload(req, res);
+
+    return {
+      'status': 'success'
+    };
+  };
+
   User.findByUsername = async(username) => {
     const user = await User.findOne({where: {'username': username}});
     if (user === null) {

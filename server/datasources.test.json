@@ -2,5 +2,11 @@
   "db": {
     "name": "db",
     "connector": "memory"
+  },
+  "storage": {
+    "connector": "loopback-component-storage",
+    "provider": "filesystem",
+    "root": "/tmp/storage",
+    "maxFileSize": "10485760"
   }
 }
