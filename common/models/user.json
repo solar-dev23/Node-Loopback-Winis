@@ -112,6 +112,13 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "property": "__link__friends"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "findByUsername"
     }
   ],
   "methods": {
@@ -135,6 +142,16 @@
         "arg": "result", "type": "object", "root": true,
         "description": "Return all the users found by the phone numbers uploaded"
       }
+    },
+    "findByUsername": {
+      "accepts": [
+        { "arg": "username", "type": "string", "require": true }
+      ],
+      "returns": {
+        "arg": "user", "type": "object", "root": true,
+        "description": "Returns a user by username"
+      },
+      "http": { "verb": "post", "path": "/findByUsername/:username" }
     },
     "prototype.sendWinis": {
       "accepts": [

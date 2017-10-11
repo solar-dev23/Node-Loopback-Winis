@@ -16,6 +16,7 @@ describe('User', function() {
       {
         winis: 50
       }, {}, {
+        username: 'username-test',
         winis: 50,
         phoneNumber: '+123456789'
       }
@@ -113,8 +114,21 @@ describe('User', function() {
         .end((err, res) => {
           expect(res.statusCode).to.be.equal(400);
           expect(res.body.error).to.not.be.a('null');
+          unmute();
           done();
         });
+    });
+
+    it('should find a friend by username', function(done) {
+      request
+        .post('/api/users/findByUsername/username-test')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.id).to.be.equal(strangerUser.id);
+          done();
+        })
     });
   });
 
@@ -142,7 +156,7 @@ describe('User', function() {
         .end((err, res) => {
           expect(res.statusCode).to.be.equal(409);
           expect(res.body.error).to.not.be.a('null');
-          mute();
+          unmute();
           done();
         });
     });
