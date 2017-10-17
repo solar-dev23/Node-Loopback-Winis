@@ -4,7 +4,6 @@ const app = require('../server/server');
 const expect = require('chai').expect;
 const mute = require('mute');
 const request = require('supertest')(app);
-const faker = require('faker');
 
 describe('User', function() {
   let accessToken, UserModel;
@@ -148,12 +147,32 @@ describe('User', function() {
   });
 
   describe('Avatar', function() {
+    beforeEach(function(done) {
+      const storage = app.models.storage;
+      storage.getContainer('avatars', (err) => {
+        if (!err) {
+          storage.destroyContainer('avatars', done);
+        } else if (err.code === 'ENOENT') {
+          done();
+        }
+      });
+    });
+
     it('should upload an avatar with post with a proper size', function(done) {
+      const fileName = './test/test-images/avatar.jpg';
+
       request
         .post(`/api/users/${ownerUser.id}/avatar`)
         .set('Authorization', accessToken.id)
-        .attach('image', './test/test-images/avatar.jpg')
+        .attach('avatar', fileName)
         .end((err, res) => {
+          const avatar = res.body.avatarData;
+          const user = res.body.user;
+
+          expect(res.body.success).to.be.equal(true);
+          expect(user.avatar).to.be.equal(avatar.name);
+          expect(avatar.name).to.match(/^\w+_\d+\.jpg/);
+          expect(avatar).includes({type: 'image/jpeg'});
           done();
         });
     });

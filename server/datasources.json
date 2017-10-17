@@ -3,5 +3,12 @@
     "database": "winis",
     "name": "db",
     "connector": "mongodb"
+  },
+  "storage": {
+    "name": "storage",
+    "connector": "loopback-component-storage",
+    "provider": "filesystem",
+    "root": "/tmp/storage",
+    "maxFileSize": "10485760"
   }
 }

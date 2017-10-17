@@ -3,6 +3,7 @@
 const debug = require('debug')('winis:user-model');
 const request = require('request-promise');
 const namor = require('namor');
+const util = require('util');
 
 module.exports = function(User) {
   delete User.validations.email;
@@ -49,24 +50,6 @@ module.exports = function(User) {
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 
-  User.prototype.uploadAvatar = async function(res, req) {
-    let container;
-
-    try {
-      container = await User.getContainer('avatars');
-    } catch (err) {
-      if (err.code === 'ENOENT' || err.code == 404) {
-        container = await User.createContainer({name: 'avatars'});
-      }
-    }
-
-    this.upload(req, res);
-
-    return {
-      'status': 'success'
-    };
-  };
-
   User.findByUsername = async(username) => {
     const user = await User.findOne({where: {'username': username}});
     if (user === null) {
@@ -75,6 +58,50 @@ module.exports = function(User) {
       throw error;
     }
     return user;
+  };
+
+  User.prototype.uploadAvatar = async function(req, res) {
+    const self = this;
+    const app = User.app;
+    const storage = app.models.storage;
+    const containerName = app.get('container');
+
+    const getContainerPm = util.promisify(storage.getContainer);
+    const createContainerPm = util.promisify(storage.createContainer);
+    const uploadPm = util.promisify(storage.upload);
+    const updateAttributePm = util.promisify(this.updateAttribute.bind(self));
+
+    let uploadData;
+
+    try {
+      await getContainerPm(containerName);
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        await createContainerPm({name: containerName});
+      }
+    } finally {
+      const getFilename = (fileInfo) => {
+        const origFilename = fileInfo.name;
+        const parts = origFilename.split('.'),
+          extension = parts[parts.length-1];
+
+        // Using a local timestamp + user id in the filename (you might want to change this)
+        return `${this.id}_${(new Date()).getTime()}.${extension}`;
+      };
+
+      uploadData = await uploadPm(app.dataSources.Storage, req, res, {
+        'container': containerName, 'getFilename': getFilename
+      });
+    }
+
+    const avatarData = uploadData.files.avatar.pop();
+    const userData = await updateAttributePm('avatar', avatarData.name);
+
+    return {
+      success: true,
+      user: userData,
+      avatarData: avatarData
+    };
   };
 
   User.prototype.sendWinis = async function(amount, options) {
