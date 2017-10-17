@@ -4,6 +4,8 @@ const app = require('../server/server');
 const expect = require('chai').expect;
 const mute = require('mute');
 const request = require('supertest')(app);
+const fs = require('fs');
+const jimp = require('jimp');
 
 describe('User', function() {
   let accessToken, UserModel;
@@ -146,6 +148,83 @@ describe('User', function() {
     })
   });
 
+  describe('Avatar', function() {
+    describe('Upload', function() {
+
+      beforeEach(function(done) {
+        const storage = app.models.storage;
+        storage.destroyContainer(app.get('container'), (err) => {
+          if (err && err.code === 'ENOENT') err = null;
+          done(err);
+        });
+      });
+
+      it('should upload an avatar with post with a proper size', function(done) {
+        const fileName = './test/test-images/avatar.jpg';
+
+        request
+          .post(`/api/users/${ownerUser.id}/avatar`)
+          .set('Authorization', accessToken.id)
+          .attach('avatar', fileName)
+          .end((err, res) => {
+            const avatar = res.body.avatarData;
+            const user = res.body.user;
+
+            expect(res.body.success).to.be.equal(true);
+            expect(avatar.name).to.match(/^\w+_avatar\.jpg/);
+            expect(avatar).includes({type: 'image/jpeg'});
+            done();
+          });
+      });
+    });
+
+    describe('Download', function() {
+      let avatarTimestamp;
+
+      beforeEach(function(done) {
+        const storage = app.models.storage;
+        storage.destroyContainer(app.get('container'), (err) => {
+          if (err && err.code !== 'ENOENT') return done(err);
+
+          request
+            .post(`/api/users/${ownerUser.id}/avatar`)
+            .set('Authorization', accessToken.id)
+            .attach('avatar', './test/test-images/avatar.jpg')
+            .end((err, res) => {
+              avatarTimestamp = res.body.user.avatar;
+              done();
+            });
+        });
+      });
+
+      it('should return the avatar in the default size', function(done) {
+        request
+          .get(`/api/users/${ownerUser.id}/avatar.jpg`)
+          .end((err, res) => {
+            jimp.read(res.body)
+              .then((avatar) => {
+                expect(avatar.bitmap).to.includes({width: 250, height: 250});
+                done();
+              });
+          });
+      });
+
+
+      it('should return the avatar in a specific size', function(done) {
+        const test = avatarTimestamp;
+        request
+          .get(`/api/users/${ownerUser.id}/avatar/${avatarTimestamp}/400x400/avatar.jpg`)
+          .end((err, res) => {
+            jimp.read(res.body)
+              .then((avatar) => {
+                expect(avatar.bitmap).to.includes({width: 400, height: 400});
+                done();
+              });
+          });
+      });
+    });
+  });
+
   describe('SendWinis', function() {
     it('should send winis from one user to another', function(done) {
       request
@@ -174,5 +253,5 @@ describe('User', function() {
           done();
         });
     });
-  })
+  });
 });

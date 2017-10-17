@@ -53,5 +53,9 @@
   "hallOfFame": {
     "dataSource": null,
     "public": true
+  },
+  "storage": {
+    "dataSource": "storage",
+    "public": true
   }
 }

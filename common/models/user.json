@@ -69,39 +69,76 @@
   },
   "acls": [
     {
-      "accessType": "EXECUTE", "principalType": "ROLE",
-      "principalId": "$everyone", "permission": "ALLOW",
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
       "property": "authenticate"
     },
     {
-      "accessType": "EXECUTE", "principalType": "ROLE",
-      "principalId": "$authenticated", "permission": "ALLOW",
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
       "property": "findByPhones"
     },
     {
-      "accessType": "EXECUTE", "principalType": "ROLE",
-      "principalId": "$authenticated", "permission": "ALLOW",
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
       "property": "sendWinis"
     },
     {
-      "principalType": "ROLE", "principalId": "$owner",
-      "permission": "ALLOW", "property": "addFriends"
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "addFriends"
     },
     {
-      "principalType": "ROLE", "principalId": "$owner",
-      "permission": "ALLOW", "property": "__get__friends"
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__get__friends"
     },
     {
-      "principalType": "ROLE", "principalId": "$owner",
-      "permission": "ALLOW", "property": "__findById__friends"
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__findById__friends"
     },
     {
-      "principalType": "ROLE", "principalId": "$owner",
-      "permission": "ALLOW", "property": "__link__friends"
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__link__friends"
     },
     {
-      "accessType": "EXECUTE", "principalType": "ROLE",
-      "principalId": "$authenticated", "permission": "ALLOW",
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "setAvatar"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getDefaultAvatar"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getResizedAvatar"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
       "property": "findByUsername"
     }
   ],
@@ -116,37 +153,149 @@
         "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
       },
       "description": "Authenticate a user.",
-      "http": { "path": "/authenticate/:method", "verb": "post" }
+      "http": {
+        "path": "/authenticate/:method",
+        "verb": "post"
+      }
     },
     "findByPhones": {
       "accepts": [
-        { "arg": "numbers", "type": ["string"], "require": true, "http": { "source": "body" } }
+        {
+          "arg": "numbers",
+          "type": [
+            "string"
+          ],
+          "require": true,
+          "http": {
+            "source": "body"
+          }
+        }
       ],
       "returns": {
-        "arg": "result", "type": "object", "root": true,
+        "arg": "result",
+        "type": "object",
+        "root": true,
         "description": "Return all the users found by the phone numbers uploaded"
       }
     },
     "findByUsername": {
       "accepts": [
-        { "arg": "username", "type": "string", "require": true }
+        {
+          "arg": "username",
+          "type": "string",
+          "require": true
+        }
       ],
       "returns": {
-        "arg": "user", "type": "object", "root": true,
+        "arg": "user",
+        "type": "object",
+        "root": true,
         "description": "Returns a user by username"
       },
-      "http": { "verb": "get", "path": "/findByUsername/:username" }
+      "http": {
+        "verb": "get",
+        "path": "/findByUsername/:username"
+      }
+    },
+    "prototype.setAvatar": {
+      "accepts": [
+        {
+          "arg": "req",
+          "type": "object",
+          "http": {
+            "source": "req"
+          }
+        },
+        {
+          "arg": "res",
+          "type": "object",
+          "http": {
+            "source": "res"
+          }
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true,
+        "description": "Update user's avatar"
+      },
+      "http": {
+        "path": "/avatar",
+        "verb": "post"
+      }
+    },
+    "prototype.getDefaultAvatar": {
+      "returns": [
+        {
+          "arg": "avatar",
+          "type": "file",
+          "root": true
+        }, {
+          "arg": "Content-Type",
+          "type": "string",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "http": {
+        "path": "/avatar.jpg",
+        "verb": "get"
+      }
+    },
+    "prototype.getResizedAvatar": {
+      "accepts": [
+        {
+          "arg": "timestamp",
+          "type": "string"
+        },
+        {
+          "arg": "size",
+          "type": "string"
+        }
+      ],
+      "returns": [
+        {
+          "arg": "avatar",
+          "type": "file",
+          "root": true
+        }, {
+          "arg": "Content-Type",
+          "type": "string",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "http": {
+        "path": "/avatar/:timestamp/:size/avatar.jpg",
+        "verb": "get"
+      }
     },
     "prototype.sendWinis": {
       "accepts": [
-        { "arg": "amount", "type": "number", "require": true },
-        { "arg": "options", "type": "object", "http": "optionsFromRequest" }
+        {
+          "arg": "amount",
+          "type": "number",
+          "require": true
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
       ],
       "returns": {
-        "arg": "result", "type": "object", "root": true,
+        "arg": "result",
+        "type": "object",
+        "root": true,
         "description": "Return the result of the operation and the two users after update"
       },
-      "http": { "verb": "post", "path": "/sendWinis/:amount" }
+      "http": {
+        "verb": "post",
+        "path": "/sendWinis/:amount"
+      }
     }
   }
 }
