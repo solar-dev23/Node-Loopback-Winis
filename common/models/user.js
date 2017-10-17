@@ -4,6 +4,9 @@ const debug = require('debug')('winis:user-model');
 const request = require('request-promise');
 const namor = require('namor');
 const util = require('util');
+const fs = require('fs');
+const streambuffer = require('stream-buffers');
+const jimp = require('jimp');
 
 module.exports = function(User) {
   delete User.validations.email;
@@ -60,7 +63,7 @@ module.exports = function(User) {
     return user;
   };
 
-  User.prototype.uploadAvatar = async function(req, res) {
+  User.prototype.setAvatar = async function(req, res) {
     const self = this;
     const app = User.app;
     const storage = app.models.storage;
@@ -70,6 +73,8 @@ module.exports = function(User) {
     const createContainerPm = util.promisify(storage.createContainer);
     const uploadPm = util.promisify(storage.upload);
     const updateAttributePm = util.promisify(this.updateAttribute.bind(self));
+
+    const timeStamp = (new Date()).getTime();
 
     let uploadData;
 
@@ -86,7 +91,7 @@ module.exports = function(User) {
           extension = parts[parts.length-1];
 
         // Using a local timestamp + user id in the filename (you might want to change this)
-        return `${this.id}_${(new Date()).getTime()}.${extension}`;
+        return `${this.id}_avatar.jpg`;
       };
 
       uploadData = await uploadPm(app.dataSources.Storage, req, res, {
@@ -95,13 +100,60 @@ module.exports = function(User) {
     }
 
     const avatarData = uploadData.files.avatar.pop();
-    const userData = await updateAttributePm('avatar', avatarData.name);
+    const userData = await updateAttributePm('avatar', timeStamp);
 
     return {
       success: true,
       user: userData,
       avatarData: avatarData
     };
+  };
+
+  User.returnResizedImage = function(userId, timeStamp, width, height, cb) {
+    const app = User.app;
+    const containerName = app.get('container');
+    const storage = app.models.storage;
+    const writeBuffer = new streambuffer.WritableStreamBuffer();
+    const resizeWidth = parseInt(width), resizeHeight = parseInt(height);
+    const defaultAvatar = 'assets/avatar/avatar.jpg';
+    const next = cb;
+
+    const fileName = `${userId}_avatar.jpg`;
+    storage.getFile(containerName, fileName, (err, file) => {
+      let fileStream;
+
+      if (err && err.code === 'ENOENT') {
+        fileStream = fs.createReadStream(defaultAvatar);
+      } else {
+        fileStream = storage.downloadStream(containerName, fileName);
+      }
+
+      fileStream.pipe(writeBuffer);
+      fileStream.on('end', (err) => {
+        const buffer = writeBuffer.getContents();
+        jimp.read(buffer)
+          .then((image) => {
+            if (image.bitmap.width === resizeWidth && image.bitmap.height === resizeHeight) {
+              return next(null, buffer, 'image/jpeg');
+            } else {
+              image
+                .cover(resizeWidth, resizeHeight)
+                .getBuffer(jimp.MIME_JPEG, (err, buffer) => {
+                  return next(null, buffer, 'image/jpeg');
+                });
+            }
+          });
+      });
+    });
+  };
+
+  User.prototype.getResizedAvatar = function(timeStamp, size, next) {
+    const [ width, height ] = size.split('x');
+    return User.returnResizedImage(this.id, this.avatar, width, height, next);
+  };
+
+  User.prototype.getDefaultAvatar = function(next) {
+    return User.returnResizedImage(this.id, this.avatar, 250, 250, next);
   };
 
   User.prototype.sendWinis = async function(amount, options) {

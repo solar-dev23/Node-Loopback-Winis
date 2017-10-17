@@ -4,6 +4,8 @@ const app = require('../server/server');
 const expect = require('chai').expect;
 const mute = require('mute');
 const request = require('supertest')(app);
+const fs = require('fs');
+const jimp = require('jimp');
 
 describe('User', function() {
   let accessToken, UserModel;
@@ -147,34 +149,79 @@ describe('User', function() {
   });
 
   describe('Avatar', function() {
-    beforeEach(function(done) {
-      const storage = app.models.storage;
-      storage.getContainer('avatars', (err) => {
-        if (!err) {
-          storage.destroyContainer('avatars', done);
-        } else if (err.code === 'ENOENT') {
-          done();
-        }
+    describe('Upload', function() {
+
+      beforeEach(function(done) {
+        const storage = app.models.storage;
+        storage.destroyContainer(app.get('container'), (err) => {
+          if (err && err.code === 'ENOENT') err = null;
+          done(err);
+        });
+      });
+
+      it('should upload an avatar with post with a proper size', function(done) {
+        const fileName = './test/test-images/avatar.jpg';
+
+        request
+          .post(`/api/users/${ownerUser.id}/avatar`)
+          .set('Authorization', accessToken.id)
+          .attach('avatar', fileName)
+          .end((err, res) => {
+            const avatar = res.body.avatarData;
+            const user = res.body.user;
+
+            expect(res.body.success).to.be.equal(true);
+            expect(avatar.name).to.match(/^\w+_avatar\.jpg/);
+            expect(avatar).includes({type: 'image/jpeg'});
+            done();
+          });
       });
     });
 
-    it('should upload an avatar with post with a proper size', function(done) {
-      const fileName = './test/test-images/avatar.jpg';
+    describe('Download', function() {
+      let avatarTimestamp;
 
-      request
-        .post(`/api/users/${ownerUser.id}/avatar`)
-        .set('Authorization', accessToken.id)
-        .attach('avatar', fileName)
-        .end((err, res) => {
-          const avatar = res.body.avatarData;
-          const user = res.body.user;
+      beforeEach(function(done) {
+        const storage = app.models.storage;
+        storage.destroyContainer(app.get('container'), (err) => {
+          if (err && err.code !== 'ENOENT') return done(err);
 
-          expect(res.body.success).to.be.equal(true);
-          expect(user.avatar).to.be.equal(avatar.name);
-          expect(avatar.name).to.match(/^\w+_\d+\.jpg/);
-          expect(avatar).includes({type: 'image/jpeg'});
-          done();
+          request
+            .post(`/api/users/${ownerUser.id}/avatar`)
+            .set('Authorization', accessToken.id)
+            .attach('avatar', './test/test-images/avatar.jpg')
+            .end((err, res) => {
+              avatarTimestamp = res.body.user.avatar;
+              done();
+            });
         });
+      });
+
+      it('should return the avatar in the default size', function(done) {
+        request
+          .get(`/api/users/${ownerUser.id}/avatar.jpg`)
+          .end((err, res) => {
+            jimp.read(res.body)
+              .then((avatar) => {
+                expect(avatar.bitmap).to.includes({width: 250, height: 250});
+                done();
+              });
+          });
+      });
+
+
+      it('should return the avatar in a specific size', function(done) {
+        const test = avatarTimestamp;
+        request
+          .get(`/api/users/${ownerUser.id}/avatar/${avatarTimestamp}/400x400/avatar.jpg`)
+          .end((err, res) => {
+            jimp.read(res.body)
+              .then((avatar) => {
+                expect(avatar.bitmap).to.includes({width: 400, height: 400});
+                done();
+              });
+          });
+      });
     });
   });
 
@@ -206,5 +253,5 @@ describe('User', function() {
           done();
         });
     });
-  })
+  });
 });

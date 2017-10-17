@@ -118,7 +118,21 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
-      "property": "uploadAvatar"
+      "property": "setAvatar"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getDefaultAvatar"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getResizedAvatar"
     },
     {
       "accessType": "EXECUTE",
@@ -183,7 +197,7 @@
         "path": "/findByUsername/:username"
       }
     },
-    "prototype.uploadAvatar": {
+    "prototype.setAvatar": {
       "accepts": [
         {
           "arg": "req",
@@ -209,6 +223,54 @@
       "http": {
         "path": "/avatar",
         "verb": "post"
+      }
+    },
+    "prototype.getDefaultAvatar": {
+      "returns": [
+        {
+          "arg": "avatar",
+          "type": "file",
+          "root": true
+        }, {
+          "arg": "Content-Type",
+          "type": "string",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "http": {
+        "path": "/avatar.jpg",
+        "verb": "get"
+      }
+    },
+    "prototype.getResizedAvatar": {
+      "accepts": [
+        {
+          "arg": "timestamp",
+          "type": "string"
+        },
+        {
+          "arg": "size",
+          "type": "string"
+        }
+      ],
+      "returns": [
+        {
+          "arg": "avatar",
+          "type": "file",
+          "root": true
+        }, {
+          "arg": "Content-Type",
+          "type": "string",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "http": {
+        "path": "/avatar/:timestamp/:size/avatar.jpg",
+        "verb": "get"
       }
     },
     "prototype.sendWinis": {
