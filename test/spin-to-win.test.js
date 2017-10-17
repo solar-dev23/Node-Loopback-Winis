@@ -95,7 +95,6 @@ describe('Spin To Win', function () {
   describe('Prizes', function() {
     const prizes = [
       {'prize': 'diamond', 'result': {'diamonds': 1}},
-      {'prize': 'present', 'result': {}},
       {'prize': 'double_spin', 'result': {'spins': 2}},
       {'prize': '5_winis', 'result': {'winis': 505}},
       {'prize': 'double_diamond', 'result': {'diamonds': 2}},
