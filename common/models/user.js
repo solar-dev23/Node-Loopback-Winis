@@ -115,11 +115,11 @@ module.exports = function(User) {
     const storage = app.models.storage;
     const writeBuffer = new streambuffer.WritableStreamBuffer();
     const resizeWidth = parseInt(width), resizeHeight = parseInt(height);
-    const defaultAvatar = 'assets/avatar/avatar.jpg';
+    const defaultAvatar = `${__dirname}/../../assets/avatar/avatar.jpg`;
     const next = cb;
 
     const fileName = `${userId}_avatar.jpg`;
-    storage.getFile(containerName, fileName, (err, file) => {
+    storage.getFile(containerName, fileName, (err) => {
       let fileStream;
 
       if (err && err.code === 'ENOENT') {

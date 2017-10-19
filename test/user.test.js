@@ -150,7 +150,6 @@ describe('User', function() {
 
   describe('Avatar', function() {
     describe('Upload', function() {
-
       beforeEach(function(done) {
         const storage = app.models.storage;
         storage.destroyContainer(app.get('container'), (err) => {
@@ -211,7 +210,6 @@ describe('User', function() {
 
 
       it('should return the avatar in a specific size', function(done) {
-        const test = avatarTimestamp;
         request
           .get(`/api/users/${ownerUser.id}/avatar/${avatarTimestamp}/400x400/avatar.jpg`)
           .end((err, res) => {
@@ -220,6 +218,15 @@ describe('User', function() {
                 expect(avatar.bitmap).to.includes({width: 400, height: 400});
                 done();
               });
+          });
+      });
+
+      it('should return a proper error when requesting a non-existant user', function(done) {
+        request
+          .get(`/api/users/n0nex1st4nt/avatar.jpg`)
+          .end((err, res) => {
+            expect(res.statusCode).to.be.equal(404);
+            done();
           });
       });
     });
