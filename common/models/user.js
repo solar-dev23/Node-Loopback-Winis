@@ -122,7 +122,7 @@ module.exports = function(User) {
     storage.getFile(containerName, fileName, (err) => {
       let fileStream;
 
-      if (err && err.code === 'ENOENT') {
+      if (err && (err.code === 'ENOENT' || err.code === 404)) {
         fileStream = fs.createReadStream(defaultAvatar);
       } else {
         fileStream = storage.downloadStream(containerName, fileName);
