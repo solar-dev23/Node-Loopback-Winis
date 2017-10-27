@@ -12,6 +12,7 @@
     "test": "NODE_ENV=test mocha"
   },
   "dependencies": {
+    "async": "^2.5.0",
     "bcrypt": "^1.0.3",
     "compression": "^1.0.3",
     "cors": "^2.5.2",

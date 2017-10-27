@@ -61,5 +61,9 @@
   "deposit": {
     "dataSource": "db",
     "public": true
+  },
+  "battle": {
+    "dataSource": "db",
+    "public": true
   }
 }
