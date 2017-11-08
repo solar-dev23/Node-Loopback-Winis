@@ -152,6 +152,11 @@ module.exports = function(User) {
     return User.returnResizedImage(this.id, this.avatar, width, height, next);
   };
 
+  User.prototype.getDefaultResizedAvatar = function(size, next) {
+    const [ width, height ] = size.split('x');
+    return User.returnResizedImage(this.id, this.avatar, width, height, next);
+  };
+
   User.prototype.getDefaultAvatar = function(next) {
     return User.returnResizedImage(this.id, this.avatar, 250, 250, next);
   };

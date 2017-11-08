@@ -126,6 +126,12 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "getDefaultAvatar"
+    },    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getDefaultResizedAvatar"
     },
     {
       "accessType": "EXECUTE",
@@ -270,6 +276,31 @@
       ],
       "http": {
         "path": "/avatar/:timestamp/:size/avatar.jpg",
+        "verb": "get"
+      }
+    },
+    "prototype.getDefaultResizedAvatar": {
+      "accepts": [
+        {
+          "arg": "size",
+          "type": "string"
+        }
+      ],
+      "returns": [
+        {
+          "arg": "avatar",
+          "type": "file",
+          "root": true
+        }, {
+          "arg": "Content-Type",
+          "type": "string",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "http": {
+        "path": "/avatar/:size/avatar.jpg",
         "verb": "get"
       }
     },

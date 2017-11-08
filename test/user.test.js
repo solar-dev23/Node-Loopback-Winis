@@ -191,7 +191,44 @@ describe('User', function() {
       });
     });
 
-    describe('Download', function() {
+    describe('Default Avatar', function() {
+      it('should return the default avatar in the default size', function(done) {
+        request
+          .get(`/api/users/${ownerUser.id}/avatar.jpg`)
+          .end((err, res) => {
+            jimp.read(res.body)
+              .then((avatar) => {
+                expect(avatar.bitmap).to.includes({width: 250, height: 250});
+                done();
+              });
+          });
+      });
+
+      it('should return default the avatar in a specific size', function(done) {
+        request
+          .get(`/api/users/${ownerUser.id}/avatar/400x400/avatar.jpg`)
+          .end((err, res) => {
+            jimp.read(res.body)
+              .then((avatar) => {
+                expect(avatar.bitmap).to.includes({width: 400, height: 400});
+                done();
+              });
+          });
+      });
+
+      it('should return a proper error when requesting a non-existant user', function(done) {
+        const unmute = mute();
+        request
+          .get(`/api/users/n0nex1st4nt/avatar.jpg`)
+          .end((err, res) => {
+            expect(res.statusCode).to.be.equal(404);
+            unmute();
+            done();
+          });
+      });
+    });
+
+    describe('Uploaded Avatar', function() {
       let avatarTimestamp;
 
       beforeEach(function(done) {
@@ -231,17 +268,6 @@ describe('User', function() {
                 expect(avatar.bitmap).to.includes({width: 400, height: 400});
                 done();
               });
-          });
-      });
-
-      it('should return a proper error when requesting a non-existant user', function(done) {
-        const unmute = mute();
-        request
-          .get(`/api/users/n0nex1st4nt/avatar.jpg`)
-          .end((err, res) => {
-            expect(res.statusCode).to.be.equal(404);
-            unmute();
-            done();
           });
       });
     });
