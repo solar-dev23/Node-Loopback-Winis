@@ -45,7 +45,8 @@
       "default": 0
     },
     "avatar": {
-      "type": "string"
+      "type": "string",
+      "default": "default"
     }
   },
   "validations": [],

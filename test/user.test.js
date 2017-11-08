@@ -48,6 +48,10 @@ describe('User', function() {
       expect(ownerUser.username).to.match(/^\w+-\w+-\d{2}/);
     });
 
+    it('have a default value for users avatar', function() {
+      expect(ownerUser.avatar).to.equal('default');
+    });
+
     it('should refuse to get info on some other user', function(done) {
       const unmute = mute();
       request
