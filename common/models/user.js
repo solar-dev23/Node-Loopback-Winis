@@ -54,7 +54,7 @@ module.exports = function(User) {
   };
 
   User.findByUsername = async(username) => {
-    const user = await User.findOne({where: {'username': username}});
+    const user = await User.findOne({where: {'username': {regexp: `/${username}/i`}}});
     if (user === null) {
       const error = new Error('No user found');
       error.statusCode = 404;

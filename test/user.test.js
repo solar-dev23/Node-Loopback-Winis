@@ -18,7 +18,7 @@ describe('User', function() {
       {
         winis: 50
       }, {}, {
-        username: 'username-test',
+        username: 'username-Test',
         winis: 50,
         phoneNumber: '+123456789'
       }
@@ -222,10 +222,12 @@ describe('User', function() {
       });
 
       it('should return a proper error when requesting a non-existant user', function(done) {
+        const unmute = mute();
         request
           .get(`/api/users/n0nex1st4nt/avatar.jpg`)
           .end((err, res) => {
             expect(res.statusCode).to.be.equal(404);
+            unmute();
             done();
           });
       });
