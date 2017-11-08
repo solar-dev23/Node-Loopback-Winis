@@ -133,6 +133,20 @@ describe('User', function() {
         })
     });
 
+    it('should not find a friend by partial username', function(done) {
+      const unmute = mute();
+      request
+        .get('/api/users/findByUsername/test')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          expect(res.statusCode).to.be.equal(404);
+          expect(res.body.id).not.to.be.equal(strangerUser.id);
+          unmute();
+          done();
+        })
+    });
+
     it('should return a 404 for a non-existent user', function(done) {
       const unmute = mute();
       request
@@ -207,7 +221,6 @@ describe('User', function() {
               });
           });
       });
-
 
       it('should return the avatar in a specific size', function(done) {
         request
