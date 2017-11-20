@@ -1,7 +1,7 @@
 'use strict';
 
 const debug = require('debug')('winis:user-model');
-const request = require('request-promise');
+const request = require('request-promise-native');
 const namor = require('namor');
 const util = require('util');
 const fs = require('fs');

@@ -28,8 +28,7 @@
     "loopback-setup-remote-methods-mixin": "^1.0.4",
     "namor": "^1.0.1",
     "passport-accountkit-token": "^1.0.0",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2",
+    "request-promise-native": "^1.0.5",
     "serve-favicon": "^2.0.1",
     "stream-buffers": "^3.0.1",
     "strong-error-handler": "^2.3.0"
