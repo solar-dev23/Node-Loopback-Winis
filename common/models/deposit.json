@@ -1,0 +1,33 @@
+{
+  "name": "deposit",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "mixins": {
+    "TimeStamp": true
+  },
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "externalId": {
+      "type": "string",
+      "required": false
+    },
+    "method": {
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "number",
+      "required": true
+    },
+    "userId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -57,5 +57,9 @@
   "storage": {
     "dataSource": "storage",
     "public": true
+  },
+  "deposit": {
+    "dataSource": "db",
+    "public": true
   }
 }

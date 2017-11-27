@@ -10,6 +10,9 @@ WORKDIR /usr/src/app
 COPY package.json .
 RUN npm install --production
 
+# Run node-prune
+RUN apt install -y golang-go && go get github.com/tj/node-prune/cmd/node-prune && node-prune && apt remove golang
+
 # Install bower dependencies
 #COPY bower.json .
 #COPY .bowerrc .
