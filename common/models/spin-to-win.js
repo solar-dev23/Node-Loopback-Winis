@@ -84,12 +84,10 @@ module.exports = function(SpinToWin) {
     userAttributes['spins']--;
     const updatedUser = await user.updateAttributes(userAttributes);
 
-    const spinObject = {
+    return {
       spinResult: spinResult,
       spin: spin,
       user: updatedUser,
     };
-
-    return spinObject;
   };
 };
