@@ -32,6 +32,9 @@
       "type": "number",
       "default": 10
     },
+    "staked": {
+      "type": "number"
+    },
     "diamonds": {
       "type": "number",
       "default": 0

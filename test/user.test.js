@@ -14,7 +14,7 @@ describe('User', function() {
     await UserModel.deleteAll();
     [ownerUser, friendUser, strangerUser] = await UserModel.create([
       {
-        winis: 50,
+        staked: 15
       }, {}, {
         username: 'username-Test',
         winis: 50,
@@ -362,5 +362,59 @@ describe('User', function() {
           done();
         });
     });
+
+    it('should refuse to send if funds are staked', function(done) {
+      const unmute = mute();
+      request
+        .post(`/api/users/${strangerUser.id}/sendWinis/40`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          expect(res.statusCode).to.be.equal(409);
+          expect(res.body.error).to.not.be.a('null');
+          unmute();
+          done();
+        });
+    });
   });
+
+  describe('Staking', function() {
+    it('should stake requested funds', async function() {
+      await ownerUser.stakeFunds(20);
+      expect(ownerUser.staked).to.equal(35);
+    });
+
+    it('should release requested funds', async function() {
+      await ownerUser.releaseFunds(10);
+      expect(ownerUser.staked).to.equal(5);
+    });
+
+    it('should transfer staked funds to another user', async function () {
+      await ownerUser.transferStakedFunds(10, strangerUser);
+    });
+
+    it('should refuse to stake more than available', function(done) {
+      ownerUser.stakeFunds(60)
+        .catch((err) => {
+          expect(err.status).to.be.equal(409);
+          done();
+        });
+    });
+
+    it('should refuse to release more than staked', function(done) {
+      ownerUser.releaseFunds(60)
+        .catch((err) => {
+          expect(err.status).to.be.equal(409);
+          done();
+        });
+    });
+
+    it('should fail transfer more than staked funds', function(done) {
+      ownerUser.transferStakedFunds(60, strangerUser)
+        .catch((err) => {
+          expect(err.status).to.be.equal(409);
+          done();
+        });
+    });
+  })
 });
