@@ -40,5 +40,31 @@
     }
   },
   "acls": [],
-  "methods": {}
+  "methods": {
+    "request": {
+      "accepts": [
+        {
+          "arg": "opponent",
+          "type": "string",
+          "require": true
+        },
+        {
+          "arg": "amount",
+          "type": "number",
+          "required": true
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "Initiate a new battle",
+      "http": {
+        "path": "/authenticate/:method",
+        "verb": "post"
+      }
+    },
+  }
 }

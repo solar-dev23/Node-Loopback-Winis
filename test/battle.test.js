@@ -20,7 +20,7 @@ describe('Battle', function() {
       {
         winis: 50
       }, {
-        winis: 50,
+        winis: 50
       }
     ]);
     challengerAccessToken = await challengerUser.createAccessToken();
@@ -32,22 +32,30 @@ describe('Battle', function() {
   });
 
   it('should start a new pending battle', function(done) {
-
     request
-      .post(`/api/battle/`)
+      .post(`/api/battles/request`)
       .set('Authorization', challengerUser.id)
       .expect('Content-Type', /json/)
       .send({
-
+        game: 'test-game',
         challengerId: challengerUser.id,
         opponentId: opponentUser.id,
         stake: 20
       })
       .end((err, res) => {
-
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body).to.be.equal(ownerUser.id);
-        done();
+        expect(res.body.game).to.be.equal('test-game');
+        expect(res.body.challengerId).to.be.equal(challengerUser.id);
+        expect(res.body.opponentId).to.be.equal(opponentUser.id);
+
+        (async function() {
+          const challenger = await UserModel.findById(challengerUser.id);
+          const opponent = await UserModel.findById(opponentUser.id);
+
+          expect(challenger.staked).to.be.equal(20);
+          expect(opponent.staked).to.be.equal(20);
+          done();
+        })();
       });
   });
 });
