@@ -7,7 +7,7 @@ const request = require('supertest')(app);
 
 let accessToken, UserModel;
 
-describe('Spin To Win', function () {
+describe('Spin To Win', function() {
   beforeEach(async function() {
     UserModel = app.models.user;
     await UserModel.deleteAll();
@@ -15,7 +15,7 @@ describe('Spin To Win', function () {
       'winis': 500,
       'scratches': 0,
       'spins': 1,
-      'diamonds': 0
+      'diamonds': 0,
     });
     accessToken = await user.createAccessToken();
   });

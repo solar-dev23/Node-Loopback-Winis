@@ -1,5 +1,6 @@
 {
   "name": "scratch",
+  "plural": "scratches",
   "base": "PersistedModel",
   "idInjection": true,
   "mixins": {
