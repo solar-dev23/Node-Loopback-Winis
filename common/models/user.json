@@ -47,6 +47,10 @@
     "avatar": {
       "type": "string",
       "default": "default"
+    },
+    "devkit": {
+      "type": "boolean",
+      "default": false
     }
   },
   "validations": [],
@@ -127,7 +131,8 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "getDefaultAvatar"
-    },    {
+    },
+    {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
       "principalId": "$everyone",
@@ -152,11 +157,24 @@
   "methods": {
     "authenticate": {
       "accepts": [
-        { "arg": "method", "type": "string", "require": true },
-        { "arg": "credentials", "type": "object", "required": true, "http": { "source": "body" } }
+        {
+          "arg": "method",
+          "type": "string",
+          "require": true
+        },
+        {
+          "arg": "credentials",
+          "type": "object",
+          "required": true,
+          "http": {
+            "source": "body"
+          }
+        }
       ],
       "returns": {
-        "arg": "accessToken", "type": "object", "root": true,
+        "arg": "accessToken",
+        "type": "object",
+        "root": true,
         "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
       },
       "description": "Authenticate a user.",
@@ -238,7 +256,8 @@
           "arg": "avatar",
           "type": "file",
           "root": true
-        }, {
+        },
+        {
           "arg": "Content-Type",
           "type": "string",
           "http": {
@@ -267,7 +286,8 @@
           "arg": "avatar",
           "type": "file",
           "root": true
-        }, {
+        },
+        {
           "arg": "Content-Type",
           "type": "string",
           "http": {
@@ -292,7 +312,8 @@
           "arg": "avatar",
           "type": "file",
           "root": true
-        }, {
+        },
+        {
           "arg": "Content-Type",
           "type": "string",
           "http": {

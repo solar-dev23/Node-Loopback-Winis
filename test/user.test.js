@@ -4,24 +4,22 @@ const app = require('../server/server');
 const expect = require('chai').expect;
 const mute = require('mute');
 const request = require('supertest')(app);
-const fs = require('fs');
 const jimp = require('jimp');
 
 describe('User', function() {
-  let accessToken, UserModel;
-  let ownerUser, friendUser, strangerUser;
+  let accessToken, UserModel, ownerUser, friendUser, strangerUser;
 
   beforeEach(async function() {
     UserModel = app.models.user;
     await UserModel.deleteAll();
     [ownerUser, friendUser, strangerUser] = await UserModel.create([
       {
-        winis: 50
+        winis: 50,
       }, {}, {
         username: 'username-Test',
         winis: 50,
-        phoneNumber: '+123456789'
-      }
+        phoneNumber: '+123456789',
+      },
     ]);
     await ownerUser.friends.add(friendUser);
     accessToken = await ownerUser.createAccessToken();
@@ -37,7 +35,7 @@ describe('User', function() {
         .get(`/api/users/${ownerUser.id}`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .then((res) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.body.id).to.be.equal(ownerUser.id);
           done();
@@ -74,14 +72,14 @@ describe('User', function() {
         .put(`/api/users/${ownerUser.id}/friends/rel/${strangerUser.id}`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .then((res) => {
           UserModel.findById(ownerUser.id)
             .then((user) => {
               expect(res.statusCode).to.be.equal(200);
               expect(res.body.id).to.be.equal(strangerUser.id);
               expect(user.friendIds).to.include(strangerUser.id);
               done();
-            })
+            });
         });
     });
 
@@ -91,7 +89,7 @@ describe('User', function() {
         .send(['+123456789'])
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .then((res) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.body).to.have.lengthOf(1);
           expect(res.body[0].id).to.be.equal(strangerUser.id);
@@ -104,7 +102,7 @@ describe('User', function() {
         .get(`/api/users/${ownerUser.id}/friends/${friendUser.id}`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .then((res) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.body.id).to.be.equal(friendUser.id);
           done();
@@ -130,11 +128,11 @@ describe('User', function() {
         .get('/api/users/findByUsername/username-test')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .then((res) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.body.id).to.be.equal(strangerUser.id);
           done();
-        })
+        });
     });
 
     it('should not find a friend by partial username', function(done) {
@@ -148,7 +146,7 @@ describe('User', function() {
           expect(res.body.id).not.to.be.equal(strangerUser.id);
           unmute();
           done();
-        })
+        });
     });
 
     it('should return a 404 for a non-existent user', function(done) {
@@ -163,7 +161,7 @@ describe('User', function() {
           unmute();
           done();
         });
-    })
+    });
   });
 
   describe('Avatar', function() {
@@ -183,10 +181,8 @@ describe('User', function() {
           .post(`/api/users/${ownerUser.id}/avatar`)
           .set('Authorization', accessToken.id)
           .attach('avatar', fileName)
-          .end((err, res) => {
+          .then((res) => {
             const avatar = res.body.avatarData;
-            const user = res.body.user;
-
             expect(res.body.success).to.be.equal(true);
             expect(avatar.name).to.match(/^\w+_avatar\.jpg/);
             expect(avatar).includes({type: 'image/jpeg'});
@@ -277,13 +273,29 @@ describe('User', function() {
     });
   });
 
+  describe('Devkit', function() {
+    it('should mark a user as interested in the dev-kit', function(done) {
+      request
+        .patch(`/api/users/${ownerUser.id}`)
+        .send({devkit: true})
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.devkit).to.be.equal(true);
+          expect(res.body.winis).to.be.equal(50);
+          done();
+        });
+    });
+  });
+
   describe('SendWinis', function() {
     it('should send winis from one user to another', function(done) {
       request
         .post(`/api/users/${strangerUser.id}/sendWinis/25`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .then((res) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.body.status).to.be.equal('success');
           expect(res.body.sender.winis).to.be.equal(25);
@@ -299,9 +311,9 @@ describe('User', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .end((err, res) => {
+          unmute();
           expect(res.statusCode).to.be.equal(409);
           expect(res.body.error).to.not.be.a('null');
-          unmute();
           done();
         });
     });
