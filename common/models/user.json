@@ -70,6 +70,14 @@
       "options": {
         "nestRemoting": true
       }
+    },
+    "blocked": {
+      "type": "referencesMany",
+      "model": "user",
+      "foreignKey": "blockedIds",
+      "options": {
+        "nestRemoting": true
+      }
     }
   },
   "acls": [
@@ -98,12 +106,6 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
-      "property": "addFriends"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
       "property": "__get__friends"
     },
     {
@@ -117,6 +119,24 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "property": "__link__friends"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__get__blocked"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__link__blocked"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__unlink__blocked"
     },
     {
       "accessType": "EXECUTE",

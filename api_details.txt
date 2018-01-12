@@ -1,0 +1,132 @@
+Battles:
+POST /battles
+Request:
+{
+  "game": (basketball|connect4|backgammon),
+  "amount": 150,
+  "opponentId": (id of user against whom we play)
+}
+
+Response:
+{
+  success: true
+  battleId: (battleId)
+}
+
+Battle accept
+POST /battles/(id)/accept
+
+Battle Reject
+POST /battles/(id)/reject
+
+Won/Lost:
+POST /battles/(id)/won
+POST /battles/(id)/lost
+
+{
+  success: true,
+  challenger: {},
+  opponent: {}
+}
+
+Developer Kit:
+POST /dev-kit/
+
+Response:
+{
+  success: true
+}
+
+Block user:
+Add:
+POST /users/(id)/blocked/rel/(blocked id)
+
+Remove:
+DELETE /users/(id)/blocked/rel/(blocked id)
+
+List:
+GET /users/(id)/blocked
+
+Scratch:
+Generate new board:
+POST /scratches
+{
+  "success": true,
+  "board_id": (board ID),
+  "board": ["diamond", "spin", "scratch", "empty", "spin", "spin"]
+}
+
+Mark board as revealed:
+POST /scratches/(id)/reveal
+{
+  "success": true,
+  "prize": {},
+  "user": {}
+}
+
+Daily win:
+POST /daily-win/
+{
+  "success": true,
+  "createdDate": (date of creation)
+  "resetDate": (date of reset)
+  "prizes": {
+    "1": {
+      "prize": "winis",
+      "count": "5",
+      "status": "picked",
+    },
+    "2":{
+      "prize": "winis",
+      "count": "10",
+      "status": "picked",
+    },
+    "3": {
+      "prize": "spin",
+      "count": "1",
+      "status": "picked"
+    },
+    "4": {
+      "prize": "winis",
+      "count": "25",
+      "status": "picked"
+    },
+    "5": {
+      "prize": "present",
+      "count": "1",
+      "status": "today"
+    },
+    "6": {
+      "prize": "winis",
+      "count": "50",
+      "status": "skipped"
+    },
+    "7": {
+      "prize": "scratch",
+      "count": "1",
+      "status": "skipped"
+    },
+    "weekly": {
+      "prize": "diamond",
+      "count": "1",
+      "status": "skipped"
+    },
+  }
+  "user": {}
+}
+
+Deposit:
+POST /deposit
+Request:
+{
+  "userId": (userId),
+  "method": "appstore",
+  "externalId": "(verification id)",
+  "amount": (amount of winis)
+}
+
+Response:
+{
+  success: true,
+  user: {user}
+}

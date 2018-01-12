@@ -22,6 +22,7 @@ describe('User', function() {
       },
     ]);
     await ownerUser.friends.add(friendUser);
+    await ownerUser.blocked.add(strangerUser);
     accessToken = await ownerUser.createAccessToken();
   });
 
@@ -270,6 +271,48 @@ describe('User', function() {
               });
           });
       });
+    });
+  });
+
+  describe('Blocked', function() {
+    it('should add a user to blocked', function(done) {
+      request
+        .put(`/api/users/${ownerUser.id}/blocked/rel/${friendUser.id}`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          UserModel.findById(ownerUser.id)
+            .then((user) => {
+              expect(res.statusCode).to.be.equal(200);
+              expect(res.body.id).to.be.equal(friendUser.id);
+              expect(user.blockedIds).to.include(friendUser.id);
+              done();
+            });
+        });
+    });
+
+    it('should remove a user from the blocked users', function(done) {
+      request
+        .delete(`/api/users/${ownerUser.id}/blocked/rel/${friendUser.id}`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body[0].id).to.not.equal(friendUser.id);
+          done();
+        });
+    });
+
+    it('should return the list of blocked users', function(done) {
+      request
+        .get(`/api/users/${ownerUser.id}/blocked`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body[0].id).to.be.equal(strangerUser.id);
+          done();
+        });
     });
   });
 
