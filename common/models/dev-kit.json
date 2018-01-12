@@ -1,0 +1,16 @@
+{
+  "name": "dev-kit",
+  "plural": "dev-kit",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "mixins": {
+    "TimeStamp": true
+  },
+  "options": {
+    "validateUpsert": true
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
