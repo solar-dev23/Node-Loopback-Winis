@@ -57,9 +57,5 @@
   "storage": {
     "dataSource": "storage",
     "public": true
-  },
-  "dev-kit": {
-    "dataSource": "db",
-    "public": true
   }
 }
