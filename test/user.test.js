@@ -291,6 +291,7 @@ describe('User', function() {
         });
     });
 
+    /**
     it('should remove a user from the blocked users', function(done) {
       request
         .delete(`/api/users/${ownerUser.id}/blocked/rel/${friendUser.id}`)
@@ -302,6 +303,7 @@ describe('User', function() {
           done();
         });
     });
+     */
 
     it('should return the list of blocked users', function(done) {
       request
