@@ -53,7 +53,7 @@ module.exports = function(User) {
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 
-  User.findByUsername = async(username) => {
+  User.findByUsername = async (username) => {
     const user = await User.findOne({where: {'username': {regexp: `/^${username}$/i`}}});
     if (user === null) {
       const error = new Error('No user found');
@@ -88,14 +88,14 @@ module.exports = function(User) {
       const getFilename = (fileInfo) => {
         const origFilename = fileInfo.name;
         const parts = origFilename.split('.'),
-          extension = parts[parts.length-1];
+          extension = parts[parts.length - 1];
 
         // Using a local timestamp + user id in the filename (you might want to change this)
         return `${this.id}_avatar.jpg`;
       };
 
       uploadData = await uploadPm(app.dataSources.Storage, req, res, {
-        'container': containerName, 'getFilename': getFilename
+        'container': containerName, 'getFilename': getFilename,
       });
     }
 
@@ -105,7 +105,7 @@ module.exports = function(User) {
     return {
       success: true,
       user: userData,
-      avatarData: avatarData
+      avatarData: avatarData,
     };
   };
 
@@ -148,12 +148,12 @@ module.exports = function(User) {
   };
 
   User.prototype.getResizedAvatar = function(timeStamp, size, next) {
-    const [ width, height ] = size.split('x');
+    const [width, height] = size.split('x');
     return User.returnResizedImage(this.id, this.avatar, width, height, next);
   };
 
   User.prototype.getDefaultResizedAvatar = function(size, next) {
-    const [ width, height ] = size.split('x');
+    const [width, height] = size.split('x');
     return User.returnResizedImage(this.id, this.avatar, width, height, next);
   };
 
@@ -186,21 +186,20 @@ module.exports = function(User) {
     };
   };
 
+  User.prototype.grantWinis = async function(amount) {
+    if (amount <= 0) {
+      throw new Error('INVALID_WINIS_AMOUNT');
+    }
+
+    const updatedRecipient = await this.updateAttribute('winis', this.winis + parseInt(amount));
+
+    return updatedRecipient;
+  };
+
   User.observe('before save', function addRandomName(ctx, next) {
     if (ctx.instance && !ctx.instance.username) {
       ctx.instance.username = namor.generate();
     }
     next();
   });
-
-  User.prototype.grantWinis = async function(amount){
-    // if(amount<=0){
-    //   throw new Error('INVALID_AMOUNT');
-    // }
-    const recipient = this;
-
-    const updatedRecipient = await recipient.updateAttribute('winis', recipient.winis + parseInt(amount));
-
-    return updatedRecipient; 
-  }
 };

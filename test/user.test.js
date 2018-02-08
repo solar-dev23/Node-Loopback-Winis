@@ -220,7 +220,7 @@ describe('User', function() {
       it('should return a proper error when requesting a non-existant user', function(done) {
         const unmute = mute();
         request
-          .get(`/api/users/n0nex1st4nt/avatar.jpg`)
+          .get('/api/users/n0nex1st4nt/avatar.jpg')
           .end((err, res) => {
             expect(res.statusCode).to.be.equal(404);
             unmute();
@@ -272,7 +272,7 @@ describe('User', function() {
           });
       });
     });
-  });
+  }).timeout(2000);
 
   describe('Blocked', function() {
     it('should add a user to blocked', function(done) {
