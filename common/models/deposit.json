@@ -3,7 +3,12 @@
   "base": "PersistedModel",
   "idInjection": true,
   "mixins": {
-    "TimeStamp": true
+    "TimeStamp": true,
+    "SetupRemoteMethods": {
+      "disableAllExcept": [
+        "tapjoy"
+      ]
+    }
   },
   "options": {
     "validateUpsert": true
@@ -28,6 +33,52 @@
   },
   "validations": [],
   "relations": {},
-  "acls": [],
-  "methods": {}
+  "acls": [
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "tapjoy"
+    }
+  ],
+  "methods": {
+    "tapjoy": {
+      "accepts": [
+        {
+          "arg": "id",
+          "type": "string"
+        },
+        {
+          "arg": "snuid",
+          "type": "string"
+        },
+        {
+          "arg": "currency",
+          "type": "string"
+        },
+        {
+          "arg": "mac_address",
+          "type": "string"
+        },
+        {
+          "arg": "display_multiplier",
+          "type": "string"
+        },
+        {
+          "arg": "verifier",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Grant reward from external source (tapjoy, appStore) for user",
+      "http": {
+        "verb": "get"
+      }
+    }
+  }
 }

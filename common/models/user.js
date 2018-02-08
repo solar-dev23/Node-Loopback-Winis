@@ -192,4 +192,15 @@ module.exports = function(User) {
     }
     next();
   });
+
+  User.prototype.grantWinis = async function(amount){
+    // if(amount<=0){
+    //   throw new Error('INVALID_AMOUNT');
+    // }
+    const recipient = this;
+
+    const updatedRecipient = await recipient.updateAttribute('winis', recipient.winis + parseInt(amount));
+
+    return updatedRecipient; 
+  }
 };
