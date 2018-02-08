@@ -23,7 +23,7 @@
     "loopback-component-explorer": "^5.2.0",
     "loopback-component-passport": "^3.4.1",
     "loopback-component-storage": "^3.3.1",
-    "loopback-connector-mongodb": "^3.3.1",
+    "loopback-connector-mongodb": "^3.4.1",
     "loopback-ds-timestamp-mixin": "^3.4.1",
     "loopback-setup-remote-methods-mixin": "^1.0.4",
     "md5": "^2.2.1",
@@ -32,14 +32,14 @@
     "request-promise-native": "^1.0.5",
     "serve-favicon": "^2.0.1",
     "stream-buffers": "^3.0.1",
-    "strong-error-handler": "^2.3.0"
+    "strong-error-handler": "^2.3.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "eslint": "^3.17.1",
     "eslint-config-loopback": "^8.0.0",
     "faker": "^4.1.0",
-    "mocha": "^4.0.1",
+    "mocha": "^4.1.0",
     "mute": "^2.0.6",
     "nsp": "^2.1.0",
     "nyc": "^11.4.1",
