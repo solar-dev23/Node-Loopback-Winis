@@ -181,7 +181,7 @@ module.exports = function(User) {
     return {
       amount: amount,
       updatedSender: updatedSender,
-      updatedRecipient: updatedRecipient
+      updatedRecipient: updatedRecipient,
     };
   };
 
@@ -202,7 +202,6 @@ module.exports = function(User) {
     };
   };
 
-<<<<<<< HEAD
   User.prototype.grantWinis = async function(amount) {
     if (amount <= 0) {
       throw new Error('INVALID_WINIS_AMOUNT');
@@ -211,7 +210,8 @@ module.exports = function(User) {
     const updatedRecipient = await this.updateAttribute('winis', this.winis + parseInt(amount));
 
     return updatedRecipient;
-=======
+  }
+
   User.prototype.stakeFunds = async function(amount) {
     const user = this;
 
@@ -221,7 +221,6 @@ module.exports = function(User) {
       error.status = 409;
       throw error;
     }
-
     const stakedAmount = user.staked + amount;
     await user.updateAttribute('staked', stakedAmount);
   };
@@ -249,9 +248,8 @@ module.exports = function(User) {
     return {
       amount: amount,
       updatedSender: updatedSender,
-      updatedRecipient: updatedRecipient
-    }
->>>>>>> 58e2f84... Implement new battle functionality
+      updatedRecipient: updatedRecipient,
+    };
   };
 
   User.observe('before save', function addRandomName(ctx, next) {

@@ -14,7 +14,8 @@ describe('User', function() {
     await UserModel.deleteAll();
     [ownerUser, friendUser, strangerUser] = await UserModel.create([
       {
-        staked: 15
+        winis: 50,
+        staked: 15,
       }, {}, {
         username: 'username-Test',
         winis: 50,
@@ -389,7 +390,7 @@ describe('User', function() {
       expect(ownerUser.staked).to.equal(5);
     });
 
-    it('should transfer staked funds to another user', async function () {
+    it('should transfer staked funds to another user', async function() {
       await ownerUser.transferStakedFunds(10, strangerUser);
     });
 
@@ -416,5 +417,5 @@ describe('User', function() {
           done();
         });
     });
-  })
+  });
 });

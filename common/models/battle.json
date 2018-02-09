@@ -2,10 +2,28 @@
   "name": "battle",
   "base": "PersistedModel",
   "idInjection": true,
+  "mixins": {
+    "TimeStamp": true,
+    "SetupRemoteMethods": {
+      "disableAllExcept": [
+        "challange",
+        "prototype.acceptBattle",
+        "prototype.declineBattle"
+      ]
+    }
+  },
   "options": {
     "validateUpsert": true
   },
   "properties": {
+    "challengerId": {
+      "type": "number",
+      "required": true
+    },
+    "opponentId": {
+      "type": "number",
+      "required": true
+    },
     "status": {
       "type": "string",
       "required": true,
@@ -41,17 +59,27 @@
   },
   "acls": [],
   "methods": {
-    "request": {
+    "challange": {
       "accepts": [
         {
-          "arg": "opponent",
-          "type": "string",
-          "require": true
-        },
-        {
-          "arg": "amount",
+          "arg": "opponentId",
           "type": "number",
           "required": true
+        },
+        {
+          "arg": "stake",
+          "type": "number",
+          "required": true
+        },
+        {
+          "arg": "game",
+          "type": "string",
+          "required": true
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
         }
       ],
       "returns": {
@@ -62,9 +90,49 @@
       },
       "description": "Initiate a new battle",
       "http": {
-        "path": "/authenticate/:method",
+        "path": "/challange",
         "verb": "post"
       }
     },
+    "prototype.acceptBattle": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "Accept battle",
+      "http": {
+        "path": "/acceptBattle",
+        "verb": "post"
+      }
+    },
+    "prototype.declineBattle": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "Decline battle",
+      "http": {
+        "path": "/declineBattle",
+        "verb": "post"
+      }
+    }
   }
 }
