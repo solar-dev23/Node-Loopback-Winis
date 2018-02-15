@@ -273,7 +273,7 @@ describe('User', function() {
           });
       });
     });
-  }).timeout(2000);
+  }).timeout(10000);
 
   describe('Blocked', function() {
     it('should add a user to blocked', function(done) {

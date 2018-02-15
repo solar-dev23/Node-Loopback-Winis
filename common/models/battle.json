@@ -8,9 +8,13 @@
       "disableAllExcept": [
         "challange",
         "prototype.acceptBattle",
-        "prototype.declineBattle"
+        "prototype.declineBattle",
+        "prototype.won",
+        "prototype.lose",
+        "prototype.draw"
       ]
     }
+
   },
   "options": {
     "validateUpsert": true
@@ -36,6 +40,21 @@
     "stake": {
       "type": "number",
       "required": true
+    },
+    "challengerStatus": {
+      "type": "string",
+      "required": true,
+      "default": "unset"
+    },
+    "opponentStatus": {
+      "type": "string",
+      "required": true,
+      "default": "unset"
+    },
+    "result": {
+      "type": "string",
+      "required": true,
+      "default": "unset"
     }
   },
   "validations": [],
@@ -59,11 +78,11 @@
   },
   "acls": [],
   "methods": {
-    "challange": {
+    "challenge": {
       "accepts": [
         {
           "arg": "opponentId",
-          "type": "number",
+          "type": "any",
           "required": true
         },
         {
@@ -90,7 +109,7 @@
       },
       "description": "Initiate a new battle",
       "http": {
-        "path": "/challange",
+        "path": "/challenge",
         "verb": "post"
       }
     },
@@ -110,11 +129,11 @@
       },
       "description": "Accept battle",
       "http": {
-        "path": "/acceptBattle",
+        "path": "/accept",
         "verb": "post"
       }
     },
-    "prototype.declineBattle": {
+    "prototype.rejectBattle": {
       "accepts": [
         {
           "arg": "options",
@@ -130,7 +149,67 @@
       },
       "description": "Decline battle",
       "http": {
-        "path": "/declineBattle",
+        "path": "/reject",
+        "verb": "post"
+      }
+    },
+    "prototype.won": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "End battle battle with some result",
+      "http": {
+        "path": "/won",
+        "verb": "post"
+      }
+    },
+    "prototype.lost": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "End battle battle with some result",
+      "http": {
+        "path": "/lost",
+        "verb": "post"
+      }
+    },
+    "prototype.draw": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+      },
+      "description": "End battle battle with some result",
+      "http": {
+        "path": "/draw",
         "verb": "post"
       }
     }
