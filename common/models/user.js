@@ -277,10 +277,40 @@ module.exports = function(User) {
     await friend.pending.add(userId);
   });
 
+  User.prototype.freeSpins = async function(options) {
+    const token = options && options.accessToken;
+    const senderId = token && token.userId;
+    const currentUser = await User.findById(senderId);
+    const dayDurration = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const differenceInDays = Number.parseInt((getStarOfDay(now, currentUser.timezone) - getStarOfDay(currentUser.lastDailySpinGrantingDate, currentUser.timezone)) / dayDurration);
+    if (differenceInDays > 0) {
+      await currentUser.updateAttribute('spins', currentUser.spins + differenceInDays);
+      await currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now());
+    }
+    return {
+      amount: differenceInDays,
+    }; 
+  };
+
   User.observe('before save', function addRandomName(ctx, next) {
     if (ctx.instance && !ctx.instance.username) {
       ctx.instance.username = namor.generate();
     }
     next();
   });
+
+  function getStarOfDay(timestamp, timezone) {
+    const startOfTheDay = timestamp - (timestamp % (24 * 60 * 60 * 1000));
+    const sign = Number.parseInt(timezone.substring(0, 1));
+    const hours = Number.parseInt(timezone.substring(1, 3));
+    const minutes = Number.parseInt(timezone.substring(4, 6));
+    let resultTimestamp = 0;
+    if (sign == '+') {
+      resultTimestamp = startOfTheDay - (hours * 60 * 60 * 1000 + minutes * 60 * 1000);
+    } else {
+      resultTimestamp = startOfTheDay + (hours * 60 * 60 * 1000 + minutes * 60 * 1000);
+    }
+    return resultTimestamp;
+  }
 };
