@@ -122,6 +122,21 @@ module.exports = function(Battle) {
       error.status = 409;
       throw error;
     }
+    
+    if (callerId == currentBattle.challengerId) {
+      if (currentBattle.challengerStatus != 'unset') {
+        const error = new Error('You have already commited your status');
+        error.status = 409;
+        throw error;
+      };
+    } else {
+      if (currentBattle.opponentStatus != 'unset') {
+        const error = new Error('You have already commited your status');
+        error.status = 409;
+        throw error;
+      };
+    }
+    
     let updatedBattle;
     if (currentBattle.challengerId == callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'won');
@@ -147,6 +162,21 @@ module.exports = function(Battle) {
       error.status = 409;
       throw error;
     }
+
+    if (callerId == currentBattle.challengerId) {
+      if (currentBattle.challengerStatus != 'unset') {
+        const error = new Error('You have already commited your status');
+        error.status = 409;
+        throw error;
+      };
+    } else {
+      if (currentBattle.opponentStatus != 'unset') {
+        const error = new Error('You have already commited your status');
+        error.status = 409;
+        throw error;
+      };
+    }
+
     let updatedBattle;
     if (currentBattle.challengerId == callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'lost');
@@ -172,6 +202,21 @@ module.exports = function(Battle) {
       error.status = 409;
       throw error;
     }
+    
+    if (callerId == currentBattle.challengerId) {
+      if (currentBattle.challengerStatus != 'unset') {
+        const error = new Error('You have already commited your status');
+        error.status = 409;
+        throw error;
+      };
+    } else {
+      if (currentBattle.opponentStatus != 'unset') {
+        const error = new Error('You have already commited your status');
+        error.status = 409;
+        throw error;
+      };
+    }
+
     let updatedBattle;
     if (currentBattle.challengerId == callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'draw');

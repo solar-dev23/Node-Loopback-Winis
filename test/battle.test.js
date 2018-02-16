@@ -84,6 +84,44 @@ describe('Battle', function() {
         });
     });
 
+    it('should fail create a new pending battle beacuse amount of staked funds + stake is to high', function(done) {
+      const unmute = mute();
+      request
+        .post('/api/battles/challenge/')
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send({
+          game: 'test-game',
+          opponentId: opponentUser.id,
+          stake: 40,
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          return UserModel.findById(challengerUser.id); 
+        })
+        .then(challenger => {
+          expect(challenger.staked).to.be.equal(40);
+          return UserModel.findById(opponentUser.id);
+        })
+        .then(opponent => {
+          expect(opponent.staked).to.be.equal(40);
+          return request
+            .post('/api/battles/challenge/')
+            .set('Authorization', challengerAccessToken.id)
+            .expect('Content-Type', /json/)
+            .send({
+              game: 'test-game',
+              opponentId: opponentUser.id,
+              stake: 40,
+            });
+        })
+        .then(res=>{
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+          done();
+        });
+    });
+
     it('should fail to create a new pending battle with non exisitng user', function(done) {
       const unmute = mute();
       request
@@ -460,6 +498,30 @@ describe('Battle', function() {
         expect(opponent.staked).to.be.equal(0);
         expect(opponent.winis).to.be.equal(50);
         done();
+      });
+    });
+
+    it('should fail to send won status 2 times', function(done) {
+      const unmute = mute();
+      request
+      .post(`/api/battles/${freshBattle.id}/won`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('won');
+        return request
+        .post(`/api/battles/${freshBattle.id}/won`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(409);
+        unmute();
+        done(); 
       });
     });
   });

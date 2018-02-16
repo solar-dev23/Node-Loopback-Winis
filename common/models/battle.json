@@ -6,11 +6,11 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "challange",
+        "challenge",
         "prototype.acceptBattle",
-        "prototype.declineBattle",
+        "prototype.rejectBattle",
         "prototype.won",
-        "prototype.lose",
+        "prototype.lost",
         "prototype.draw"
       ]
     }
@@ -105,7 +105,7 @@
         "arg": "battle",
         "type": "object",
         "root": true,
-        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+        "description": "The response body contains newly created battle object with default configuration."
       },
       "description": "Initiate a new battle",
       "http": {
@@ -125,7 +125,7 @@
         "arg": "battle",
         "type": "object",
         "root": true,
-        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
+        "description": "The response body contains accepted battle object."
       },
       "description": "Accept battle",
       "http": {
@@ -145,9 +145,9 @@
         "arg": "battle",
         "type": "object",
         "root": true,
-        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
-      },
-      "description": "Decline battle",
+        "description": "The response body contains rejected battle object. All stakes related to this battle are released."
+        },
+      "description": "Reject battle",
       "http": {
         "path": "/reject",
         "verb": "post"
@@ -165,9 +165,9 @@
         "arg": "battle",
         "type": "object",
         "root": true,
-        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
-      },
-      "description": "End battle battle with some result",
+        "description": "The response body contains updated battle object. If this was second request from both contenders then battle is finished and funds are transfered."
+        },
+      "description": "End battle battle with 'won' result from either player",
       "http": {
         "path": "/won",
         "verb": "post"
@@ -185,9 +185,9 @@
         "arg": "battle",
         "type": "object",
         "root": true,
-        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
-      },
-      "description": "End battle battle with some result",
+        "description": "The response body contains updated battle object. If this was second request from both contenders then battle is finished and funds are transfered."
+        },
+      "description": "End battle battle with 'lost' result from either player",
       "http": {
         "path": "/lost",
         "verb": "post"
@@ -205,9 +205,9 @@
         "arg": "battle",
         "type": "object",
         "root": true,
-        "description": "The response body contains properties of the AccessToken created on login.\n Depending on the value of `include` parameter, the body may contain additional properties:\n\n  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n"
-      },
-      "description": "End battle battle with some result",
+        "description": "The response body contains updated battle object. If this was second request from both contenders then battle is finished and funds are transfered."
+        },
+      "description": "End battle battle with 'draw' result from either player",
       "http": {
         "path": "/draw",
         "verb": "post"
