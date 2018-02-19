@@ -16,7 +16,7 @@ describe('User', function() {
     [ownerUser, friendUser, strangerUser] = await UserModel.create([
       {
         winis: 50,
-        scratches: 2,
+        scratches: 1,
       },
     ]);
     await ownerUser.friends.add(friendUser);
@@ -27,17 +27,38 @@ describe('User', function() {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('Owner', function() {
-    it('should refuse to get scratch because no scratches left', function(done) {
-      const unmute = mute();
+  describe('Scratch', function() { 
+    it('should get scratch', function(done) {
       request
-        .post('/api/scratches/')
+        .post('/api/scratches/generate')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          expect(res.statusCode).to.be.equal(401);
-          expect(res.body.error.code).to.be.equal('AUTHORIZATION_REQUIRED');
-          expect(res.body.error).to.not.be.a('null');
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.success).to.be.equal(true);
+          expect(res.body.board.length).to.be.equal(6);
+          done();
+        });
+    });
+
+    it('should refuse to get scratch because there are no scratches left', function(done) {
+      const unmute = mute();
+      request
+        .post('/api/scratches/generate')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then(res => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.userId).to.be.equal(accessToken.userId.toString());
+          return request
+          .post('/api/scratches/generate')
+          .set('Authorization', accessToken.id)
+          .expect('Content-Type', /json/)
+          .send();
+        })
+        .then(res => {
+          expect(res.statusCode).to.be.equal(200);
           unmute();
           done();
         });

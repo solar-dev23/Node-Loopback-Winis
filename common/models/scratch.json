@@ -7,13 +7,33 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "scratch"
+        "/",
+        "prototype.validate"
       ]
     }
   },
-  "properties": {},
+  "properties": {
+    "board": {
+      "type": "array",
+      "required": true
+    },
+    "userId": {
+      "type": "string",
+      "required": true
+    },
+    "prize": {
+      "type": "string",
+      "required": false
+    }
+  },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "user": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": "userId"
+    }
+  },
   "acls": [
     {
       "accessType": "EXECUTE",
@@ -21,6 +41,13 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "scratch"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "reveal"
     },
     {
       "accessType": "*",
@@ -39,13 +66,33 @@
         }
       ],
       "returns": {
-        "arg": "result",
+        "arg": "scratch",
         "type": "object",
         "root": true
       },
-      "description": "Get the the boxes for the scratches spin for this user, and update user model",
+      "description": "Creates Scratch object",
       "http": {
-        "verb": "post"
+        "verb": "post",
+        "path": "/"
+      }
+    },
+    "prototype.reveal": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "scratch",
+        "type": "object",
+        "root": true
+      },
+      "description": "Reveals current Scratch. User receives prize instantly",
+      "http": {
+        "verb": "post",
+        "path": "/reveal"
       }
     }
   }
