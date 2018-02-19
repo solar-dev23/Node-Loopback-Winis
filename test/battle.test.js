@@ -42,23 +42,23 @@ describe('Battle', function() {
         .expect('Content-Type', /json/)
         .send({
           game: 'test-game',
-          opponentId: opponentUser.id,
+          opponentId: opponentUser.id.toString(),
           stake: 20,
         })
         .then(res =>{
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.challengerId).to.be.equal(challengerUser.id);
-          expect(res.body.opponentId).to.be.equal(opponentUser.id);
+          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
           expect(res.body.status).to.be.equal('pending');
           expect(res.body.game).to.be.equal('test-game');
           expect(res.body.opponentStatus).to.be.equal('unset');
           expect(res.body.challengerStatus).to.be.equal('unset');
   
-          return UserModel.findById(challengerUser.id); 
+          return UserModel.findById(challengerUser.id.toString()); 
         })
         .then(challenger => {
           expect(challenger.staked).to.be.equal(20);
-          return UserModel.findById(opponentUser.id);
+          return UserModel.findById(opponentUser.id.toString());
         })
         .then(opponent => {
           expect(opponent.staked).to.be.equal(20);
@@ -66,7 +66,7 @@ describe('Battle', function() {
         });
     });
 
-    it('should fail create a new pending battle beacuse stake is to high', function(done) {
+    it('should fail create a new pending battle there is already one', function(done) {
       const unmute = mute();
       request
         .post('/api/battles/challenge/')
@@ -74,7 +74,67 @@ describe('Battle', function() {
         .expect('Content-Type', /json/)
         .send({
           game: 'test-game',
-          opponentId: opponentUser.id,
+          opponentId: opponentUser.id.toString(),
+          stake: 20,
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          return request
+            .post('/api/battles/challenge/')
+            .set('Authorization', challengerAccessToken.id)
+            .expect('Content-Type', /json/)
+            .send({
+              game: 'test-game',
+              opponentId: opponentUser.id.toString(),
+              stake: 20,
+            });
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+          done();
+        });
+    });
+
+    it('should fail create a new pending battle there is already one', function(done) {
+      const unmute = mute();
+      request
+        .post('/api/battles/challenge/')
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send({
+          game: 'test-game',
+          opponentId: opponentUser.id.toString(),
+          stake: 20,
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          return request
+            .post('/api/battles/challenge/')
+            .set('Authorization', opponentAccessToken.id)
+            .expect('Content-Type', /json/)
+            .send({
+              game: 'test-game',
+              opponentId: challengerUser.id.toString(),
+              stake: 20,
+            });
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+          done();
+        });
+    });
+    
+    it('should fail create a new pending battle bacause stake is to high', function(done) {
+      const unmute = mute();
+      request
+        .post('/api/battles/challenge/')
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send({
+          game: 'test-game',
+          opponentId: opponentUser.id.toString(),
           stake: 60,
         })
         .then(res =>{
@@ -84,7 +144,7 @@ describe('Battle', function() {
         });
     });
 
-    it('should fail create a new pending battle beacuse amount of staked funds + stake is to high', function(done) {
+    it('should fail create a new pending battle bacause amount of staked funds + stake is to high', function(done) {
       const unmute = mute();
       request
         .post('/api/battles/challenge/')
@@ -92,16 +152,16 @@ describe('Battle', function() {
         .expect('Content-Type', /json/)
         .send({
           game: 'test-game',
-          opponentId: opponentUser.id,
+          opponentId: opponentUser.id.toString(),
           stake: 40,
         })
         .then(res =>{
           expect(res.statusCode).to.be.equal(200);
-          return UserModel.findById(challengerUser.id); 
+          return UserModel.findById(challengerUser.id.toString()); 
         })
         .then(challenger => {
           expect(challenger.staked).to.be.equal(40);
-          return UserModel.findById(opponentUser.id);
+          return UserModel.findById(opponentUser.id.toString());
         })
         .then(opponent => {
           expect(opponent.staked).to.be.equal(40);
@@ -111,7 +171,7 @@ describe('Battle', function() {
             .expect('Content-Type', /json/)
             .send({
               game: 'test-game',
-              opponentId: opponentUser.id,
+              opponentId: opponentUser.id.toString(),
               stake: 40,
             });
         })
@@ -130,7 +190,7 @@ describe('Battle', function() {
         .expect('Content-Type', /json/)
         .send({
           game: 'test-game',
-          opponentId: opponentUser.id + 10,
+          opponentId: opponentUser.id.toString() + 10,
           stake: 20,
         })
         .then(res =>{
@@ -148,7 +208,7 @@ describe('Battle', function() {
         .expect('Content-Type', /json/)
         .send({
           game: 'test-game',
-          opponentId: challengerUser.id,
+          opponentId: challengerUser.id.toString(),
           stake: 20,
         })
         .then(res =>{
@@ -168,13 +228,13 @@ describe('Battle', function() {
       .expect('Content-Type', /json/)
       .send({
         game: 'test-game',
-        opponentId: opponentUser.id,
+        opponentId: opponentUser.id.toString(),
         stake: 20,
       })
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.challengerId).to.be.equal(challengerUser.id);
-        expect(res.body.opponentId).to.be.equal(opponentUser.id);
+        expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+        expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
         expect(res.body.status).to.be.equal('pending');
         expect(res.body.game).to.be.equal('test-game');
         expect(res.body.opponentStatus).to.be.equal('unset');
@@ -249,13 +309,13 @@ describe('Battle', function() {
       .expect('Content-Type', /json/)
       .send({
         game: 'test-game',
-        opponentId: opponentUser.id,
+        opponentId: opponentUser.id.toString(),
         stake: 20,
       })
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.challengerId).to.be.equal(challengerUser.id);
-        expect(res.body.opponentId).to.be.equal(opponentUser.id);
+        expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+        expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
         expect(res.body.status).to.be.equal('pending');
         expect(res.body.game).to.be.equal('test-game');
         expect(res.body.opponentStatus).to.be.equal('unset');
@@ -273,11 +333,11 @@ describe('Battle', function() {
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
         expect(res.body.status).to.be.equal('rejected');
-        return UserModel.findById(challengerUser.id);
+        return UserModel.findById(challengerUser.id.toString());
       })
       .then(res =>{
         expect(res.staked).to.be.equal(0);
-        return UserModel.findById(opponentUser.id);
+        return UserModel.findById(opponentUser.id.toString());
       })
       .then(res =>{
         expect(res.staked).to.be.equal(0);
@@ -337,13 +397,13 @@ describe('Battle', function() {
       .expect('Content-Type', /json/)
       .send({
         game: 'test-game',
-        opponentId: opponentUser.id,
+        opponentId: opponentUser.id.toString(),
         stake: 20,
       })
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.challengerId).to.be.equal(challengerUser.id);
-        expect(res.body.opponentId).to.be.equal(opponentUser.id);
+        expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+        expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
         expect(res.body.status).to.be.equal('pending');
         expect(res.body.game).to.be.equal('test-game');
         expect(res.body.opponentStatus).to.be.equal('unset');
@@ -382,12 +442,12 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('opponent won');
-        return UserModel.findById(challengerUser.id); 
+        return UserModel.findById(challengerUser.id.toString()); 
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(30);
-        return UserModel.findById(opponentUser.id);
+        return UserModel.findById(opponentUser.id.toString());
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -417,12 +477,12 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('challenger won');
-        return UserModel.findById(challengerUser.id); 
+        return UserModel.findById(challengerUser.id.toString()); 
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(70);
-        return UserModel.findById(opponentUser.id);
+        return UserModel.findById(opponentUser.id.toString());
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -452,12 +512,12 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('both draw');
-        return UserModel.findById(challengerUser.id); 
+        return UserModel.findById(challengerUser.id.toString()); 
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(50);
-        return UserModel.findById(opponentUser.id);
+        return UserModel.findById(opponentUser.id.toString());
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -487,7 +547,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id); 
+        return UserModel.findById(challengerUser.id.toString().toString()); 
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);

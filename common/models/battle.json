@@ -21,11 +21,11 @@
   },
   "properties": {
     "challengerId": {
-      "type": "number",
+      "type": "string",
       "required": true
     },
     "opponentId": {
-      "type": "number",
+      "type": "string",
       "required": true
     },
     "status": {
@@ -82,7 +82,7 @@
       "accepts": [
         {
           "arg": "opponentId",
-          "type": "any",
+          "type": "string",
           "required": true
         },
         {

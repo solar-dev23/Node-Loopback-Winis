@@ -26,6 +26,17 @@ module.exports = function(Battle) {
       throw error;
     }
     
+    let existingBattle = await Battle.findOne({where: {challengerId: challengerId, opponentId: opponentId, result: 'unset'}});
+    if (!existingBattle) { 
+      existingBattle = await Battle.findOne({where: {challengerId: opponentId, opponentId: challengerId, result: 'unset'}});
+    }
+    
+    if (existingBattle) {
+      const error = new Error('You have already started battle with this user');
+      error.status = 409;
+      throw error;
+    }
+
     if (challenger.id == opponent.id) {
       const error = new Error('You cannot start battle with yourself');
       error.status = 409;

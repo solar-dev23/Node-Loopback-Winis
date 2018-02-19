@@ -214,13 +214,20 @@ module.exports = function(User) {
 
   User.prototype.stakeFunds = async function(amount) {
     const user = this;
-
     debug(`Staking ${amount} winis`);
-    if (this.winis - this.staked < amount) {
+
+    if (this.winis < amount) {
       const error = new Error('Not enough winis');
       error.status = 409;
       throw error;
     }
+    
+    if (this.winis - this.staked < amount) {
+      const error = new Error('Amount of staked winis is to big');
+      error.status = 409;
+      throw error;
+    }
+
     const stakedAmount = user.staked + amount;
     await user.updateAttribute('staked', stakedAmount);
   };
