@@ -120,7 +120,12 @@ module.exports = function(Scratch) {
       case 'diamond':  uppdatedUser2 = await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
       case 'winis':  uppdatedUser2 = await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
       case 'scratch':  uppdatedUser2 = await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
-      case 'present':  break;// TODO implement present grating logic
+      case 'present':  Promise.all([
+        uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1), 
+        uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 10),
+        uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1),
+        uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1),
+      ]); break;
       case 'spin':  uppdatedUser2 = await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
     }
     if (this.prize != 'empty') {
