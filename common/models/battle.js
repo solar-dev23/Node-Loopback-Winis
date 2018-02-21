@@ -169,7 +169,7 @@ module.exports = function(Battle) {
     }
 
     if (currentBattle.status != 'accepted') {
-      const error = new Error('You cannot win unaccepted game');
+      const error = new Error('You cannot lose unaccepted game');
       error.status = 409;
       throw error;
     }
@@ -209,7 +209,7 @@ module.exports = function(Battle) {
     }
 
     if (currentBattle.status != 'accepted') {
-      const error = new Error('You cannot win unaccepted game');
+      const error = new Error('You cannot draw unaccepted game');
       error.status = 409;
       throw error;
     }
