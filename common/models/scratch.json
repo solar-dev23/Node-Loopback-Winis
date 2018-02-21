@@ -73,7 +73,7 @@
       "description": "Creates Scratch object",
       "http": {
         "verb": "post",
-        "path": "/"
+        "path": "/generate"
       }
     },
     "prototype.reveal": {

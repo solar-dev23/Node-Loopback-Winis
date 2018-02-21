@@ -87,19 +87,17 @@ module.exports = function(Scratch) {
       throw error;
     }
 
-    const scratchBoard = Scratch.calculateScratchBoard();
-
-    const prize = Scratch.determinePrize(scratchBoard);
+    const scratchBoard = await Scratch.calculateScratchBoard();
+    const prize = await Scratch.determinePrize(scratchBoard);
 
     const scratch = await Scratch.create({
       board: scratchBoard,
-      userId: user.id,
+      userId: userId,
       prize: prize,
     });
-
     return {
       success: true,
-      boardId: scratch.id,
+      id: scratch.id,
       board: scratch.board,
     };
   };
@@ -116,6 +114,17 @@ module.exports = function(Scratch) {
     }
     const user = await UserModel.findById(userId);
     const uppdatedUser = await user.updateAttribute('scratches', user.scratches - 1);
+    let uppdatedUser2;
+    switch (this.prize) {
+      case 'empty': break;
+      case 'diamond':  uppdatedUser2 = await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
+      case 'winis':  uppdatedUser2 = await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
+      case 'scratch':  uppdatedUser2 = await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
+      case 'present':  break;// TODO implement present grating logic
+      case 'spin':  uppdatedUser2 = await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
+    }
+    if (this.prize != 'empty') {
+    }
     return {
       success: true,
       prize: this.prize,
