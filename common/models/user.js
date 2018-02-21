@@ -130,6 +130,12 @@ module.exports = function(User) {
 
       fileStream.pipe(writeBuffer);
       fileStream.on('end', (err) => {
+        if (err) {
+          const error = new Error('Failed fetching a avatar');
+          error.status = 409;
+          throw error;
+        }
+
         const buffer = writeBuffer.getContents();
         jimp.read(buffer)
           .then((image) => {
@@ -161,15 +167,9 @@ module.exports = function(User) {
     return User.returnResizedImage(this.id, this.avatar, 250, 250, next);
   };
 
-  User.prototype.sendWinis = async function(amount, options) {
-    const token = options && options.accessToken;
-    const senderId = token && token.userId;
-
-    const recipient = this;
-    const sender = await User.findById(senderId);
-
+  User.transferFunds = async function(amount, sender, recipient) {
     debug(`Sending ${amount} winis from ${sender.id} to ${recipient.id}`);
-    if (sender.winis < amount) {
+    if (sender.winis - sender.staked < amount) {
       const error = new Error('Not enough winis');
       error.status = 409;
       throw error;
@@ -177,6 +177,22 @@ module.exports = function(User) {
 
     const updatedRecipient = await recipient.updateAttribute('winis', recipient.winis + amount);
     const updatedSender = await sender.updateAttribute('winis', sender.winis - amount);
+
+    return {
+      amount: amount,
+      updatedSender: updatedSender,
+      updatedRecipient: updatedRecipient,
+    };
+  };
+
+  User.prototype.sendWinis = async function(amount, options) {
+    const token = options && options.accessToken;
+    const senderId = token && token.userId;
+
+    const recipient = this;
+    const sender = await User.findById(senderId);
+
+    const {updatedSender, updatedRecipient} = await User.transferFunds(amount, sender, recipient);
 
     return {
       status: 'success',
@@ -194,6 +210,53 @@ module.exports = function(User) {
     const updatedRecipient = await this.updateAttribute('winis', this.winis + parseInt(amount));
 
     return updatedRecipient;
+  }
+
+  User.prototype.stakeFunds = async function(amount) {
+    const user = this;
+    debug(`Staking ${amount} winis`);
+
+    if (this.winis < amount) {
+      const error = new Error('Not enough winis');
+      error.status = 409;
+      throw error;
+    }
+    
+    if (this.winis - this.staked < amount) {
+      const error = new Error('Amount of staked winis is to big');
+      error.status = 409;
+      throw error;
+    }
+
+    const stakedAmount = user.staked + amount;
+    await user.updateAttribute('staked', stakedAmount);
+  };
+
+  User.prototype.releaseFunds = async function(amount) {
+    if (this.staked < amount) {
+      const error = new Error('Not enough staked winis');
+      error.status = 409;
+      throw error;
+    }
+
+    await this.updateAttribute('staked', this.staked - amount);
+  };
+
+  User.prototype.transferStakedFunds = async function(amount, recipient) {
+    if (this.staked < amount) {
+      const error = new Error('Not enough staked winis');
+      error.status = 409;
+      throw error;
+    }
+
+    await this.releaseFunds(amount);
+    const {updatedSender, updatedRecipient} = await User.transferFunds(amount, this, recipient);
+
+    return {
+      amount: amount,
+      updatedSender: updatedSender,
+      updatedRecipient: updatedRecipient,
+    };
   };
 
   User.observe('before save', function addRandomName(ctx, next) {

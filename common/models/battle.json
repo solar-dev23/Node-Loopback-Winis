@@ -1,0 +1,217 @@
+{
+  "name": "battle",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "mixins": {
+    "TimeStamp": true,
+    "SetupRemoteMethods": {
+      "disableAllExcept": [
+        "challenge",
+        "prototype.acceptBattle",
+        "prototype.rejectBattle",
+        "prototype.won",
+        "prototype.lost",
+        "prototype.draw"
+      ]
+    }
+
+  },
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "challengerId": {
+      "type": "string",
+      "required": true
+    },
+    "opponentId": {
+      "type": "string",
+      "required": true
+    },
+    "status": {
+      "type": "string",
+      "required": true,
+      "default": "pending"
+    },
+    "game": {
+      "type": "string",
+      "required": true
+    },
+    "stake": {
+      "type": "number",
+      "required": true
+    },
+    "challengerStatus": {
+      "type": "string",
+      "required": true,
+      "default": "unset"
+    },
+    "opponentStatus": {
+      "type": "string",
+      "required": true,
+      "default": "unset"
+    },
+    "result": {
+      "type": "string",
+      "required": true,
+      "default": "unset"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "challenger": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": "challengerId",
+      "options": {
+        "nestRemoting": true
+      }
+    },
+    "opponent": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": "opponentId",
+      "options": {
+        "nestRemoting": true
+      }
+    }
+  },
+  "acls": [],
+  "methods": {
+    "challenge": {
+      "accepts": [
+        {
+          "arg": "opponentId",
+          "type": "string",
+          "required": true
+        },
+        {
+          "arg": "stake",
+          "type": "number",
+          "required": true
+        },
+        {
+          "arg": "game",
+          "type": "string",
+          "required": true
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains newly created battle object with default configuration."
+      },
+      "description": "Initiate a new battle",
+      "http": {
+        "path": "/challenge",
+        "verb": "post"
+      }
+    },
+    "prototype.acceptBattle": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains accepted battle object."
+      },
+      "description": "Accept battle",
+      "http": {
+        "path": "/accept",
+        "verb": "post"
+      }
+    },
+    "prototype.rejectBattle": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains rejected battle object. All stakes related to this battle are released."
+        },
+      "description": "Reject battle",
+      "http": {
+        "path": "/reject",
+        "verb": "post"
+      }
+    },
+    "prototype.won": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains updated battle object. If this was second request from both contenders then battle is finished and funds are transfered."
+        },
+      "description": "End battle battle with 'won' result from either player",
+      "http": {
+        "path": "/won",
+        "verb": "post"
+      }
+    },
+    "prototype.lost": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains updated battle object. If this was second request from both contenders then battle is finished and funds are transfered."
+        },
+      "description": "End battle battle with 'lost' result from either player",
+      "http": {
+        "path": "/lost",
+        "verb": "post"
+      }
+    },
+    "prototype.draw": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains updated battle object. If this was second request from both contenders then battle is finished and funds are transfered."
+        },
+      "description": "End battle battle with 'draw' result from either player",
+      "http": {
+        "path": "/draw",
+        "verb": "post"
+      }
+    }
+  }
+}
