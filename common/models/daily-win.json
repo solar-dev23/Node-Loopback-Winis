@@ -1,0 +1,98 @@
+{
+  "name": "daily-win",
+  "plural": "daily-wins",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "TimeStamp": true,
+    "SetupRemoteMethods": {
+      "disableAllExcept": [
+        "check",
+        "prototype.pickReward"
+      ]
+    }
+  },
+  "properties": {
+    "createdDate": {
+      "type": "number",
+      "required": false
+    },
+    "resetDate": {
+      "type": "number",
+      "required": false
+    },
+    "prizes": {
+      "type": "object",
+      "required": false
+    },
+    "lastAllowedDay": {
+      "type": "number",
+      "default": 1
+    },
+    "lastVisitDate": {
+      "type": "number",
+      "default": 0
+    },
+    "userId": {
+      "type": "any",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "userId": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [],
+  "methods": {
+    "check": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Check for DailyWin",
+      "http": {
+        "path": "/check",
+        "verb": "post"
+      }
+    },
+    "prototype.pickReward": {
+      "accepts": [
+        {
+          "arg": "dayNumber",
+          "type": "number",
+          "require": true
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Check for DailyWin",
+      "http": {
+        "path": "/pickReward",
+        "verb": "post"
+      }
+    }
+  }
+}
