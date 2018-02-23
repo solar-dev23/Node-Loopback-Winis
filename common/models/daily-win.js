@@ -38,7 +38,7 @@ module.exports = function(Dailywin) {
     await currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay);
     await currentDailyWin.updateAttribute('lastAllowedDay', currentDailyWin.lastAllowedDay + 1);
     let prizesObject = currentDailyWin.prizes;
-    if (currentDailyWin.lastAllowedDay + 1 == 7) {
+    if (currentDailyWin.lastAllowedDay == 7) {
       prizesObject.weekly.status = 'allowed';
     }
     prizesObject[currentDailyWin.lastAllowedDay].status = 'allowed';
@@ -51,30 +51,43 @@ module.exports = function(Dailywin) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
-
-    if (this.userId != userId) {
+    let self = this.__data;
+    if (self.userId != userId) {
       const error = new Error('You cannot pick someone else\'s reward');
       error.status = 409;
       throw error;
     }
 
-    if (this.prizes[day].status == 'disallowed') {
+    if (self.prizes[day].status == 'disallowed') {
       const error = new Error('You cannot pick disallowed reward');
       error.status = 409;
       throw error;
     }
 
-    if (this.prizes[day].status == 'picked') {
+    if (self.prizes[day].status == 'picked') {
       const error = new Error('You have already picked this reward');
       error.status = 409;
       throw error;
     }
     
-    let prizesObject = this.prizes;
+    let prizesObject = self.prizes;
     prizesObject[day].status = 'picked';
     const updatedDailyWin = await this.updateAttribute('prizes', prizesObject);
     const user = await UserModel.findById(userId);
-    // await userId.updateAttribute(); TODO implement prizes
+    
+    switch (prizesObject[day].prize) {
+      case 'empty': break;
+      case 'diamond': await user.updateAttribute('diamonds', user.diamonds + prizesObject[day].count); break;
+      case 'winis':  await user.updateAttribute('winis', user.winis + prizesObject[day].count); break;
+      case 'scratch': await user.updateAttribute('scratches', user.scratches + prizesObject[day].count); break;
+      case 'present': await Promise.all([
+        user.updateAttribute('diamonds', user.diamonds + 1 * prizesObject[day].count), 
+        user.updateAttribute('winis', user.winis + 10 * prizesObject[day].count),
+        user.updateAttribute('scratches', user.scratches + 1 * prizesObject[day].count),
+        user.updateAttribute('spins', user.spins + 1 * prizesObject[day].count),
+      ]); break;
+      case 'spin': await user.updateAttribute('spins', user.spins + prizesObject[day].count); break;
+    }
     return updatedDailyWin;
   };
 
