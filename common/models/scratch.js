@@ -1,16 +1,5 @@
 'use strict';
 
-const Ivoire = require('ivoire-weighted-choice');
-const PrizeManager = require('../services/prize');
-
-const spinOptions = [
-  'diamond', 'winis', 'scratch', 'present', 'spin',
-];
-
-const spinWeights = [
-  15, 50, 15, 5, 15,
-];
-
 module.exports = function(Scratch) {
   Scratch.determinePrize = (board) => {
     let prize;
@@ -74,7 +63,7 @@ module.exports = function(Scratch) {
     }
     return board; 
   };
-  
+
   Scratch.scratch = async function(options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
@@ -114,22 +103,20 @@ module.exports = function(Scratch) {
     }
     const user = await UserModel.findById(userId);
     const uppdatedUser = await user.updateAttribute('scratches', user.scratches - 1);
-    let uppdatedUser2;
     switch (this.prize) {
       case 'empty': break;
-      case 'diamond':  uppdatedUser2 = await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
-      case 'winis':  uppdatedUser2 = await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
-      case 'scratch':  uppdatedUser2 = await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
-      case 'present':  Promise.all([
+      case 'diamond':  await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
+      case 'winis':  await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
+      case 'scratch':  await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
+      case 'present':  await Promise.all([
         uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1), 
         uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 10),
         uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1),
         uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1),
       ]); break;
-      case 'spin':  uppdatedUser2 = await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
+      case 'spin':  await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
     }
-    if (this.prize != 'empty') {
-    }
+
     return {
       success: true,
       prize: this.prize,

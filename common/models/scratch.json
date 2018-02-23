@@ -7,7 +7,7 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "/",
+        "generate",
         "prototype.validate"
       ]
     }
@@ -73,7 +73,7 @@
       "description": "Creates Scratch object",
       "http": {
         "verb": "post",
-        "path": "/generate"
+        "path": "/"
       }
     },
     "prototype.reveal": {
