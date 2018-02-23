@@ -7,10 +7,7 @@ const request = require('supertest')(app);
 const moment = require('moment-timezone');
 
 let accessToken, UserModel, DailyWinModel;
-// process.on('unhandledRejection', (reason, p) => {
-//   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-//   // application specific logging, throwing an error, or other logic here
-// });
+
 describe('Daily-win', async function() {
   let user;
   beforeEach(async function() {
