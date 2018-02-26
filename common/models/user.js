@@ -221,7 +221,7 @@ module.exports = function(User) {
       error.status = 409;
       throw error;
     }
-    
+
     if (this.winis - this.staked < amount) {
       const error = new Error('Amount of staked winis is to big');
       error.status = 409;
@@ -258,6 +258,24 @@ module.exports = function(User) {
       updatedRecipient: updatedRecipient,
     };
   };
+
+  User.beforeRemote('prototype.__link__blocked', async (ctx) => {
+    const user = ctx.instance;
+    const blockedId = ctx.args.fk;
+
+    await user.friends.remove(blockedId);
+    await user.pending.remove(blockedId);
+  });
+
+  User.afterRemote('prototype.__link__friends', async (ctx) => {
+    const user = ctx.instance;
+    const userId = user.id;
+    const friendId = ctx.args.fk;
+    const friend = await User.findById(friendId);
+
+    await user.pending.remove(friendId);
+    await friend.pending.add(userId);
+  });
 
   User.observe('before save', function addRandomName(ctx, next) {
     if (ctx.instance && !ctx.instance.username) {

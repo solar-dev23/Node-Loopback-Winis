@@ -86,6 +86,21 @@ describe('User', function() {
         });
     });
 
+    it('should add us to the pending list for the new friend', function(done) {
+      request
+        .put(`/api/users/${ownerUser.id}/friends/rel/${strangerUser.id}`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          UserModel.findById(strangerUser.id)
+            .then((user) => {
+              expect(res.statusCode).to.be.equal(200);
+              expect(user.pendingIds).to.include(ownerUser.id);
+              done();
+            });
+        });
+    });
+
     it('should return users in the database by phone', function(done) {
       request
         .post('/api/users/findByPhones')
@@ -279,6 +294,22 @@ describe('User', function() {
   describe('Blocked', function() {
     it('should add a user to blocked', function(done) {
       request
+        .put(`/api/users/${ownerUser.id}/blocked/rel/${strangerUser.id}`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          UserModel.findById(ownerUser.id)
+            .then((user) => {
+              expect(res.statusCode).to.be.equal(200);
+              expect(res.body.id).to.be.equal(strangerUser.id);
+              expect(user.blockedIds).to.include(strangerUser.id);
+              done();
+            });
+        });
+    });
+
+    it('should remove a blocked friend from friend list', function(done) {
+      request
         .put(`/api/users/${ownerUser.id}/blocked/rel/${friendUser.id}`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
@@ -286,8 +317,7 @@ describe('User', function() {
           UserModel.findById(ownerUser.id)
             .then((user) => {
               expect(res.statusCode).to.be.equal(200);
-              expect(res.body.id).to.be.equal(friendUser.id);
-              expect(user.blockedIds).to.include(friendUser.id);
+              expect(user.friendIds).to.not.include(friendUser.id);
               done();
             });
         });
