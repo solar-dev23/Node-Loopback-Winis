@@ -6,7 +6,7 @@ const mute = require('mute');
 const request = require('supertest')(app);
 const jimp = require('jimp');
 
-describe('User', function() {
+describe('Scratch', function() {
   let accessToken, UserModel;
   let ownerUser, friendUser, strangerUser;
 
@@ -27,9 +27,8 @@ describe('User', function() {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('Scratch', function() { 
-    it('should get scratch', function(done) {
-      request
+  it('should get scratch', function(done) {
+    request
         .post('/api/scratches/generate')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
@@ -40,19 +39,35 @@ describe('User', function() {
           expect(res.body.board.length).to.be.equal(6);
           done();
         });
-    });
+  });
 
-    it('should refuse to get scratch because there are no scratches left', function(done) {
-      const unmute = mute();
-      request
-        .post('/api/scratches/generate')
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send()
-        .then(res => {
-          expect(res.statusCode).to.be.equal(409);
-          unmute();
-        });
-    });
+  it('should refuse to get scratch because there are no scratches left', function(done) {
+    const unmute = mute();
+    request
+      .post('/api/scratches/generate')
+      .set('Authorization', accessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res => {
+        expect(res.statusCode).to.be.equal(200);
+        return request
+          .post(`/api/scratches/${res.body.id}/reveal`)
+          .set('Authorization', accessToken.id)
+          .expect('Content-Type', /json/)
+          .send();
+      })
+      .then((res)=>{
+        expect(res.statusCode).to.be.equal(200);
+        return request
+          .post('/api/scratches/generate')
+          .set('Authorization', accessToken.id)
+          .expect('Content-Type', /json/)
+          .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(409);
+        unmute();
+        done();
+      });
   });
 });
