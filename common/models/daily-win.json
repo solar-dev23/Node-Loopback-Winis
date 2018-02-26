@@ -10,7 +10,7 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "check",
+        "checkDailyWin",
         "prototype.pickReward"
       ]
     }
@@ -51,7 +51,7 @@
   },
   "acls": [],
   "methods": {
-    "check": {
+    "checkDailyWin": {
       "accepts": [
         {
           "arg": "options",

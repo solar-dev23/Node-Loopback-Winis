@@ -91,6 +91,48 @@ module.exports = function(Dailywin) {
     return updatedDailyWin;
   };
 
+  Dailywin.checkDailyWin = async function(options) {
+    const token = options && options.accessToken;
+    const userId = token && token.userId;
+    const UserModel = Dailywin.app.models.user;
+    const user = await UserModel.findById(userId);
+    const startOfCurrentDay = moment(new Date()).tz(user.timezone).startOf('day').valueOf();
+    const allActiveDailywin = await Dailywin.find({where: {and: [{userId: userId}, {resetDate: {gt: startOfCurrentDay}}]}});
+    let currentDailyWin;
+
+    if (allActiveDailywin.length == 0) {
+      currentDailyWin = await Dailywin.create({
+        userId: userId,
+      });
+      await currentDailyWin.pickReward('1', options);
+    } else if (allActiveDailywin.length == 1) {
+      currentDailyWin = allActiveDailywin[0];
+    } else {
+      const error = new Error('To many daily-win instances');
+      error.status = 500;
+      throw error;
+    }
+
+    if (currentDailyWin.lastVisitDate > startOfCurrentDay) {
+      const error = new Error('Time error');
+      error.status = 500;
+      throw error;
+    }
+
+    if (currentDailyWin.lastVisitDate == startOfCurrentDay) {
+      return currentDailyWin;
+    }
+
+    await currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay);
+    await currentDailyWin.updateAttribute('lastAllowedDay', currentDailyWin.lastAllowedDay + 1);
+    await currentDailyWin.pickReward(currentDailyWin.lastAllowedDay, options);
+    if (currentDailyWin.lastAllowedDay == 7) {
+      await currentDailyWin.pickReward('weekly', options);
+    }
+
+    return currentDailyWin;
+  };
+
   Dailywin.observe('before save', async function updateTimestamp(ctx, next) {
     if (ctx.isNewInstance) {
       if (!ctx.instance.__data.userId) {
