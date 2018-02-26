@@ -7,7 +7,7 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "generate",
+        "create",
         "prototype.reveal"
       ]
     }
@@ -17,8 +17,7 @@
       "type": "array"
     },
     "userId": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "prize": {
       "type": "string"
@@ -55,25 +54,6 @@
     }
   ],
   "methods": {
-    "generate": {
-      "accepts": [
-        {
-          "arg": "options",
-          "type": "object",
-          "http": "optionsFromRequest"
-        }
-      ],
-      "returns": {
-        "arg": "scratch",
-        "type": "object",
-        "root": true
-      },
-      "description": "Creates Scratch object",
-      "http": {
-        "verb": "post",
-        "path": "/generate"
-      }
-    },
     "prototype.reveal": {
       "accepts": [
         {

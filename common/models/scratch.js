@@ -1,6 +1,55 @@
 'use strict';
 
 module.exports = function(Scratch) {
+  Scratch.beforeRemote('create', async function(context, modelInstance, next) {
+    const token = context.req.accessToken;
+    const userId = token && token.userId;
+    const UserModel = Scratch.app.models.user;
+
+    const user = await UserModel.findById(userId);
+    if (user.scratches === 0) {
+      const error = new Error('User has no more scratches');
+      error.status = 409;
+      throw error;
+    }
+    context.req.body.board = Scratch.calculateScratchBoard();
+    context.req.body.prize = Scratch.determinePrize(context.req.body.board);
+    context.req.body.userId = userId;
+  });
+
+  Scratch.prototype.reveal = async function(options) {
+    const token = options && options.accessToken;
+    const userId = token && token.userId;
+    const UserModel = Scratch.app.models.user;
+
+    if (this.userId != userId) {
+      const error = new Error('You cannot revive someone else\'s scratch');
+      error.status = 409;
+      throw error;
+    }
+    const user = await UserModel.findById(userId);
+    const uppdatedUser = await user.updateAttribute('scratches', user.scratches - 1);
+    switch (this.prize) {
+      case 'empty': break;
+      case 'diamond':  await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
+      case 'winis':  await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
+      case 'scratch':  await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
+      case 'present':  await Promise.all([
+        uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1), 
+        uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 10),
+        uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1),
+        uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1),
+      ]); break;
+      case 'spin':  await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
+    }
+
+    return {
+      success: true,
+      prize: this.prize,
+      user: uppdatedUser,
+    };
+  };
+
   Scratch.determinePrize = (board) => {
     let prize;
     let prizeVariants = {
@@ -62,65 +111,5 @@ module.exports = function(Scratch) {
       board = Scratch.calculateScratchBoard();
     }
     return board; 
-  };
-
-  Scratch.generate = async function(options) {
-    const token = options && options.accessToken;
-    const userId = token && token.userId;
-    const UserModel = Scratch.app.models.user;
-
-    const user = await UserModel.findById(userId);
-    if (user.scratches === 0) {
-      const error = new Error('User has no more scratches');
-      error.status = 409;
-      throw error;
-    }
-
-    const scratchBoard = await Scratch.calculateScratchBoard();
-    const prize = await Scratch.determinePrize(scratchBoard);
-
-    const scratch = await Scratch.create({
-      board: scratchBoard,
-      userId: userId,
-      prize: prize,
-    });
-    return {
-      success: true,
-      id: scratch.id,
-      board: scratch.board,
-    };
-  };
-
-  Scratch.prototype.reveal = async function(options) {
-    const token = options && options.accessToken;
-    const userId = token && token.userId;
-    const UserModel = Scratch.app.models.user;
-
-    if (this.userId != userId) {
-      const error = new Error('You cannot revive someone else\'s scratch');
-      error.status = 409;
-      throw error;
-    }
-    const user = await UserModel.findById(userId);
-    const uppdatedUser = await user.updateAttribute('scratches', user.scratches - 1);
-    switch (this.prize) {
-      case 'empty': break;
-      case 'diamond':  await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
-      case 'winis':  await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
-      case 'scratch':  await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
-      case 'present':  await Promise.all([
-        uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1), 
-        uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 10),
-        uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1),
-        uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1),
-      ]); break;
-      case 'spin':  await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
-    }
-
-    return {
-      success: true,
-      prize: this.prize,
-      user: uppdatedUser,
-    };
   };
 };
