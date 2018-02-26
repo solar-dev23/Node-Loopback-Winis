@@ -1,5 +1,4 @@
 'use strict';
-const LoopBackContext = require('loopback-context');
 
 module.exports = function(Battle) {
   Battle.challenge = async function(opponentId, stake, gameType, options) {
@@ -254,36 +253,53 @@ module.exports = function(Battle) {
       if (bothUpdated) {
         if (ctx.currentInstance.status == 'accepted') {
           let UserModel = Battle.app.models.user;
+          ctx.data.status = 'finished';
           if (ctx.data.challengerStatus == 'won' && ctx.currentInstance.opponentStatus == 'lost') {
-            ctx.data.status = 'finished';
-            ctx.data.result = 'challenger won';
             let winner =  await UserModel.findById(ctx.currentInstance.challengerId);
             let losser =  await UserModel.findById(ctx.currentInstance.opponentId);
             await winner.releaseFunds(ctx.currentInstance.stake);
             await losser.releaseFunds(ctx.currentInstance.stake);
+            ctx.data.result = 'challenger won';
+            await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
+          } else if (ctx.currentInstance.challengerStatus == 'won' && ctx.data.opponentStatus == 'lost') {
+            let winner =  await UserModel.findById(ctx.currentInstance.challengerId);
+            let losser =  await UserModel.findById(ctx.currentInstance.opponentId);
+            await winner.releaseFunds(ctx.currentInstance.stake);
+            await losser.releaseFunds(ctx.currentInstance.stake);
+            ctx.data.result = 'challenger won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
           } else if (ctx.data.challengerStatus == 'lost' && ctx.currentInstance.opponentStatus == 'won') {
-            ctx.data.status = 'finished';
-            ctx.data.result = 'opponent won';
-            let winner = await UserModel.findById(ctx.currentInstance.opponentId);
-            let losser = await UserModel.findById(ctx.currentInstance.challengerId);
+            let winner =  await UserModel.findById(ctx.currentInstance.opponentId);
+            let losser =  await UserModel.findById(ctx.currentInstance.challengerId);
             await winner.releaseFunds(ctx.currentInstance.stake);
             await losser.releaseFunds(ctx.currentInstance.stake);
+            ctx.data.result = 'opponent won';
+            await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
+          }  else if (ctx.currentInstance.challengerStatus == 'lost' && ctx.data.opponentStatus == 'won') {
+            let winner =  await UserModel.findById(ctx.currentInstance.opponentId);
+            let losser =  await UserModel.findById(ctx.currentInstance.challengerId);
+            await winner.releaseFunds(ctx.currentInstance.stake);
+            await losser.releaseFunds(ctx.currentInstance.stake);
+            ctx.data.result = 'opponent won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
           } else if (ctx.data.challengerStatus == 'draw' && ctx.currentInstance.opponentStatus == 'draw') {
-            ctx.data.status = 'finished';
+            let drawwer1 =  await UserModel.findById(ctx.currentInstance.opponentId);
+            let drawwer2 =  await UserModel.findById(ctx.currentInstance.challengerId);
+            await drawwer1.releaseFunds(ctx.currentInstance.stake);
+            await drawwer2.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'both draw';
-            let winner = await UserModel.findById(ctx.currentInstance.challengerId);
-            let losser = await UserModel.findById(ctx.currentInstance.opponentId);
-            await winner.releaseFunds(ctx.currentInstance.stake);
-            await losser.releaseFunds(ctx.currentInstance.stake);
+          } else if (ctx.currentInstance.challengerStatus == 'draw' && ctx.data.opponentStatus == 'draw') {
+            let drawwer1 =  await UserModel.findById(ctx.currentInstance.opponentId);
+            let drawwer2 =  await UserModel.findById(ctx.currentInstance.challengerId);
+            await drawwer1.releaseFunds(ctx.currentInstance.stake);
+            await drawwer2.releaseFunds(ctx.currentInstance.stake);
+            ctx.data.result = 'both draw';
           } else {
-            ctx.data.status = 'finished';
+            let drawwer1 =  await UserModel.findById(ctx.currentInstance.opponentId);
+            let drawwer2 =  await UserModel.findById(ctx.currentInstance.challengerId);
+            await drawwer1.releaseFunds(ctx.currentInstance.stake);
+            await drawwer2.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'error state';
-            let winner = await UserModel.findById(ctx.currentInstance.challengerId);
-            let losser = await UserModel.findById(ctx.currentInstance.opponentId);
-            await winner.releaseFunds(ctx.currentInstance.stake);
-            await losser.releaseFunds(ctx.currentInstance.stake);
           }
         }
       }
