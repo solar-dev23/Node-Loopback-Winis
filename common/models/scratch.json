@@ -8,22 +8,20 @@
     "SetupRemoteMethods": {
       "disableAllExcept": [
         "generate",
-        "prototype.validate"
+        "prototype.reveal"
       ]
     }
   },
   "properties": {
     "board": {
-      "type": "array",
-      "required": true
+      "type": "array"
     },
     "userId": {
       "type": "string",
       "required": true
     },
     "prize": {
-      "type": "string",
-      "required": false
+      "type": "string"
     }
   },
   "validations": [],
@@ -57,7 +55,7 @@
     }
   ],
   "methods": {
-    "scratch": {
+    "generate": {
       "accepts": [
         {
           "arg": "options",
@@ -73,7 +71,7 @@
       "description": "Creates Scratch object",
       "http": {
         "verb": "post",
-        "path": "/"
+        "path": "/generate"
       }
     },
     "prototype.reveal": {

@@ -33,7 +33,8 @@ describe('User', function() {
         .post('/api/scratches/generate')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end((err, res) => {
+        .send()
+        .then((res) => {
           expect(res.statusCode).to.be.equal(200);
           expect(res.body.success).to.be.equal(true);
           expect(res.body.board.length).to.be.equal(6);
@@ -42,24 +43,15 @@ describe('User', function() {
     });
 
     it('should refuse to get scratch because there are no scratches left', function(done) {
-      // const unmute = mute();
+      const unmute = mute();
       request
         .post('/api/scratches/generate')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
         .then(res => {
-          expect(res.statusCode).to.be.equal(200);
-          return request
-          .post(`/api/scratches/${res.body.id}/reveal/`)
-          .set('Authorization', accessToken.id)
-          .expect('Content-Type', /json/)
-          .send();
-        })
-        .then(res => {
-          expect(res.statusCode).to.be.equal(200);
-          // unmute();
-          done();
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
         });
     });
   });

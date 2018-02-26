@@ -64,7 +64,7 @@ module.exports = function(Scratch) {
     return board; 
   };
 
-  Scratch.scratch = async function(options) {
+  Scratch.generate = async function(options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Scratch.app.models.user;
