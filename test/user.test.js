@@ -7,12 +7,12 @@ const request = require('supertest')(app);
 const jimp = require('jimp');
 
 describe('User', function() {
-  let accessToken, UserModel, ownerUser, friendUser, strangerUser;
+  let accessToken, UserModel, ownerUser, friendUser, strangerUser, blockedUser;
 
   beforeEach(async function() {
     UserModel = app.models.user;
     await UserModel.deleteAll();
-    [ownerUser, friendUser, strangerUser] = await UserModel.create([
+    [ownerUser, friendUser, strangerUser, blockedUser] = await UserModel.create([
       {
         winis: 50,
         staked: 15,
@@ -20,10 +20,11 @@ describe('User', function() {
         username: 'username-Test',
         winis: 50,
         phoneNumber: '+123456789',
-      },
+      }, {},
     ]);
+
     await ownerUser.friends.add(friendUser);
-    await ownerUser.blocked.add(strangerUser);
+    await ownerUser.blocked.add(blockedUser);
     accessToken = await ownerUser.createAccessToken();
   });
 
@@ -292,19 +293,20 @@ describe('User', function() {
         });
     });
 
-    /**
-    it('should remove a user from the blocked users', function(done) {
+    it('should remove a user from the blocked users', function (done) {
       request
-        .delete(`/api/users/${ownerUser.id}/blocked/rel/${friendUser.id}`)
+        .delete(`/api/users/${ownerUser.id}/blocked/rel/${blockedUser.id}`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .then((res) => {
-          expect(res.statusCode).to.be.equal(200);
-          expect(res.body[0].id).to.not.equal(friendUser.id);
-          done();
+          UserModel.findById(ownerUser.id)
+            .then((user) => {
+              expect(res.statusCode).to.be.equal(204);
+              expect(user.blockedIds).not.to.include(blockedUser.id);
+              done();
+            });
         });
     });
-     */
 
     it('should return the list of blocked users', function(done) {
       request
@@ -313,7 +315,7 @@ describe('User', function() {
         .expect('Content-Type', /json/)
         .then((res) => {
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body[0].id).to.be.equal(strangerUser.id);
+          expect(res.body[0].id).to.be.equal(blockedUser.id);
           done();
         });
     });
