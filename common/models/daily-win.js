@@ -3,50 +3,8 @@
 const moment = require('moment-timezone');
 
   // NOTE: Day counting starts from 1
+  // picked, picked, picked, today, skiped, skiped, skiped
 module.exports = function(Dailywin) {
-  Dailywin.check = async function(options) {
-    const token = options && options.accessToken;
-    const userId = token && token.userId;
-    const UserModel = Dailywin.app.models.user;
-    const user = await UserModel.findById(userId);
-    const startOfCurrentDay = moment(new Date()).tz(user.timezone).startOf('day').valueOf();
-    const allActiveDailywin = await Dailywin.find({where: {and: [{userId: userId}, {resetDate: {gt: startOfCurrentDay}}]}});
-    let currentDailyWin;
-
-    if (allActiveDailywin.length == 0) {
-      currentDailyWin = await Dailywin.create({
-        userId: userId,
-      });
-    } else if (allActiveDailywin.length == 1) {
-      currentDailyWin = allActiveDailywin[0];
-    } else {
-      const error = new Error('To many daily-win instances');
-      error.status = 500;
-      throw error;
-    }
-
-    if (currentDailyWin.lastVisitDate > startOfCurrentDay) {
-      const error = new Error('Time error');
-      error.status = 500;
-      throw error;
-    }
-
-    if (currentDailyWin.lastVisitDate == startOfCurrentDay) {
-      return currentDailyWin;
-    }
-    
-    await currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay);
-    await currentDailyWin.updateAttribute('lastAllowedDay', currentDailyWin.lastAllowedDay + 1);
-    let prizesObject = currentDailyWin.prizes;
-    if (currentDailyWin.lastAllowedDay == 7) {
-      prizesObject.weekly.status = 'allowed';
-    }
-    prizesObject[currentDailyWin.lastAllowedDay].status = 'allowed';
-    await currentDailyWin.updateAttribute('prizes', prizesObject);
-
-    return currentDailyWin;
-  };
-
   Dailywin.prototype.pickReward = async function(day, options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
@@ -58,20 +16,20 @@ module.exports = function(Dailywin) {
       throw error;
     }
 
-    if (self.prizes[day].status == 'disallowed') {
+    if (self.prizes[day].status == 'skiped') {
       const error = new Error('You cannot pick disallowed reward');
       error.status = 409;
       throw error;
     }
 
-    if (self.prizes[day].status == 'picked') {
+    if (self.prizes[day].status == 'today') {
       const error = new Error('You have already picked this reward');
       error.status = 409;
       throw error;
     }
     
     let prizesObject = self.prizes;
-    prizesObject[day].status = 'picked';
+    prizesObject[day].status = 'today';
     const updatedDailyWin = await this.updateAttribute('prizes', prizesObject);
     const user = await UserModel.findById(userId);
     
@@ -91,7 +49,7 @@ module.exports = function(Dailywin) {
     return updatedDailyWin;
   };
 
-  Dailywin.checkDailyWin = async function(options) {
+  Dailywin.check = async function(options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
@@ -151,37 +109,37 @@ module.exports = function(Dailywin) {
         '2': {
           prize: 'winis',
           count: 10,
-          status: 'disallowed',
+          status: 'skiped',
         },
         '3': {
           prize: 'spin',
           count: 1,
-          status: 'disallowed',
+          status: 'skiped',
         },
         '4': {
           prize: 'winis',
           count: 25,
-          status: 'disallowed',
+          status: 'skiped',
         },
         '5': {
           prize: 'present',
           count: 1,
-          status: 'disallowed',
+          status: 'skiped',
         },
         '6': {
           prize: 'winis',
           count: 50,
-          status: 'disallowed',
+          status: 'skiped',
         },
         '7': {
           prize: 'scratch',
           count: 1,
-          status: 'disallowed',
+          status: 'skiped',
         },
         weekly: {
           prize: 'diamond',
           count: 1,
-          status: 'disallowed',
+          status: 'skiped',
         },
       };
     }
