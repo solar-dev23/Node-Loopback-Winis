@@ -31,9 +31,6 @@ module.exports = function(Deposit) {
 
     try {
       let newWinis = (await user.grantWinis(parseInt(currency * displayMultiplier))).winis;
-      if (newWinis == (oldWinis + parseInt(currency * displayMultiplier))) {
-
-      }
     } catch (catchError) {
       let error = new Error('Error while granting winis.');
       error.status = 403;
@@ -44,9 +41,33 @@ module.exports = function(Deposit) {
         userId: snuid,
         method: 'tapjoy',
         amount: currency,
+        price: currency / 1000,
       });
     }
 
     return {result: true};
   };
+
+  Deposit.beforeRemote('create', async function(context, modelInstance, next) {
+    const UserModel = Deposit.app.models.user;
+
+    const winisAmount = Number.parseInt(context.req.body.price * 1000);
+    const user = await UserModel.findById(context.req.body.userId);
+    if (!user) {
+      const error = new Error('User id not valid');
+      error.status = 409;
+      throw error;
+    }
+    await user.updateAttribute('winis', user.winis + winisAmount);
+  });
+
+  Deposit.afterRemote('create', async function(ctx, next) {
+    const token = ctx.req.accessToken;
+    const userId = token && token.userId;
+    const UserModel = Deposit.app.models.user;
+
+    const user = await UserModel.findById(userId);
+    ctx.result.success = true;
+    ctx.result.user = user;
+  });
 };

@@ -51,10 +51,7 @@ describe('Daily-win', async function() {
           expect(res.body.prizes['6'].status).to.be.equal('skiped');
           expect(res.body.prizes['7'].status).to.be.equal('skiped');
           expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
-          return UserModel.findById(accessToken.userId);
-        })
-        .then((user)=>{
-          expect(user.winis).to.be.equal(5);
+          expect(res.body.user.winis).to.be.equal(5);
           done();
         });
     });
@@ -85,6 +82,7 @@ describe('Daily-win', async function() {
         expect(res.body.prizes['6'].status).to.be.equal('skiped');
         expect(res.body.prizes['7'].status).to.be.equal('skiped');
         expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
+        expect(res.body.user.winis).to.be.equal(5);
         done();
       });
     });
@@ -120,10 +118,7 @@ describe('Daily-win', async function() {
           expect(res.body.prizes['6'].status).to.be.equal('skiped');
           expect(res.body.prizes['7'].status).to.be.equal('skiped');
           expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
-          return UserModel.findById(res.body.userId);
-        })
-        .then((user)=>{
-          expect(user.winis).to.equal(15);
+          expect(res.body.user.winis).to.be.equal(15);
           done();
         });
     });    
@@ -207,13 +202,10 @@ describe('Daily-win', async function() {
         expect(res.body.prizes['6'].status).to.be.equal('picked');
         expect(res.body.prizes['7'].status).to.be.equal('today');
         expect(res.body.prizes['weekly'].status).to.be.equal('today');
-        return UserModel.findById(res.body.userId);
-      })
-      .then((user)=>{
-        expect(user.winis).to.be.equal(100);
-        expect(user.spins).to.be.equal(2);
-        expect(user.scratches).to.be.equal(2);
-        expect(user.diamonds).to.be.equal(2);
+        expect(res.body.user.winis).to.be.equal(100);
+        expect(res.body.user.spins).to.be.equal(2);
+        expect(res.body.user.scratches).to.be.equal(2);
+        expect(res.body.user.diamonds).to.be.equal(2);
         done();
       });
     });
@@ -247,13 +239,10 @@ describe('Daily-win', async function() {
         expect(res.body.prizes['6'].status).to.be.equal('skiped');
         expect(res.body.prizes['7'].status).to.be.equal('skiped');
         expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
-        return UserModel.findById(res.body.userId);
-      })
-      .then((user)=>{
-        expect(user.winis).to.be.equal(15);
-        expect(user.spins).to.be.equal(0);
-        expect(user.scratches).to.be.equal(0);
-        expect(user.diamonds).to.be.equal(0);
+        expect(res.body.user.winis).to.be.equal(15);
+        expect(res.body.user.spins).to.be.equal(0);
+        expect(res.body.user.scratches).to.be.equal(0);
+        expect(res.body.user.diamonds).to.be.equal(0);
         done();
       });
     });
@@ -287,13 +276,10 @@ describe('Daily-win', async function() {
         expect(res.body.prizes['6'].status).to.be.equal('skiped');
         expect(res.body.prizes['7'].status).to.be.equal('skiped');
         expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
-        return UserModel.findById(res.body.userId);
-      })
-      .then((user)=>{
-        expect(user.winis).to.be.equal(10);
-        expect(user.spins).to.be.equal(0);
-        expect(user.scratches).to.be.equal(0);
-        expect(user.diamonds).to.be.equal(0);
+        expect(res.body.user.winis).to.be.equal(10);
+        expect(res.body.user.spins).to.be.equal(0);
+        expect(res.body.user.scratches).to.be.equal(0);
+        expect(res.body.user.diamonds).to.be.equal(0);
         done();
       });
     });
@@ -327,13 +313,11 @@ describe('Daily-win', async function() {
         expect(res.body.prizes['6'].status).to.be.equal('skiped');
         expect(res.body.prizes['7'].status).to.be.equal('skiped');
         expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
-        return UserModel.findById(res.body.userId);
-      })
-      .then((user)=>{
-        expect(user.winis).to.be.equal(15);
-        expect(user.spins).to.be.equal(0);
-        expect(user.scratches).to.be.equal(0);
-        expect(user.diamonds).to.be.equal(0);
+        expect(res.body.user.winis).to.be.equal(15);
+        expect(res.body.user.spins).to.be.equal(0);
+        expect(res.body.user.scratches).to.be.equal(0);
+        expect(res.body.user.diamonds).to.be.equal(0);
+
         DailyWinModel.getStartOfDay = function() {
           return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 7;
         };
@@ -357,16 +341,10 @@ describe('Daily-win', async function() {
         expect(res.body.prizes['6'].status).to.be.equal('skiped');
         expect(res.body.prizes['7'].status).to.be.equal('skiped');
         expect(res.body.prizes['weekly'].status).to.be.equal('skiped');
-        return UserModel.findById(res.body.userId);
-      })
-      .then((user)=>{
-        expect(user.winis).to.be.equal(20);
-        expect(user.spins).to.be.equal(0);
-        expect(user.scratches).to.be.equal(0);
-        expect(user.diamonds).to.be.equal(0);
-        DailyWinModel.getStartOfDay = function() {
-          return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 7;
-        };
+        expect(res.body.user.winis).to.be.equal(20);
+        expect(res.body.user.spins).to.be.equal(0);
+        expect(res.body.user.scratches).to.be.equal(0);
+        expect(res.body.user.diamonds).to.be.equal(0);
         done();
       });
     });

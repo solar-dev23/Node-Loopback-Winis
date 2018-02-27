@@ -16,19 +16,21 @@
   "properties": {
     "externalId": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "method": {
       "type": "string",
       "required": true
     },
     "amount": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "userId": {
       "type": "string",
       "required": true
+    },
+    "price": {
+      "type": "number"
     }
   },
   "validations": [],

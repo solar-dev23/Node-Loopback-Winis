@@ -18,6 +18,7 @@ describe('Deposit', function() {
 
     ownerUser = await UserModel.create({winis: 50});
     tapjoyKey = app.get('tapjoyKey');
+    accessToken = await ownerUser.createAccessToken();
   });
 
   after(async function() {
@@ -111,6 +112,29 @@ describe('Deposit', function() {
           unmute();
           done();
         });
+    });
+  });
+
+  describe('appStore', function() {
+    it('should award 2000 winis for 2$', function(done) {
+      const params = {    
+        'userId': accessToken.userId,     
+        'method': 'appstore',
+        'externalId': 'someExternalId',
+        'price': 2.0,
+      };
+
+      request
+      .post('/api/deposits/')
+      .set('Authorization', accessToken.id)
+      .expect('Content-Type', /json/)
+      .send(params)
+      .then((res)=>{
+        expect(res.body.success).to.be.equals(true);
+        expect(res.body.user.winis).to.be.equal(params.price * 1000 + 50);
+        expect(res.body.user.diamonds).to.be.equal(0);
+        done();
+      });
     });
   });
 });

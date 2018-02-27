@@ -42,17 +42,11 @@ module.exports = function(Battle) {
       throw error;
     }
 
-    try {
-      await challenger.stakeFunds(stake);
-    } catch (error) {
-      challenger.releaseFunds(stake);
-      throw error;
-    }
+    await challenger.stakeFunds(stake);
     try {
       await opponent.stakeFunds(stake);
     } catch (error) {
       challenger.releaseFunds(stake);
-      opponent.releaseFunds(stake);
       throw error;
     }
 
