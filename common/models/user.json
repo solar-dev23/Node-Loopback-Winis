@@ -55,6 +55,10 @@
     "devkit": {
       "type": "boolean",
       "default": false
+    },
+    "timezone": {
+      "type": "string",
+      "default": "Europe/London"
     }
   },
   "validations": [],

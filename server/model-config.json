@@ -65,5 +65,9 @@
   "battle": {
     "dataSource": "db",
     "public": true
+  },
+  "daily-win": {
+    "dataSource": "db",
+    "public": true
   }
 }
