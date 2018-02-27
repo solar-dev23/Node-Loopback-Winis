@@ -13,7 +13,6 @@ describe('Daily-win', async function() {
   beforeEach(async function() {
     UserModel = app.models.user;
     DailyWinModel = app.models.dailyWin;
-    // originalGetStartOfDayFunction =  DailyWinModel.getStartOfDay;
     DailyWinModel.getStartOfDay = function() {
       return moment(new Date()).tz(user.timezone).startOf('day').valueOf();
     };
