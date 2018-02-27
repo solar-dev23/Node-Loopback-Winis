@@ -2,36 +2,23 @@
 
 const moment = require('moment-timezone');
 
-  // NOTE: Day counting starts from 1
-  // picked, picked, picked, today, skiped, skiped, skiped
 module.exports = function(Dailywin) {
-  Dailywin.prototype.pickReward = async function(day, options) {
-    const token = options && options.accessToken;
-    const userId = token && token.userId;
+  Dailywin.prototype.pickReward = async function(day) {
     const UserModel = Dailywin.app.models.user;
     let self = this.__data;
-    if (self.userId != userId) {
-      const error = new Error('You cannot pick someone else\'s reward');
-      error.status = 409;
-      throw error;
-    }
-
-    if (self.prizes[day].status == 'skiped') {
-      const error = new Error('You cannot pick disallowed reward');
-      error.status = 409;
-      throw error;
-    }
 
     if (self.prizes[day].status == 'today') {
       const error = new Error('You have already picked this reward');
       error.status = 409;
       throw error;
     }
-    
     let prizesObject = self.prizes;
     prizesObject[day].status = 'today';
+    if (day >= 2 && day <= 7) {
+      prizesObject[day - 1].status = 'picked';
+    }
     const updatedDailyWin = await this.updateAttribute('prizes', prizesObject);
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(self.userId);
     
     switch (prizesObject[day].prize) {
       case 'empty': break;
@@ -54,7 +41,7 @@ module.exports = function(Dailywin) {
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
     const user = await UserModel.findById(userId);
-    const startOfCurrentDay = moment(new Date()).tz(user.timezone).startOf('day').valueOf();
+    const startOfCurrentDay = Dailywin.getStartOfDay(user.timezone);
     const allActiveDailywin = await Dailywin.find({where: {and: [{userId: userId}, {resetDate: {gt: startOfCurrentDay}}]}});
     let currentDailyWin;
 
@@ -62,7 +49,7 @@ module.exports = function(Dailywin) {
       currentDailyWin = await Dailywin.create({
         userId: userId,
       });
-      await currentDailyWin.pickReward('1', options);
+      await currentDailyWin.pickReward('1');
     } else if (allActiveDailywin.length == 1) {
       currentDailyWin = allActiveDailywin[0];
     } else {
@@ -80,15 +67,20 @@ module.exports = function(Dailywin) {
     if (currentDailyWin.lastVisitDate == startOfCurrentDay) {
       return currentDailyWin;
     }
-
-    await currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay);
-    await currentDailyWin.updateAttribute('lastAllowedDay', currentDailyWin.lastAllowedDay + 1);
-    await currentDailyWin.pickReward(currentDailyWin.lastAllowedDay, options);
+    await Promise.all([
+      currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay),
+      currentDailyWin.updateAttribute('lastAllowedDay', currentDailyWin.lastAllowedDay + 1),
+      currentDailyWin.pickReward(currentDailyWin.lastAllowedDay + 1),
+    ]);
     if (currentDailyWin.lastAllowedDay == 7) {
-      await currentDailyWin.pickReward('weekly', options);
+      await currentDailyWin.pickReward('weekly');
     }
 
     return currentDailyWin;
+  };
+
+  Dailywin.getStartOfDay = function(timezone) {
+    return moment(new Date()).tz(timezone).startOf('day').valueOf();
   };
 
   Dailywin.observe('before save', async function updateTimestamp(ctx, next) {
@@ -97,9 +89,9 @@ module.exports = function(Dailywin) {
         throw new Error('userId is not set');
       }
       let user = await ctx.Model.app.models.user.findById(ctx.instance.__data.userId); 
-      ctx.instance.lastVisitDate = moment(new Date()).tz(user.timezone).startOf('day').valueOf();
-      ctx.instance.createdDate = moment(new Date()).tz(user.timezone).startOf('day').valueOf();
-      ctx.instance.resetDate = moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1;
+      ctx.instance.lastVisitDate = Dailywin.getStartOfDay(user.timezone);
+      ctx.instance.createdDate = Dailywin.getStartOfDay(user.timezone);
+      ctx.instance.resetDate = Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1;
       ctx.instance.prizes = {
         '1': {
           prize: 'winis',
