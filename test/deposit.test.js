@@ -12,11 +12,20 @@ describe('Deposit', function() {
 
   beforeEach(async function() {
     DepositModel = app.models.deposit;
-
+    DepositModel.getRewardConfiguration = function() {
+      return [
+        {productId: '2_winis', iconId: 'winis', amount: 2},
+      ];
+    };
     const UserModel = app.models.user;
     await UserModel.deleteAll();
 
-    ownerUser = await UserModel.create({winis: 50});
+    ownerUser = await UserModel.create({
+      winis: 0, 
+      spins: 0, 
+      diamonds: 0, 
+      scratchs: 0,
+    });
     tapjoyKey = app.get('tapjoyKey');
     accessToken = await ownerUser.createAccessToken();
   });
@@ -116,12 +125,11 @@ describe('Deposit', function() {
   });
 
   describe('appStore', function() {
-    it('should award 2000 winis for 2$', function(done) {
+    it('should award 2 winis', function(done) {
       const params = {    
         'userId': accessToken.userId,     
         'method': 'appstore',
-        'externalId': 'someExternalId',
-        'price': 2.0,
+        'externalId': '2_winis',
       };
 
       request
@@ -131,8 +139,29 @@ describe('Deposit', function() {
       .send(params)
       .then((res)=>{
         expect(res.body.success).to.be.equals(true);
-        expect(res.body.user.winis).to.be.equal(params.price * 1000 + 50);
+        expect(res.body.user.winis).to.be.equal(2);
         expect(res.body.user.diamonds).to.be.equal(0);
+        expect(res.body.user.spins).to.be.equal(0);
+        expect(res.body.user.scratches).to.be.equal(0);
+        done();
+      });
+    });
+
+    it('should fail award wrong externalId', function(done) {
+      const unmute = mute();
+      const params = {    
+        'userId': accessToken.userId,     
+        'method': 'appstore',
+        'externalId': '3_winis',
+      };
+      request
+      .post('/api/deposits/')
+      .set('Authorization', accessToken.id)
+      .expect('Content-Type', /json/)
+      .send(params)
+      .then((res)=>{
+        expect(res.statusCode).to.be.equals(422);
+        unmute();
         done();
       });
     });

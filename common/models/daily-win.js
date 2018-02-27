@@ -106,37 +106,37 @@ module.exports = function(Dailywin) {
         '2': {
           prize: 'winis',
           count: 10,
-          status: 'skiped',
+          status: 'skipped',
         },
         '3': {
           prize: 'spin',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
         '4': {
           prize: 'winis',
           count: 25,
-          status: 'skiped',
+          status: 'skipped',
         },
         '5': {
           prize: 'present',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
         '6': {
           prize: 'winis',
           count: 50,
-          status: 'skiped',
+          status: 'skipped',
         },
         '7': {
           prize: 'scratch',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
         weekly: {
           prize: 'diamond',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
       };
     }

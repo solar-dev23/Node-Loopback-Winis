@@ -6,7 +6,8 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "tapjoy"
+        "tapjoy",
+        "getRewardConfiguration"
       ]
     }
   },
@@ -80,6 +81,20 @@
       "description": "Grant reward from external source (tapjoy, appStore) for user",
       "http": {
         "verb": "get"
+      }
+    },
+    "getRewardConfiguration": {
+      "accepts": [
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Get current reward configuration",
+      "http": {
+        "path":"/getRewardConfiguration",
+        "verb": "post"
       }
     }
   }
