@@ -59,6 +59,11 @@
     "timezone": {
       "type": "string",
       "default": "Europe/London"
+    },
+    "lastDailySpinGrantingDate": {
+      "type": "date",
+      "required": true,
+      "default": "$now"
     }
   },
   "validations": [],
@@ -224,6 +229,13 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "findByUsername"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "freeSpins"
     }
   ],
   "methods": {
@@ -420,6 +432,25 @@
       "http": {
         "verb": "post",
         "path": "/sendWinis/:amount"
+      }
+    },
+    "prototype.freeSpins": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true,
+        "description": "Return the amount of gained spins"
+      },
+      "http": {
+        "verb": "post",
+        "path": "/freeSpins/"
       }
     }
   }

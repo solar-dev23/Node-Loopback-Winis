@@ -450,4 +450,106 @@ describe('User', function() {
         });
     });
   });
+  describe('Daily spin', function() {
+    it('should grant 0 spins', function(done) {
+      let startSpins, lastDailySpinGrantingDate;
+      request
+      .get(`/api/users/${accessToken.userId}/`)
+      .set('Authorization', accessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then((res) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.id).to.be.equal(accessToken.userId);
+        startSpins = res.body.spins;
+        lastDailySpinGrantingDate = res.body.lastDailySpinGrantingDate;
+        return request
+        .post(`/api/users/${accessToken.userId}/freeSpins`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.success).to.be.equal(false);
+        return request
+        .get(`/api/users/${accessToken.userId}/`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.spins).to.be.equal(startSpins);
+        expect(res.body.lastDailySpinGrantingDate).to.be.equal(lastDailySpinGrantingDate);
+        done();
+      });
+    });
+
+    it('should grant 1 spin for 1 day absence', function(done) {
+      let startSpins;
+      const testStartTimestamp = Date.now();
+      UserModel.findById(accessToken.userId)
+      .then(user=>{
+        return user.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 - 1);
+      })
+      .then(updatedUser =>{
+        startSpins = updatedUser.spins;
+        expect(new Date(updatedUser.lastDailySpinGrantingDate).getTime()).to.be.below(testStartTimestamp);
+        return request
+        .post(`/api/users/${accessToken.userId}/freeSpins`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then((res) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.success).to.be.equal(true);
+        return request
+        .get(`/api/users/${accessToken.userId}/`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.spins).to.be.equal(startSpins + 1);
+        expect(new Date(res.body.lastDailySpinGrantingDate).getTime()).to.be.above(testStartTimestamp);
+        done();
+      });
+    });
+
+    it('should grant 1 spins for 3 day ansence', function(done) {
+      let startSpins;
+      const testStartTimestamp = Date.now();
+      UserModel.findById(accessToken.userId)
+      .then(user=>{
+        return user.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 * 3 - 1);
+      })
+      .then(updatedUser =>{
+        startSpins = updatedUser.spins;
+        expect(new Date(updatedUser.lastDailySpinGrantingDate).getTime()).to.be.below(testStartTimestamp);
+        return request
+        .post(`/api/users/${accessToken.userId}/freeSpins`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then((res) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.success).to.be.equal(true);
+        return request
+        .get(`/api/users/${accessToken.userId}/`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.spins).to.be.equal(startSpins + 1);
+        expect(new Date(res.body.lastDailySpinGrantingDate).getTime()).to.be.above(testStartTimestamp);
+        done();
+      });
+    });
+  });
 });

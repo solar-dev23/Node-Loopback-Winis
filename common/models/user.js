@@ -277,6 +277,22 @@ module.exports = function(User) {
     await friend.pending.add(userId);
   });
 
+  User.prototype.freeSpins = async function(options) {
+    const token = options && options.accessToken;
+    const senderId = token && token.userId;
+    const currentUser = await User.findById(senderId);
+
+    if ((Date.now() - currentUser.lastDailySpinGrantingDate) > 24 * 60 * 60 * 1000) {
+      await Promise.all([currentUser.updateAttribute('spins', currentUser.spins + 1), currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now())]);
+      return {
+        success: true,
+      };
+    } 
+    return {
+      success: false,
+    };
+  };
+
   User.observe('before save', function addRandomName(ctx, next) {
     if (ctx.instance && !ctx.instance.username) {
       ctx.instance.username = namor.generate();

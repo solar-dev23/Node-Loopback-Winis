@@ -105,7 +105,7 @@ describe('Spin To Win', function() {
       {'prize': 'spin', 'result': {'spins': 1}},
     ];
 
-    prizes.forEach(function (roll) {
+    prizes.forEach(function(roll) {
       it(`it should update a user when the user rolls ${roll.prize}`, function(done) {
         app.models.spinToWin.calculateSpin = () => {
           return roll.prize;
@@ -124,7 +124,7 @@ describe('Spin To Win', function() {
             expect(spinResult).to.be.equal(roll.prize);
             expect(responseUser).to.include(expectedResult);
             done();
-          })
+          });
       });
     });
   });
