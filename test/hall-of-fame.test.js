@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const request = require('supertest')(app);
 
 describe('Hall Of Fame', function() {
-  let accessToken;
+  let accessToken, callingUser;
   before(async () => {
     const UserModel = app.models.user;
     await UserModel.deleteAll();
@@ -36,6 +36,7 @@ describe('Hall Of Fame', function() {
     const [firstUser, secondUser] = users;
     await firstUser.friends.add(secondUser);
     const accessTokenModel = await firstUser.createAccessToken();
+    callingUser = firstUser;
     accessToken = accessTokenModel.id;
   });
 
@@ -60,7 +61,7 @@ describe('Hall Of Fame', function() {
       });
   });
 
-  it('should return a personal result for a specific user', function(done) {
+  it('should include the calling user in the list of friends', function(done) {
     request
       .post('/api/hallOfFame/friends')
       .set('Authorization', accessToken)
@@ -69,11 +70,25 @@ describe('Hall Of Fame', function() {
         const result = res.body;
 
         expect(res.statusCode).to.be.equal(200);
-        expect(result).to.have.lengthOf(1);
+        expect(result.map(user => user.id)).to.include(callingUser.id);
+        done();
+      });
+  });
+
+  it('should return a friends result for a specific user', function(done) {
+    request
+      .post('/api/hallOfFame/friends')
+      .set('Authorization', accessToken)
+      .expect('Content-Type', /json/)
+      .end((err, res) => {
+        const result = res.body;
+
+        expect(res.statusCode).to.be.equal(200);
+        expect(result).to.have.lengthOf(2);
 
         const [firstResult] = result;
         expect(firstResult.username).to.be.equal('test-user-2');
         done();
-      })
+      });
   });
 });

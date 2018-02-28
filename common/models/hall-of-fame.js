@@ -21,6 +21,7 @@ module.exports = function(HallOfFame) {
 
     const user = await UserModel.findById(userId);
     const friendIds = user.friendIds;
+    friendIds.push(userId);
 
     const whereQuery = {id: {inq: friendIds}};
 
