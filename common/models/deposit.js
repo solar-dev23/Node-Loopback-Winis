@@ -47,9 +47,9 @@ module.exports = function(Deposit) {
     return {result: true};
   };
 
-  Deposit.getRewardConfiguration = function() {
+  Deposit.getRewardConfiguration = async function() {
     return [
-      {productId: '1_scratch', iconId: 'scratch', amount: 1},
+      {productId: '1_scratch_2', iconId: 'scratch', amount: 1},
       {productId: '2_winis', iconId: 'winis', amount: 2},
       {productId: '10_winis', iconId: 'winis', amount: 10},
       {productId: '20_winis', iconId: 'winis', amount: 20},
@@ -61,7 +61,7 @@ module.exports = function(Deposit) {
     const userId = token && token.userId;
     const UserModel = Deposit.app.models.user;
 
-    const rewardConfiguration = Deposit.getRewardConfiguration();
+    const rewardConfiguration = await Deposit.getRewardConfiguration();
     if (rewardConfiguration.map(value => value.productId).indexOf(context.req.body.externalId) < 0) {
       const error = new Error('Wrong externalId');
       error.status = 422;

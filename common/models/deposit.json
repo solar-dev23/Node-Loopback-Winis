@@ -6,6 +6,7 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
+        "create",
         "tapjoy",
         "getRewardConfiguration"
       ]
@@ -43,6 +44,13 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "tapjoy"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getRewardConfiguration"
     }
   ],
   "methods": {
@@ -94,7 +102,7 @@
       "description": "Get current reward configuration",
       "http": {
         "path":"/getRewardConfiguration",
-        "verb": "post"
+        "verb": "get"
       }
     }
   }
