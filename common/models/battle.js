@@ -24,10 +24,10 @@ module.exports = function(Battle) {
       error.status = 404;
       throw error;
     }
-    
-    let existingBattle = await Battle.findOne({where: {challengerId: challengerId, opponentId: opponentId, result: 'unset'}});
-    if (!existingBattle) { 
-      existingBattle = await Battle.findOne({where: {challengerId: opponentId, opponentId: challengerId, result: 'unset'}});
+
+    const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == challenger.id && value.opponentId == opponent.id && value.result == 'unset'; })[0];
+    if (!existingBattle) {
+      const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset'; })[0];
     }
     
     if (existingBattle) {

@@ -39,8 +39,8 @@ describe('Daily-win', async function() {
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
-          expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf());
-          expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1);
+          expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+          expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
           expect(res.body.lastAllowedDay).to.be.equal(1);
           expect(res.body.userId).to.be.equal(accessToken.userId);
           expect(res.body.prizes['1'].status).to.be.equal('today');
@@ -70,8 +70,8 @@ describe('Daily-win', async function() {
         .send();
       })
       .then((res)=>{      
-        expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf());
-        expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1);
+        expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+        expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(1);
         expect(res.body.userId).to.be.equal(accessToken.userId);
         expect(res.body.prizes['1'].status).to.be.equal('today');
@@ -106,8 +106,8 @@ describe('Daily-win', async function() {
           .send();
         })
         .then((res)=>{
-          expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf());
-          expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1);
+          expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+          expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
           expect(res.body.lastAllowedDay).to.be.equal(2);
           expect(res.body.userId).to.be.equal(accessToken.userId);
           expect(res.body.prizes['1'].status).to.be.equal('picked');
@@ -190,8 +190,8 @@ describe('Daily-win', async function() {
           .send();
       })
       .then((res)=>{
-        expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf());
-        expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1);
+        expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+        expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(7);
         expect(res.body.userId).to.be.equal(accessToken.userId);
         expect(res.body.prizes['1'].status).to.be.equal('picked');
@@ -227,8 +227,8 @@ describe('Daily-win', async function() {
           .send();
       })
       .then((res)=>{
-        expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf());
-        expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1);
+        expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+        expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(2);
         expect(res.body.userId).to.be.equal(accessToken.userId);
         expect(res.body.prizes['1'].status).to.be.equal('picked');
@@ -264,8 +264,8 @@ describe('Daily-win', async function() {
           .send();
       })
       .then((res)=>{
-        expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000);
-        expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 14 * 24 * 60 * 60 * 1000 - 1);
+        expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000).toISOString());
+        expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 14 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(1);
         expect(res.body.userId).to.be.equal(accessToken.userId);
         expect(res.body.prizes['1'].status).to.be.equal('today');
@@ -301,8 +301,8 @@ describe('Daily-win', async function() {
           .send();
       })
       .then((res)=>{
-        expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf());
-        expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1);
+        expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+        expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(2);
         expect(res.body.userId).to.be.equal(accessToken.userId);
         expect(res.body.prizes['1'].status).to.be.equal('picked');
@@ -329,8 +329,8 @@ describe('Daily-win', async function() {
           .send();
       })
       .then((res)=>{
-        expect(res.body.createdDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000);
-        expect(res.body.resetDate).to.be.equal(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 14 * 24 * 60 * 60 * 1000 - 1);
+        expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000).toISOString());
+        expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 14 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(1);
         expect(res.body.userId).to.be.equal(accessToken.userId);
         expect(res.body.prizes['1'].status).to.be.equal('today');

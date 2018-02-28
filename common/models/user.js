@@ -178,6 +178,13 @@ module.exports = function(User) {
     const updatedRecipient = await recipient.updateAttribute('winis', recipient.winis + amount);
     const updatedSender = await sender.updateAttribute('winis', sender.winis - amount);
 
+    await User.app.models.transactionLog.create({
+      attribute: 'winis',
+      amount: amount,
+      operationType: 'transfer',
+      firstActor: updatedRecipient.id,
+      secondActor: updatedSender.id,
+    });
     return {
       amount: amount,
       updatedSender: updatedSender,
@@ -210,7 +217,7 @@ module.exports = function(User) {
     const updatedRecipient = await this.updateAttribute('winis', this.winis + parseInt(amount));
 
     return updatedRecipient;
-  }
+  };
 
   User.prototype.stakeFunds = async function(amount) {
     const user = this;
@@ -222,7 +229,7 @@ module.exports = function(User) {
       throw error;
     }
 
-    if (this.winis - this.staked < amount) {
+    if ((this.winis - this.staked) < amount) {
       const error = new Error('Amount of staked winis is to big');
       error.status = 409;
       throw error;
@@ -230,6 +237,12 @@ module.exports = function(User) {
 
     const stakedAmount = user.staked + amount;
     await user.updateAttribute('staked', stakedAmount);
+    await User.app.models.transactionLog.create({
+      attribute: 'winis',
+      amount: amount,
+      operationType: 'stake',
+      firstActor: this.id,
+    });
   };
 
   User.prototype.releaseFunds = async function(amount) {
@@ -240,6 +253,12 @@ module.exports = function(User) {
     }
 
     await this.updateAttribute('staked', this.staked - amount);
+    await User.app.models.transactionLog.create({
+      attribute: 'winis',
+      amount: amount,
+      operationType: 'release',
+      firstActor: this.id,
+    });
   };
 
   User.prototype.transferStakedFunds = async function(amount, recipient) {

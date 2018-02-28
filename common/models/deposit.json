@@ -2,6 +2,9 @@
   "name": "deposit",
   "base": "PersistedModel",
   "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "mixins": {
     "TimeStamp": true,
     "SetupRemoteMethods": {
@@ -11,9 +14,6 @@
         "getRewardConfiguration"
       ]
     }
-  },
-  "options": {
-    "validateUpsert": true
   },
   "properties": {
     "externalId": {
@@ -95,7 +95,7 @@
       },
       "description": "Grant reward from external source (tapjoy) for user",
       "http": {
-        "path":"/tapjoy",
+        "path": "/tapjoy",
         "verb": "get"
       }
     },
@@ -118,13 +118,12 @@
       },
       "description": "Grant reward from external source (appStore) for user",
       "http": {
-        "path":"/appStore",
+        "path": "/appStore",
         "verb": "post"
       }
     },
     "getRewardConfiguration": {
-      "accepts": [
-      ],
+      "accepts": [],
       "returns": {
         "arg": "result",
         "type": "object",
@@ -132,7 +131,7 @@
       },
       "description": "Get current reward configuration",
       "http": {
-        "path":"/getRewardConfiguration",
+        "path": "/getRewardConfiguration",
         "verb": "get"
       }
     }
