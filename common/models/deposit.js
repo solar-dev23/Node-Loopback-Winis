@@ -52,7 +52,7 @@ module.exports = function(Deposit) {
     const userId = token && token.userId;
     const UserModel = Deposit.app.models.user;
 
-    const rewardConfiguration = await Deposit.getRewardConfiguration();
+    const rewardConfiguration = await Deposit.getAppStoreRewardConfiguration();
     if (rewardConfiguration.map(value => value.productId).indexOf(externalId) < 0) {
       const error = new Error('Wrong externalId');
       error.status = 422;
@@ -72,7 +72,7 @@ module.exports = function(Deposit) {
       case 'winis':  await user.updateAttribute('winis', user.winis + amount); break;
       case 'scratch':  await user.updateAttribute('scratches', user.scratches + amount); break;
       case 'present':  await Promise.all([
-        user.updateAttribute('diamonds', user.diamonds + amount), 
+        user.updateAttribute('diamonds', user.diamonds + amount),
         user.updateAttribute('winis', user.winis + amount * 10),
         user.updateAttribute('scratches', user.scratches + amount),
         user.updateAttribute('spins', user.spins + amount),
@@ -93,7 +93,7 @@ module.exports = function(Deposit) {
     return result;
   };
 
-  Deposit.getRewardConfiguration = async function() {
+  Deposit.getAppStoreRewardConfiguration = async function() {
     return [
       {productId: '1_scratch_2', iconId: 'scratch', amount: 1},
       {productId: '2_winis', iconId: 'winis', amount: 2},

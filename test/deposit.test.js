@@ -121,7 +121,7 @@ describe('Deposit', function() {
   });
 
   describe('appStore', function() {
-    app.models.Deposit.getRewardConfiguration = async function() {
+    app.models.Deposit.getAppStoreRewardConfiguration = async function() {
       return [
         {productId: '2_winis', iconId: 'winis', amount: 2},
         {productId: '5_scratches', iconId: 'scratch', amount: 5},
