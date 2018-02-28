@@ -131,7 +131,7 @@
       },
       "description": "Get current reward configuration",
       "http": {
-        "path": "/getRewardConfiguration",
+        "path": "/appStore/rewardsConfig",
         "verb": "get"
       }
     }
