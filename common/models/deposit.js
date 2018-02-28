@@ -47,33 +47,24 @@ module.exports = function(Deposit) {
     return {result: true};
   };
 
-  Deposit.getRewardConfiguration = async function() {
-    return [
-      {productId: '1_scratch_2', iconId: 'scratch', amount: 1},
-      {productId: '2_winis', iconId: 'winis', amount: 2},
-      {productId: '10_winis', iconId: 'winis', amount: 10},
-      {productId: '20_winis', iconId: 'winis', amount: 20},
-    ];
-  };
-
-  Deposit.beforeRemote('create', async function(context, modelInstance, next) {
-    const token = context.req.accessToken;
+  Deposit.appStore = async function(externalId, options) {
+    const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Deposit.app.models.user;
 
     const rewardConfiguration = await Deposit.getRewardConfiguration();
-    if (rewardConfiguration.map(value => value.productId).indexOf(context.req.body.externalId) < 0) {
+    if (rewardConfiguration.map(value => value.productId).indexOf(externalId) < 0) {
       const error = new Error('Wrong externalId');
       error.status = 422;
       throw error;
     }
-    const user = await UserModel.findById(context.req.body.userId);
+    const user = await UserModel.findById(userId);
     if (!user) {
       const error = new Error('User id is not valid');
       error.status = 409;
       throw error;
     }
-    const currentReward = rewardConfiguration.filter(element => element.productId == context.req.body.externalId)[0];
+    const currentReward = rewardConfiguration.filter(element => element.productId == externalId)[0];
     const amount = currentReward.amount;
     switch (currentReward.iconId) {
       case 'empty': break;
@@ -88,15 +79,26 @@ module.exports = function(Deposit) {
       ]); break;
       case 'spin':  await user.updateAttribute('spins', user.spins + amount); break;
     }
-  });
+    const newDeposit = await Deposit.create({
+      externalId: externalId,
+      userId: userId,
+      method: 'appstore',
+      amount: amount,
+    });
 
-  Deposit.afterRemote('create', async function(ctx, next) {
-    const token = ctx.req.accessToken;
-    const userId = token && token.userId;
-    const UserModel = Deposit.app.models.user;
+    let result = newDeposit;
+    result.success = true;
+    result.user = user;
 
-    const user = await UserModel.findById(userId);
-    ctx.result.success = true;
-    ctx.result.user = user;
-  });
+    return result;
+  };
+
+  Deposit.getRewardConfiguration = async function() {
+    return [
+      {productId: '1_scratch_2', iconId: 'scratch', amount: 1},
+      {productId: '2_winis', iconId: 'winis', amount: 2},
+      {productId: '10_winis', iconId: 'winis', amount: 10},
+      {productId: '20_winis', iconId: 'winis', amount: 20},
+    ];
+  };
 };

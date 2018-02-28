@@ -12,15 +12,6 @@ describe('Deposit', function() {
 
   beforeEach(async function() {
     DepositModel = app.models.deposit;
-    DepositModel.getRewardConfiguration = async function() {
-      return [
-        {productId: '2_winis', iconId: 'winis', amount: 2},
-        {productId: '5_scratches', iconId: 'scratch', amount: 5},
-        {productId: '7_diamonds', iconId: 'diamond', amount: 7},
-        {productId: '3_presents', iconId: 'present', amount: 3},
-        {productId: '12_spins', iconId: 'spin', amount: 12},
-      ];
-    };
     const UserModel = app.models.user;
     await UserModel.deleteAll();
 
@@ -129,10 +120,19 @@ describe('Deposit', function() {
   });
 
   describe('appStore', function() {
-    it('should return rewardConfiguration', function(done) {
+    beforeEach(async function() {
       DepositModel.getRewardConfiguration = async function() {
-        return [{productId: '2_winis', iconId: 'winis', amount: 2}];
+        return [
+        {productId: '2_winis', iconId: 'winis', amount: 2},
+        {productId: '5_scratches', iconId: 'scratch', amount: 5},
+        {productId: '7_diamonds', iconId: 'diamond', amount: 7},
+        {productId: '3_presents', iconId: 'present', amount: 3},
+        {productId: '12_spins', iconId: 'spin', amount: 12},
+        ];
       };
+    });
+
+    it('should return rewardConfiguration', function(done) {
       request
       .get('/api/deposits/getRewardConfiguration')
       .set('Authorization', accessToken.id)
@@ -147,19 +147,19 @@ describe('Deposit', function() {
     });
 
     it('should award 2 winis', function(done) {
-      const params = {    
-        'userId': accessToken.userId,     
+      const params = {        
         'method': 'appstore',
         'externalId': '2_winis',
       };
 
       request
-      .post('/api/deposits/')
+      .post('/api/deposits/appStore/')
       .set('Authorization', accessToken.id)
       .expect('Content-Type', /json/)
       .send(params)
       .then((res)=>{
         expect(res.body.success).to.be.equals(true);
+        expect(res.body.method).to.be.equals('appstore');
         expect(res.body.user.winis).to.be.equal(2);
         expect(res.body.user.diamonds).to.be.equal(0);
         expect(res.body.user.spins).to.be.equal(0);
@@ -169,19 +169,18 @@ describe('Deposit', function() {
     });
 
     it('should award 5 scratches', function(done) {
-      const params = {    
-        'userId': accessToken.userId,     
-        'method': 'appstore',
+      const params = {        
         'externalId': '5_scratches',
       };
 
       request
-      .post('/api/deposits/')
+      .post('/api/deposits/appStore/')
       .set('Authorization', accessToken.id)
       .expect('Content-Type', /json/)
       .send(params)
       .then((res)=>{
         expect(res.body.success).to.be.equals(true);
+        expect(res.body.method).to.be.equals('appstore');
         expect(res.body.user.winis).to.be.equal(0);
         expect(res.body.user.diamonds).to.be.equal(0);
         expect(res.body.user.spins).to.be.equal(0);
@@ -190,20 +189,20 @@ describe('Deposit', function() {
       });
     });
 
-    it('should award 5 scratches', function(done) {
-      const params = {    
-        'userId': accessToken.userId,     
+    it('should award 7 diamonds', function(done) {
+      const params = {       
         'method': 'appstore',
         'externalId': '7_diamonds',
       };
 
       request
-      .post('/api/deposits/')
+      .post('/api/deposits/appStore/')
       .set('Authorization', accessToken.id)
       .expect('Content-Type', /json/)
       .send(params)
       .then((res)=>{
         expect(res.body.success).to.be.equals(true);
+        expect(res.body.method).to.be.equals('appstore');
         expect(res.body.user.winis).to.be.equal(0);
         expect(res.body.user.diamonds).to.be.equal(7);
         expect(res.body.user.spins).to.be.equal(0);
@@ -213,19 +212,19 @@ describe('Deposit', function() {
     });
 
     it('should award 3 presents', function(done) {
-      const params = {    
-        'userId': accessToken.userId,     
+      const params = {      
         'method': 'appstore',
         'externalId': '3_presents',
       };
       
       request
-      .post('/api/deposits/')
+      .post('/api/deposits/appStore/')
       .set('Authorization', accessToken.id)
       .expect('Content-Type', /json/)
       .send(params)
       .then((res)=>{
         expect(res.body.success).to.be.equals(true);
+        expect(res.body.method).to.be.equals('appstore');
         expect(res.body.user.winis).to.be.equal(30);
         expect(res.body.user.diamonds).to.be.equal(3);
         expect(res.body.user.spins).to.be.equal(3);
@@ -235,19 +234,19 @@ describe('Deposit', function() {
     });
 
     it('should award 12 spins', function(done) {
-      const params = {    
-        'userId': accessToken.userId,     
+      const params = {       
         'method': 'appstore',
         'externalId': '12_spins',
       };
 
       request
-      .post('/api/deposits/')
+      .post('/api/deposits/appStore/')
       .set('Authorization', accessToken.id)
       .expect('Content-Type', /json/)
       .send(params)
       .then((res)=>{
         expect(res.body.success).to.be.equals(true);
+        expect(res.body.method).to.be.equals('appstore');
         expect(res.body.user.winis).to.be.equal(0);
         expect(res.body.user.diamonds).to.be.equal(0);
         expect(res.body.user.spins).to.be.equal(12);
@@ -258,13 +257,12 @@ describe('Deposit', function() {
 
     it('should fail award wrong externalId', function(done) {
       const unmute = mute();
-      const params = {    
-        'userId': accessToken.userId,     
+      const params = {       
         'method': 'appstore',
         'externalId': '3_winis',
       };
       request
-      .post('/api/deposits/')
+      .post('/api/deposits/appStore/')
       .set('Authorization', accessToken.id)
       .expect('Content-Type', /json/)
       .send(params)

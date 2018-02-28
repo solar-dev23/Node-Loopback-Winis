@@ -6,8 +6,8 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "create",
         "tapjoy",
+        "appStore",
         "getRewardConfiguration"
       ]
     }
@@ -50,6 +50,13 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
+      "property": "appStore"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
       "property": "getRewardConfiguration"
     }
   ],
@@ -86,9 +93,33 @@
         "type": "object",
         "root": true
       },
-      "description": "Grant reward from external source (tapjoy, appStore) for user",
+      "description": "Grant reward from external source (tapjoy) for user",
       "http": {
+        "path":"/tapjoy",
         "verb": "get"
+      }
+    },
+    "appStore": {
+      "accepts": [
+        {
+          "arg": "externalId",
+          "type": "string"
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Grant reward from external source (appStore) for user",
+      "http": {
+        "path":"/appStore",
+        "verb": "post"
       }
     },
     "getRewardConfiguration": {
