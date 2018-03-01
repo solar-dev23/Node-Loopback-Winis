@@ -323,7 +323,7 @@ describe('User', function() {
         });
     });
 
-    it('should remove a user from the blocked users', function (done) {
+    it('should remove a user from the blocked users', function(done) {
       request
         .delete(`/api/users/${ownerUser.id}/blocked/rel/${blockedUser.id}`)
         .set('Authorization', accessToken.id)
@@ -338,7 +338,7 @@ describe('User', function() {
         });
     });
 
-    it('return an unblocked user to the friend list', function (done) {
+    it('return an unblocked user to the friend list', function(done) {
       request
         .delete(`/api/users/${ownerUser.id}/blocked/rel/${blockedUser.id}`)
         .set('Authorization', accessToken.id)
@@ -466,37 +466,44 @@ describe('User', function() {
     });
   });
   describe('Daily spin', function() {
-    it('should grant 0 spins', function(done) {
-      let startSpins, lastDailySpinGrantingDate;
+    it('should grant 1 spin for first visit', function(done) {
       request
-      .get(`/api/users/${accessToken.userId}/`)
-      .set('Authorization', accessToken.id)
-      .expect('Content-Type', /json/)
-      .send()
-      .then((res) => {
+        .post(`/api/users/${accessToken.userId}/freeSpins`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+      .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.id).to.be.equal(accessToken.userId);
-        startSpins = res.body.spins;
-        lastDailySpinGrantingDate = res.body.lastDailySpinGrantingDate;
+        expect(res.body.success).to.be.equal(true);
+        return UserModel.findById(accessToken.userId);
+      })
+      .then(user =>{
+        expect(user.spins).to.be.equal(2);
+        done();
+      });
+    });
+
+    it('should not grant spin for second visit', function(done) {
+      request
+        .post(`/api/users/${accessToken.userId}/freeSpins`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.success).to.be.equal(true);
         return request
         .post(`/api/users/${accessToken.userId}/freeSpins`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send();
       })
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(200);
+      .then(res=>{
         expect(res.body.success).to.be.equal(false);
-        return request
-        .get(`/api/users/${accessToken.userId}/`)
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send();
+        return UserModel.findById(accessToken.userId);
       })
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(startSpins);
-        expect(res.body.lastDailySpinGrantingDate).to.be.equal(lastDailySpinGrantingDate);
+      .then(user =>{
+        expect(user.spins).to.be.equal(2);
         done();
       });
     });
