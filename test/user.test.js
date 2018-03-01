@@ -338,6 +338,21 @@ describe('User', function() {
         });
     });
 
+    it('return an unblocked user to the friend list', function (done) {
+      request
+        .delete(`/api/users/${ownerUser.id}/blocked/rel/${blockedUser.id}`)
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          UserModel.findById(ownerUser.id)
+            .then((user) => {
+              expect(res.statusCode).to.be.equal(204);
+              expect(user.friendIds).to.include(blockedUser.id);
+              done();
+            });
+        });
+    });
+
     it('should return the list of blocked users', function(done) {
       request
         .get(`/api/users/${ownerUser.id}/blocked`)
