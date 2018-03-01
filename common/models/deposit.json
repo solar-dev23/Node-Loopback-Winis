@@ -2,33 +2,37 @@
   "name": "deposit",
   "base": "PersistedModel",
   "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
   "mixins": {
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "tapjoy"
+        "tapjoy",
+        "appStore",
+        "getRewardConfiguration"
       ]
     }
-  },
-  "options": {
-    "validateUpsert": true
   },
   "properties": {
     "externalId": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "method": {
       "type": "string",
       "required": true
     },
     "amount": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "userId": {
       "type": "string",
       "required": true
+    },
+    "price": {
+      "type": "number"
     }
   },
   "validations": [],
@@ -40,6 +44,20 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "tapjoy"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "appStore"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getRewardConfiguration"
     }
   ],
   "methods": {
@@ -75,8 +93,45 @@
         "type": "object",
         "root": true
       },
-      "description": "Grant reward from external source (tapjoy, appStore) for user",
+      "description": "Grant reward from external source (tapjoy) for user",
       "http": {
+        "path": "/tapjoy",
+        "verb": "get"
+      }
+    },
+    "appStore": {
+      "accepts": [
+        {
+          "arg": "externalId",
+          "type": "string"
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Grant reward from external source (appStore) for user",
+      "http": {
+        "path": "/appStore",
+        "verb": "post"
+      }
+    },
+    "getAppStoreRewardConfiguration": {
+      "accepts": [],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Get current reward configuration",
+      "http": {
+        "path": "/appStore/rewardsConfig",
         "verb": "get"
       }
     }

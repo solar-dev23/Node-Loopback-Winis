@@ -40,7 +40,7 @@ module.exports = function(Dailywin) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
-    const user = await UserModel.findById(userId);
+    let user = await UserModel.findById(userId);
     const startOfCurrentDay = Dailywin.getStartOfDay(user.timezone);
     const allActiveDailywin = await Dailywin.find({where: {and: [{userId: userId}, {resetDate: {gt: startOfCurrentDay}}]}});
     let currentDailyWin;
@@ -65,7 +65,10 @@ module.exports = function(Dailywin) {
     }
 
     if (currentDailyWin.lastVisitDate == startOfCurrentDay) {
-      return currentDailyWin;
+      let result = currentDailyWin;
+      const user = await UserModel.findById(userId);
+      result.user = user;
+      return result;
     }
     await Promise.all([
       currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay),
@@ -75,8 +78,10 @@ module.exports = function(Dailywin) {
     if (currentDailyWin.lastAllowedDay == 7) {
       await currentDailyWin.pickReward('weekly');
     }
-
-    return currentDailyWin;
+    let result = currentDailyWin;
+    user = await UserModel.findById(userId);
+    result.user = user;
+    return result;
   };
 
   Dailywin.getStartOfDay = function(timezone) {
@@ -101,37 +106,37 @@ module.exports = function(Dailywin) {
         '2': {
           prize: 'winis',
           count: 10,
-          status: 'skiped',
+          status: 'skipped',
         },
         '3': {
           prize: 'spin',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
         '4': {
           prize: 'winis',
           count: 25,
-          status: 'skiped',
+          status: 'skipped',
         },
         '5': {
           prize: 'present',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
         '6': {
           prize: 'winis',
           count: 50,
-          status: 'skiped',
+          status: 'skipped',
         },
         '7': {
           prize: 'scratch',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
         weekly: {
           prize: 'diamond',
           count: 1,
-          status: 'skiped',
+          status: 'skipped',
         },
       };
     }

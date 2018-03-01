@@ -69,5 +69,9 @@
   "daily-win": {
     "dataSource": "db",
     "public": true
+  },
+  "transaction-log": {
+    "dataSource": "db",
+    "public": false
   }
 }

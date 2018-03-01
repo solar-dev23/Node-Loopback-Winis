@@ -1,0 +1,42 @@
+{
+  "name": "transaction-log",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "attribute": {
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "number",
+      "required": true,
+      "default": 0
+    },
+    "operationType": {
+      "type": "string",
+      "required": true
+    },
+    "firstActor": {
+      "type": "string",
+      "required": true,
+      "default": "not_set"
+    },
+    "secondActor": {
+      "type": "string",
+      "required": true,
+      "default": "not_set"
+    },
+    "createdAt": {
+      "type": "date",
+      "required": true,
+      "default": "$now"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
