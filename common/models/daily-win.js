@@ -57,14 +57,16 @@ module.exports = function(Dailywin) {
       error.status = 500;
       throw error;
     }
-
-    if (currentDailyWin.lastVisitDate > startOfCurrentDay) {
+    if (!currentDailyWin.lastVisitDate) {
+      currentDailyWin.updateAttribute('lastVisitDate', startOfCurrentDay);
+    }
+    if (currentDailyWin.lastVisitDate.getTime() > startOfCurrentDay) {
       const error = new Error('Time error');
       error.status = 500;
       throw error;
     }
 
-    if (currentDailyWin.lastVisitDate == startOfCurrentDay) {
+    if (currentDailyWin.lastVisitDate.getTime() == startOfCurrentDay) {
       let result = currentDailyWin;
       const user = await UserModel.findById(userId);
       result.user = user;

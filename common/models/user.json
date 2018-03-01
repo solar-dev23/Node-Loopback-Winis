@@ -62,8 +62,7 @@
     },
     "lastDailySpinGrantingDate": {
       "type": "date",
-      "required": true,
-      "default": "$now"
+      "default": 0
     }
   },
   "validations": [],

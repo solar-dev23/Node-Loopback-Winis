@@ -307,7 +307,9 @@ module.exports = function(User) {
     const token = options && options.accessToken;
     const senderId = token && token.userId;
     const currentUser = await User.findById(senderId);
-
+    if (currentUser.lastDailySpinGrantingDate == 0) {
+      currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 - 1);
+    }
     if ((Date.now() - currentUser.lastDailySpinGrantingDate) > 24 * 60 * 60 * 1000) {
       await Promise.all([currentUser.updateAttribute('spins', currentUser.spins + 1), currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now())]);
       return {

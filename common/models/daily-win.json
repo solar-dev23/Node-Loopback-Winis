@@ -32,7 +32,7 @@
       "default": 1
     },
     "lastVisitDate": {
-      "type": "number",
+      "type": "date",
       "default": 0
     },
     "userId": {

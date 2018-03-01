@@ -25,9 +25,9 @@ module.exports = function(Battle) {
       throw error;
     }
 
-    const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == challenger.id && value.opponentId == opponent.id && value.result == 'unset'; })[0];
+    const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == challenger.id && value.opponentId == opponent.id && value.result == 'unset' && value.createdAt.getTime() > Date.now() - 3 * 60 * 1000; })[0];
     if (!existingBattle) {
-      const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset'; })[0];
+      const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset' && value.createdAt.getTime() > Date.now() - 3 * 60 * 1000; })[0];
     }
     
     if (existingBattle) {
