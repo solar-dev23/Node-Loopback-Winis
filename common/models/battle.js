@@ -47,7 +47,9 @@ module.exports = function(Battle) {
       await opponent.stakeFunds(stake);
     } catch (error) {
       challenger.releaseFunds(stake);
-      throw error;
+      const newError = new Error('Opponent doesn’t have enough winis');
+      newError.status = 409;
+      throw newError;
     }
 
     let newBattle = await Battle.create({
