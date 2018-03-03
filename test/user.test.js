@@ -474,11 +474,7 @@ describe('User', function() {
         .send()
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.success).to.be.equal(true);
-        return UserModel.findById(accessToken.userId);
-      })
-      .then(user =>{
-        expect(user.spins).to.be.equal(2);
+        expect(res.body.spins).to.be.equal(2);
         done();
       });
     });
@@ -491,7 +487,7 @@ describe('User', function() {
         .send()
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.success).to.be.equal(true);
+        expect(res.body.spins).to.be.equal(2);
         return request
         .post(`/api/users/${accessToken.userId}/freeSpins`)
         .set('Authorization', accessToken.id)
@@ -499,11 +495,7 @@ describe('User', function() {
         .send();
       })
       .then(res=>{
-        expect(res.body.success).to.be.equal(false);
-        return UserModel.findById(accessToken.userId);
-      })
-      .then(user =>{
-        expect(user.spins).to.be.equal(2);
+        expect(res.body.spins).to.be.equal(2);
         done();
       });
     });
@@ -526,16 +518,7 @@ describe('User', function() {
       })
       .then((res) => {
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.success).to.be.equal(true);
-        return request
-        .get(`/api/users/${accessToken.userId}/`)
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send();
-      })
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(startSpins + 1);
+        expect(res.body.spins).to.be.equal(2);
         expect(new Date(res.body.lastDailySpinGrantingDate).getTime()).to.be.above(testStartTimestamp);
         done();
       });
@@ -559,16 +542,7 @@ describe('User', function() {
       })
       .then((res) => {
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.success).to.be.equal(true);
-        return request
-        .get(`/api/users/${accessToken.userId}/`)
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send();
-      })
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(startSpins + 1);
+        expect(res.body.spins).to.be.equal(2);
         expect(new Date(res.body.lastDailySpinGrantingDate).getTime()).to.be.above(testStartTimestamp);
         done();
       });

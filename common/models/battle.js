@@ -257,6 +257,7 @@ module.exports = function(Battle) {
             await losser.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'challenger won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
+            await winner.updateAttribute('diamonds', winner.diamonds + 1);
           } else if (ctx.currentInstance.challengerStatus == 'won' && ctx.data.opponentStatus == 'lost') {
             let winner =  await UserModel.findById(ctx.currentInstance.challengerId);
             let losser =  await UserModel.findById(ctx.currentInstance.opponentId);
@@ -264,6 +265,7 @@ module.exports = function(Battle) {
             await losser.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'challenger won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
+            await winner.updateAttribute('diamonds', winner.diamonds + 1);
           } else if (ctx.data.challengerStatus == 'lost' && ctx.currentInstance.opponentStatus == 'won') {
             let winner =  await UserModel.findById(ctx.currentInstance.opponentId);
             let losser =  await UserModel.findById(ctx.currentInstance.challengerId);
@@ -271,6 +273,7 @@ module.exports = function(Battle) {
             await losser.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'opponent won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
+            await winner.updateAttribute('diamonds', winner.diamonds + 1);
           }  else if (ctx.currentInstance.challengerStatus == 'lost' && ctx.data.opponentStatus == 'won') {
             let winner =  await UserModel.findById(ctx.currentInstance.opponentId);
             let losser =  await UserModel.findById(ctx.currentInstance.challengerId);
@@ -278,6 +281,7 @@ module.exports = function(Battle) {
             await losser.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'opponent won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
+            await winner.updateAttribute('diamonds', winner.diamonds + 1);
           } else if (ctx.data.challengerStatus == 'draw' && ctx.currentInstance.opponentStatus == 'draw') {
             let drawwer1 =  await UserModel.findById(ctx.currentInstance.opponentId);
             let drawwer2 =  await UserModel.findById(ctx.currentInstance.challengerId);
