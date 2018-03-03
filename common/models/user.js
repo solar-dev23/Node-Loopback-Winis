@@ -307,18 +307,22 @@ module.exports = function(User) {
     const token = options && options.accessToken;
     const senderId = token && token.userId;
     const currentUser = await User.findById(senderId);
-    if (currentUser.lastDailySpinGrantingDate == 0) {
-      currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 - 1);
+    if (!currentUser.lastDailySpinGrantingDate) {
+      await currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 - 1);
     }
-    if ((Date.now() - currentUser.lastDailySpinGrantingDate) > 24 * 60 * 60 * 1000) {
-      await Promise.all([currentUser.updateAttribute('spins', currentUser.spins + 1), currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now())]);
-      return {
-        success: true,
-      };
+    if ((Date.now() - currentUser.lastDailySpinGrantingDate.getTime()) > 24 * 60 * 60 * 1000) {
+      await Promise.all([
+        currentUser.updateAttribute('spins', currentUser.spins + 1), 
+        currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now()),
+        User.app.models.transactionLog.create({
+          attribute: 'spins',
+          amount: 1,
+          operationType: 'dailySpin',
+          firstActor: currentUser.id,
+        }),
+      ]);
     }
-    return {
-      success: false,
-    };
+    return currentUser;
   };
 
   User.observe('before save', function addRandomName(ctx, next) {
