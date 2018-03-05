@@ -50,6 +50,7 @@ describe('Battle', function() {
           expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
           expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
           expect(res.body.status).to.be.equal('pending');
+          expect(res.body.result).to.be.equal('unset');
           expect(res.body.game).to.be.equal('test-game');
           expect(res.body.opponentStatus).to.be.equal('unset');
           expect(res.body.challengerStatus).to.be.equal('unset');
@@ -206,6 +207,7 @@ describe('Battle', function() {
         expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
         expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
         expect(res.body.status).to.be.equal('pending');
+        expect(res.body.result).to.be.equal('unset');
         expect(res.body.game).to.be.equal('test-game');
         expect(res.body.opponentStatus).to.be.equal('unset');
         expect(res.body.challengerStatus).to.be.equal('unset');
@@ -223,6 +225,47 @@ describe('Battle', function() {
         expect(res.statusCode).to.be.equal(200);
         expect(res.body.status).to.be.equal('accepted');
         done();
+      });
+    });
+
+    it('should accept pending battle after rejecting previous', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/reject`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('rejected');
+        return request
+        .post('/api/battles/challenge/')
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send({
+          game: 'test-game',
+          opponentId: opponentUser.id.toString(),
+          stake: 20,
+        })
+        .then(res=>{
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.status).to.be.equal('pending');
+          expect(res.body.result).to.be.equal('unset');
+          expect(res.body.game).to.be.equal('test-game');
+          expect(res.body.opponentStatus).to.be.equal('unset');
+          expect(res.body.challengerStatus).to.be.equal('unset');
+          return request
+          .post(`/api/battles/${res.body.id}/accept`)
+          .set('Authorization', opponentAccessToken.id)
+          .expect('Content-Type', /json/)
+          .send();
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.status).to.be.equal('accepted');
+          done();
+        });
       });
     });
 
@@ -287,6 +330,7 @@ describe('Battle', function() {
         expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
         expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
         expect(res.body.status).to.be.equal('pending');
+        expect(res.body.result).to.be.equal('unset');
         expect(res.body.game).to.be.equal('test-game');
         expect(res.body.opponentStatus).to.be.equal('unset');
         expect(res.body.challengerStatus).to.be.equal('unset');
@@ -303,6 +347,7 @@ describe('Battle', function() {
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
         expect(res.body.status).to.be.equal('rejected');
+        expect(res.body.result).to.be.equal('finished');
         return UserModel.findById(challengerUser.id.toString());
       })
       .then(res =>{
@@ -312,6 +357,47 @@ describe('Battle', function() {
       .then(res =>{
         expect(res.staked).to.be.equal(0);
         done();
+      });
+    });
+
+    it('should reject pending battle after rejecting previous', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/reject`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('rejected');
+        return request
+        .post('/api/battles/challenge/')
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send({
+          game: 'test-game',
+          opponentId: opponentUser.id.toString(),
+          stake: 20,
+        })
+        .then(res=>{
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.status).to.be.equal('pending');
+          expect(res.body.result).to.be.equal('unset');
+          expect(res.body.game).to.be.equal('test-game');
+          expect(res.body.opponentStatus).to.be.equal('unset');
+          expect(res.body.challengerStatus).to.be.equal('unset');
+          return request
+          .post(`/api/battles/${res.body.id}/reject`)
+          .set('Authorization', opponentAccessToken.id)
+          .expect('Content-Type', /json/)
+          .send();
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.status).to.be.equal('rejected');
+          done();
+        });
       });
     });
 
@@ -391,7 +477,7 @@ describe('Battle', function() {
       });
     });
 
-    it('should finish battle with win/lose configuration', function(done) {
+    it('should finish battle with win/lose configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/won`)
       .set('Authorization', opponentAccessToken.id)
@@ -426,7 +512,42 @@ describe('Battle', function() {
       });
     });
 
-    it('should finish battle with lose/win configuration', function(done) {
+    it('should finish battle with win/lose configuration. challenger opponent', function(done) {
+      request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('lost');
+        return request
+        .post(`/api/battles/${freshBattle.id}/won`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('won');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('opponent won');
+        return UserModel.findById(challengerUser.id.toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(30);
+        return UserModel.findById(opponentUser.id.toString());
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(70);
+        done();
+      });
+    });
+    
+    it('should finish battle with lose/win configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/lost`)
       .set('Authorization', opponentAccessToken.id)
@@ -460,8 +581,42 @@ describe('Battle', function() {
         done();
       });
     });
-
-    it('should finish battle with draw/draw configuration', function(done) {
+    it('should finish battle with lose/win configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/won`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('won');
+        return request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('lost');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('challenger won');
+        return UserModel.findById(challengerUser.id.toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(70);
+        return UserModel.findById(opponentUser.id.toString());
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(30);
+        done();
+      });
+    });
+    
+    it('should finish battle with draw/draw configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/draw`)
       .set('Authorization', opponentAccessToken.id)
@@ -496,7 +651,42 @@ describe('Battle', function() {
       });
     });
 
-    it('should finish battle with win/win configuration', function(done) {
+    it('should finish battle with draw/draw configuration. challender opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/draw`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('draw');
+        return request
+        .post(`/api/battles/${freshBattle.id}/draw`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('draw');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('both draw');
+        return UserModel.findById(challengerUser.id.toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id.toString());
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with win/win error configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/won`)
       .set('Authorization', opponentAccessToken.id)
@@ -531,6 +721,391 @@ describe('Battle', function() {
       });
     });
 
+    it('should finish battle with win/win error configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/won`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('won');
+        return request
+        .post(`/api/battles/${freshBattle.id}/won`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.challengerStatus).to.be.equal('won');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+    
+    it('should finish battle with lose/lose error configuration. opponent challenger', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/lost`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('lost');
+        return request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.challengerStatus).to.be.equal('lost');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with lose/lose error configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/lost`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('lost');
+        return request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('lost');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+    
+    it('should finish battle with win/draw error configuration. opponent challenger', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/won`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('won');
+        return request
+        .post(`/api/battles/${freshBattle.id}/draw`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.challengerStatus).to.be.equal('draw');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with win/draw error configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/draw`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('draw');
+        return request
+        .post(`/api/battles/${freshBattle.id}/won`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('won');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+    
+    it('should finish battle with draw/win error configuration. opponent challenger', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/draw`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('draw');
+        return request
+        .post(`/api/battles/${freshBattle.id}/won`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.challengerStatus).to.be.equal('won');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with draw/win error configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/won`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('won');
+        return request
+        .post(`/api/battles/${freshBattle.id}/draw`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('draw');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with lose/draw error configuration. opponent challenger', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/lost`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('lost');
+        return request
+        .post(`/api/battles/${freshBattle.id}/draw`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.challengerStatus).to.be.equal('draw');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with lose/draw error configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/draw`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('draw');
+        return request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('lost');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+    
+    it('should finish battle with draw/lose error configuration. opponent challenger', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/draw`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('draw');
+        return request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.challengerStatus).to.be.equal('lost');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
+    it('should finish battle with draw/lose error configuration. challenger opponent', function(done) {
+      request
+      .post(`/api/battles/${freshBattle.id}/lost`)
+      .set('Authorization', challengerAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.challengerStatus).to.be.equal('lost');
+        return request
+        .post(`/api/battles/${freshBattle.id}/draw`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.opponentStatus).to.be.equal('draw');
+        expect(res.body.status).to.be.equal('finished');
+        expect(res.body.result).to.be.equal('error state');
+        return UserModel.findById(challengerUser.id.toString().toString());
+      })
+      .then(challenger => {
+        expect(challenger.staked).to.be.equal(0);
+        expect(challenger.winis).to.be.equal(50);
+        return UserModel.findById(opponentUser.id);
+      })
+      .then(opponent => {
+        expect(opponent.staked).to.be.equal(0);
+        expect(opponent.winis).to.be.equal(50);
+        done();
+      });
+    });
+
     it('should fail to send won status 2 times', function(done) {
       const unmute = mute();
       request
@@ -544,6 +1119,54 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('won');
         return request
         .post(`/api/battles/${freshBattle.id}/won`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(409);
+        unmute();
+        done();
+      });
+    });
+
+    it('should fail to send lost status 2 times', function(done) {
+      const unmute = mute();
+      request
+      .post(`/api/battles/${freshBattle.id}/lost`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('lost');
+        return request
+        .post(`/api/battles/${freshBattle.id}/lost`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send();
+      })
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(409);
+        unmute();
+        done();
+      });
+    });
+
+    it('should fail to send draw status 2 times', function(done) {
+      const unmute = mute();
+      request
+      .post(`/api/battles/${freshBattle.id}/draw`)
+      .set('Authorization', opponentAccessToken.id)
+      .expect('Content-Type', /json/)
+      .send()
+      .then(res =>{
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body.status).to.be.equal('accepted');
+        expect(res.body.opponentStatus).to.be.equal('draw');
+        return request
+        .post(`/api/battles/${freshBattle.id}/draw`)
         .set('Authorization', opponentAccessToken.id)
         .expect('Content-Type', /json/)
         .send();

@@ -24,10 +24,9 @@ module.exports = function(Battle) {
       error.status = 404;
       throw error;
     }
-
-    const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == challenger.id && value.opponentId == opponent.id && value.result == 'unset' && value.createdAt.getTime() > Date.now() - 3 * 60 * 1000; })[0];
+    const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == challenger.id && value.opponentId == opponent.id && value.result == 'unset' && value.status == 'pending'; })[0];
     if (!existingBattle) {
-      const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset' && value.createdAt.getTime() > Date.now() - 3 * 60 * 1000; })[0];
+      const existingBattle = (await Battle.find()).filter(value =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset' && value.status == 'pending'; })[0];
     }
     
     if (existingBattle) {
@@ -105,12 +104,15 @@ module.exports = function(Battle) {
     const challenger = await UserModel.findById(currentBattle.challengerId);
     const opponent = await UserModel.findById(currentBattle.opponentId);
 
-    const updatedBattle = await currentBattle.updateAttribute('status', 'rejected');
+    Promise.all([
+      currentBattle.updateAttribute('status', 'rejected'),
+      currentBattle.updateAttribute('result', 'finished'),
+    ]);
 
     const updatedChallenger = await challenger.releaseFunds(currentBattle.stake);
     const updatedOpponent = await opponent.releaseFunds(currentBattle.stake);
 
-    return updatedBattle;
+    return currentBattle;
   };
 
   Battle.prototype.won = async function(options) {
