@@ -50,7 +50,7 @@ describe('Spin To Win', function() {
 
     it('should keep the returned user and stored users in sync', function(done) {
       app.models.spinToWin.calculateSpin = () => {
-        return '5_winis';
+        return '100_winis';
       };
 
       request
@@ -63,8 +63,8 @@ describe('Spin To Win', function() {
               const resultUser = res.body.user;
 
               expect(res.statusCode).to.be.equal(200);
-              expect(storedUser.winis).to.be.equal(505);
-              expect(resultUser.winis).to.be.equal(505);
+              expect(storedUser.winis).to.be.equal(600);
+              expect(resultUser.winis).to.be.equal(600);
               done();
             })
             .catch(done);
@@ -96,10 +96,10 @@ describe('Spin To Win', function() {
     const prizes = [
       {'prize': 'diamond', 'result': {'diamonds': 1}},
       {'prize': 'double_spin', 'result': {'spins': 2}},
-      {'prize': '5_winis', 'result': {'winis': 505}},
+      {'prize': '100_winis', 'result': {'winis': 600}},
       {'prize': 'double_diamond', 'result': {'diamonds': 2}},
       {'prize': 'empty', 'result': {}},
-      {'prize': '2_winis', 'result': {'winis': 502}},
+      {'prize': '50_winis', 'result': {'winis': 550}},
       {'prize': 'double_scratch', 'result': {'scratches': 2}},
       {'prize': 'scratch', 'result': {'scratches': 1}},
       {'prize': 'spin', 'result': {'spins': 1}},
