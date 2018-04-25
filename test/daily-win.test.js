@@ -69,7 +69,7 @@ describe('Daily-win', async function() {
         .expect('Content-Type', /json/)
         .send();
       })
-      .then((res)=>{      
+      .then((res)=>{
         expect(res.body.createdDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
         expect(res.body.resetDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString());
         expect(res.body.lastAllowedDay).to.be.equal(1);
@@ -121,8 +121,8 @@ describe('Daily-win', async function() {
           expect(res.body.user.winis).to.be.equal(15);
           done();
         });
-    });    
-    
+    });
+
     it('should iterate throught full week', function(done) {
       request
       .post('/api/daily-wins/check')
@@ -205,7 +205,7 @@ describe('Daily-win', async function() {
         expect(res.body.user.winis).to.be.equal(100);
         expect(res.body.user.spins).to.be.equal(2);
         expect(res.body.user.scratches).to.be.equal(2);
-        expect(res.body.user.diamonds).to.be.equal(2);
+        expect(res.body.user.diamonds).to.be.equal(101);
         done();
       });
     });
@@ -321,7 +321,7 @@ describe('Daily-win', async function() {
         DailyWinModel.getStartOfDay = function() {
           return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 7;
         };
-        
+
         return request
           .post('/api/daily-wins/check')
           .set('Authorization', accessToken.id)

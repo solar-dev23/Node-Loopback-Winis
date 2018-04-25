@@ -19,14 +19,14 @@ module.exports = function(Dailywin) {
     }
     const updatedDailyWin = await this.updateAttribute('prizes', prizesObject);
     const user = await UserModel.findById(self.userId);
-    
+
     switch (prizesObject[day].prize) {
       case 'empty': break;
       case 'diamond': await user.updateAttribute('diamonds', user.diamonds + prizesObject[day].count); break;
       case 'winis':  await user.updateAttribute('winis', user.winis + prizesObject[day].count); break;
       case 'scratch': await user.updateAttribute('scratches', user.scratches + prizesObject[day].count); break;
       case 'present': await Promise.all([
-        user.updateAttribute('diamonds', user.diamonds + 1 * prizesObject[day].count), 
+        user.updateAttribute('diamonds', user.diamonds + 1 * prizesObject[day].count),
         user.updateAttribute('winis', user.winis + 10 * prizesObject[day].count),
         user.updateAttribute('scratches', user.scratches + 1 * prizesObject[day].count),
         user.updateAttribute('spins', user.spins + 1 * prizesObject[day].count),
@@ -95,7 +95,7 @@ module.exports = function(Dailywin) {
       if (!ctx.instance.__data.userId) {
         throw new Error('userId is not set');
       }
-      let user = await ctx.Model.app.models.user.findById(ctx.instance.__data.userId); 
+      let user = await ctx.Model.app.models.user.findById(ctx.instance.__data.userId);
       ctx.instance.lastVisitDate = Dailywin.getStartOfDay(user.timezone);
       ctx.instance.createdDate = Dailywin.getStartOfDay(user.timezone);
       ctx.instance.resetDate = Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1;
@@ -137,7 +137,7 @@ module.exports = function(Dailywin) {
         },
         weekly: {
           prize: 'diamond',
-          count: 1,
+          count: 100,
           status: 'skipped',
         },
       };
