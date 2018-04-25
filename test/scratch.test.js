@@ -45,7 +45,7 @@ describe('Scratch', function() {
             done();
           });
     });
-  
+
     it('should reveal prize', function(done) {
       request
       .post('/api/scratches/')
@@ -128,6 +128,10 @@ describe('Scratch', function() {
       ['winis', 'present', 'present', 'present', 'present', 'spin'],
     ];
 
+    app.models.scratch.calculateRandomWinis = function() {
+      return 30;
+    };
+
     board.forEach(function(board) {
       const prize = app.models.scratch.determinePrize(board);
       it(`it should update a user when the user scratches ${prize}`, function(done) {
@@ -158,17 +162,17 @@ describe('Scratch', function() {
           })
           .then((user)=>{
             switch (prize) {
-              case 'empty': 
+              case 'empty':
                 break;
-              case 'diamond':  
+              case 'diamond':
                 expect(user.diamonds).to.be.equal(1); ; break;
-              case 'winis':  
-                expect(user.winis).to.be.equal(1); ; break;
-              case 'scratch':  
+              case 'winis':
+                expect(user.winis).to.be.equal(30); ; break;
+              case 'scratch':
                 expect(user.scratches).to.be.equal(1); break;
-              case 'spin':  
+              case 'spin':
                 expect(user.spins).to.be.equal(1); break;
-              case 'present':  
+              case 'present':
                 expect(user.diamonds).to.be.equal(1);
                 expect(user.scratches).to.be.equal(1);
                 expect(user.spins).to.be.equal(1);

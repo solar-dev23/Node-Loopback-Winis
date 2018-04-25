@@ -4,8 +4,8 @@ const Ivoire = require('ivoire-weighted-choice');
 const debug = require('debug')('winis:spin-to-win');
 
 const spinOptions = [
-  'diamond', 'present', 'double_spin', '5_winis', 'empty',
-  'present_2', '2_winis', 'double_scratch', 'scratch', 'spin',
+  'diamond', 'present', 'double_spin', '100_winis', 'empty',
+  'present_2', '50_winis', 'double_scratch', 'scratch', 'spin',
 ];
 
 const spinWeights = [
@@ -35,14 +35,14 @@ module.exports = function(SpinToWin) {
       case 'double_spin':
         attributes['spins'] = user.spins + 2;
         break;
-      case '5_winis':
-        attributes['winis'] = user.winis + 5;
+      case '100_winis':
+        attributes['winis'] = user.winis + 100;
         break;
       case 'double_diamond':
         attributes['diamonds'] = user.diamonds + 2;
         break;
-      case '2_winis':
-        attributes['winis'] = user.winis + 2;
+      case '50_winis':
+        attributes['winis'] = user.winis + 50;
         break;
       case 'double_scratch':
         attributes['scratches'] = user.scratches + 2;

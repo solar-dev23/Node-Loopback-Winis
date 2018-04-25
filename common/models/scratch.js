@@ -1,4 +1,5 @@
 'use strict';
+const Ivoire = require('ivoire');
 
 module.exports = function(Scratch) {
   Scratch.beforeRemote('create', async function(context, modelInstance, next) {
@@ -12,6 +13,7 @@ module.exports = function(Scratch) {
       error.status = 409;
       throw error;
     }
+
     context.req.body.board = Scratch.calculateScratchBoard();
     context.req.body.prize = Scratch.determinePrize(context.req.body.board);
     context.req.body.userId = userId;
@@ -32,10 +34,13 @@ module.exports = function(Scratch) {
     switch (this.prize) {
       case 'empty': break;
       case 'diamond':  await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
-      case 'winis':  await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 1); break;
+      case 'winis':
+        const randomWinis = Scratch.calculateRandomWinis();
+        await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + randomWinis);
+        break;
       case 'scratch':  await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
       case 'present':  await Promise.all([
-        uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1), 
+        uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1),
         uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 10),
         uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1),
         uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1),
@@ -50,8 +55,14 @@ module.exports = function(Scratch) {
     };
   };
 
+  Scratch.calculateRandomWinis = () => {
+    const ivoire = new Ivoire();
+    return ivoire.integer({min: 20, max: 100});
+  };
+
   Scratch.determinePrize = (board) => {
     let prize;
+
     let prizeVariants = {
       diamond: 0,
       winis: 0,
@@ -59,6 +70,7 @@ module.exports = function(Scratch) {
       present: 0,
       spin: 0,
     };
+
     board.forEach(element => {
       switch (element) {
         case 'diamond': prizeVariants.diamond++; break;
@@ -75,7 +87,7 @@ module.exports = function(Scratch) {
 
     return Object.keys(prizeVariants).reduce((a, b) => prizeVariants[a] > prizeVariants[b] ? a : b);
   };
-    
+
   Scratch.calculateScratchBoard = () => {
     let board = [];
     let prizeVariants = {
@@ -86,7 +98,7 @@ module.exports = function(Scratch) {
       spin: 0,
     };
     for (let i = 0; i < 6; i++) {
-      let tempCell; 
+      let tempCell;
       let generatedRandomNumber = Math.random();
       if (generatedRandomNumber < 0.15) {
         tempCell = 'diamond';
@@ -110,6 +122,6 @@ module.exports = function(Scratch) {
     if (verifier.length == 2) {
       board = Scratch.calculateScratchBoard();
     }
-    return board; 
+    return board;
   };
 };
