@@ -32,26 +32,57 @@ module.exports = function(Scratch) {
 
     const user = await UserModel.findById(userId);
     const updatedUser = await user.updateAttribute('scratches', user.scratches - 1);
+    let prizeDetails = {};
+    let randomWinis = 0;
+
     switch (this.prize) {
-      case 'empty': break;
-      case 'diamond':  await updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1); break;
-      case 'winis':
-        const randomWinis = Scratch.calculateRandomWinis();
-        await updatedUser.updateAttribute('winis', updatedUser.winis + randomWinis);
+      case 'empty':
         break;
-      case 'scratch':  await updatedUser.updateAttribute('scratches', updatedUser.scratches + 1); break;
-      case 'present':  await Promise.all([
-        updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1),
-        updatedUser.updateAttribute('winis', updatedUser.winis + 10),
-        updatedUser.updateAttribute('scratches', updatedUser.scratches + 1),
-        updatedUser.updateAttribute('spins', updatedUser.spins + 1),
-      ]); break;
-      case 'spin':  await updatedUser.updateAttribute('spins', updatedUser.spins + 1); break;
+
+      case 'diamond':
+        await updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1);
+        prizeDetails['diamonds'] = 1;
+        break;
+
+      case 'winis':
+        randomWinis = Scratch.calculateRandomWinis();
+        await updatedUser.updateAttribute('winis', updatedUser.winis + randomWinis);
+        prizeDetails['winis'] = randomWinis;
+        break;
+
+      case 'scratch':
+        await updatedUser.updateAttribute('scratches', updatedUser.scratches + 1);
+        prizeDetails['scratches'] = 1;
+        break;
+
+      case 'present':
+        randomWinis = Scratch.calculateRandomWinis();
+
+        await updatedUser.updateAttributes({
+          'diamonds': updatedUser.diamonds + 1,
+          'winis': updatedUser.winis + randomWinis,
+          'scratches': updatedUser.scratches + 1,
+          'spins': updatedUser.spins + 1
+        });
+
+        prizeDetails = {
+          'diamonds': 1,
+          'winis': randomWinis,
+          'scratches': 1,
+          'spins': 1
+        };
+
+        break;
+      case 'spin':
+        await updatedUser.updateAttribute('spins', updatedUser.spins + 1);
+        prizeDetails['spins'] = 1;
+        break;
     }
 
     return {
       success: true,
       prize: this.prize,
+      prizeDetails: prizeDetails,
       user: updatedUser,
     };
   };
