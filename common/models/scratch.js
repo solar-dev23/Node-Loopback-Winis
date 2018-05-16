@@ -29,29 +29,30 @@ module.exports = function(Scratch) {
       error.status = 409;
       throw error;
     }
+
     const user = await UserModel.findById(userId);
-    const uppdatedUser = await user.updateAttribute('scratches', user.scratches - 1);
+    const updatedUser = await user.updateAttribute('scratches', user.scratches - 1);
     switch (this.prize) {
       case 'empty': break;
-      case 'diamond':  await uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1); break;
+      case 'diamond':  await updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1); break;
       case 'winis':
         const randomWinis = Scratch.calculateRandomWinis();
-        await uppdatedUser.updateAttribute('winis', uppdatedUser.winis + randomWinis);
+        await updatedUser.updateAttribute('winis', updatedUser.winis + randomWinis);
         break;
-      case 'scratch':  await uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1); break;
+      case 'scratch':  await updatedUser.updateAttribute('scratches', updatedUser.scratches + 1); break;
       case 'present':  await Promise.all([
-        uppdatedUser.updateAttribute('diamonds', uppdatedUser.diamonds + 1),
-        uppdatedUser.updateAttribute('winis', uppdatedUser.winis + 10),
-        uppdatedUser.updateAttribute('scratches', uppdatedUser.scratches + 1),
-        uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1),
+        updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1),
+        updatedUser.updateAttribute('winis', updatedUser.winis + 10),
+        updatedUser.updateAttribute('scratches', updatedUser.scratches + 1),
+        updatedUser.updateAttribute('spins', updatedUser.spins + 1),
       ]); break;
-      case 'spin':  await uppdatedUser.updateAttribute('spins', uppdatedUser.spins + 1); break;
+      case 'spin':  await updatedUser.updateAttribute('spins', updatedUser.spins + 1); break;
     }
 
     return {
       success: true,
       prize: this.prize,
-      user: uppdatedUser,
+      user: updatedUser,
     };
   };
 
