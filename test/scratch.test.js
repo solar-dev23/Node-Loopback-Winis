@@ -158,6 +158,28 @@ describe('Scratch', function() {
             expect(res.statusCode).to.be.equal(200);
             expect(res.body.success).to.be.equal(true);
             expect(res.body.prize).to.be.equal(prize);
+
+            const prizeDetails = res.body.prizeDetails;
+
+            switch (prize) {
+              case 'empty':
+                break;
+              case 'diamond':
+                expect(prizeDetails.diamonds).to.be.equal(1); break;
+              case 'winis':
+                expect(prizeDetails.winis).to.be.equal(30); ; break;
+              case 'scratch':
+                expect(prizeDetails.scratches).to.be.equal(1); break;
+              case 'spin':
+                expect(prizeDetails.spins).to.be.equal(1); break;
+              case 'present':
+                expect(prizeDetails.diamonds).to.be.equal(1);
+                expect(prizeDetails.scratches).to.be.equal(1);
+                expect(prizeDetails.spins).to.be.equal(1);
+                expect(prizeDetails.winis).to.be.equal(30);
+                break;
+            }
+
             return UserModel.findById(accessToken.userId);
           })
           .then((user)=>{
@@ -176,7 +198,7 @@ describe('Scratch', function() {
                 expect(user.diamonds).to.be.equal(1);
                 expect(user.scratches).to.be.equal(1);
                 expect(user.spins).to.be.equal(1);
-                expect(user.winis).to.be.equal(10);
+                expect(user.winis).to.be.equal(30);
                 break;
             }
             done();
