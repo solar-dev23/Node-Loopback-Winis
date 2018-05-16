@@ -165,17 +165,17 @@ describe('Scratch', function() {
               case 'empty':
                 break;
               case 'diamond':
-                expect(prizeDetails.diamonds).to.be.equal(1); break;
+                expect(prizeDetails.diamond).to.be.equal(1); break;
               case 'winis':
                 expect(prizeDetails.winis).to.be.equal(30); ; break;
               case 'scratch':
-                expect(prizeDetails.scratches).to.be.equal(1); break;
+                expect(prizeDetails.scratch).to.be.equal(1); break;
               case 'spin':
-                expect(prizeDetails.spins).to.be.equal(1); break;
+                expect(prizeDetails.spin).to.be.equal(1); break;
               case 'present':
-                expect(prizeDetails.diamonds).to.be.equal(1);
-                expect(prizeDetails.scratches).to.be.equal(1);
-                expect(prizeDetails.spins).to.be.equal(1);
+                expect(prizeDetails.diamond).to.be.equal(1);
+                expect(prizeDetails.scratch).to.be.equal(1);
+                expect(prizeDetails.spin).to.be.equal(1);
                 expect(prizeDetails.winis).to.be.equal(30);
                 break;
             }

@@ -41,7 +41,7 @@ module.exports = function(Scratch) {
 
       case 'diamond':
         await updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1);
-        prizeDetails['diamonds'] = 1;
+        prizeDetails['diamond'] = 1;
         break;
 
       case 'winis':
@@ -52,7 +52,7 @@ module.exports = function(Scratch) {
 
       case 'scratch':
         await updatedUser.updateAttribute('scratches', updatedUser.scratches + 1);
-        prizeDetails['scratches'] = 1;
+        prizeDetails['scratch'] = 1;
         break;
 
       case 'present':
@@ -62,20 +62,20 @@ module.exports = function(Scratch) {
           'diamonds': updatedUser.diamonds + 1,
           'winis': updatedUser.winis + randomWinis,
           'scratches': updatedUser.scratches + 1,
-          'spins': updatedUser.spins + 1
+          'spins': updatedUser.spins + 1,
         });
 
         prizeDetails = {
-          'diamonds': 1,
+          'diamond': 1,
           'winis': randomWinis,
-          'scratches': 1,
-          'spins': 1
+          'scratch': 1,
+          'spin': 1,
         };
 
         break;
       case 'spin':
         await updatedUser.updateAttribute('spins', updatedUser.spins + 1);
-        prizeDetails['spins'] = 1;
+        prizeDetails['spin'] = 1;
         break;
     }
 
