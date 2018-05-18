@@ -2,43 +2,74 @@
 
 let _ = require('lodash');
 let utils = require('../utils/utils');
-// let forms = require('forms');
+let forms = require('forms');
 let express = require('express');
 let router = express.Router();
-// let moment = require('moment');
-// let formUtils = require('../utils/form');
+let moment = require('moment');
+let formUtils = require('../utils/form');
 let auth = require('../middlewares/auth');
 
-router.get('/', auth, async function(req, res, next) {
-  let app = req.app;
-  let User = app.models.user;
+router.get('/', auth, function(req, res, next) {
+//   let app = req.app;
+//   let Users = app.models.user;
 
-  const users = await User.find();
+//   Users.find({include: 'adverts'}, {sort: 'createdAt DESC'}, function(err, data) {
+//     let userMarkers = [];
 
-  const userData = users.map((user)=>{
-    return {
-      id: user.id,
-      username: user.username,
-      phoneNumber: user.phoneNumber,
-      address: user.address,
-      email: user.email,
-      diamonds: user.diamonds,
-      externalAuthMethod: user.externalAuthMethod,
-      scratches: user.scratches,
-      spins: user.spins,
-      winis: user.winis,
-      staked: user.staked,
-      isAdmin: user.isAdmin,
-      createdAt: user.createdAt,
-    };
-  });
+//     if (err) {
+//       return next(err);
+//     }
 
-  res.render('users', _.defaults(utils.getRequestVariables(app, req), {
-    usersActive: 'active',
-    pageName: 'User List',
-    tableName: 'Users',
-    users: userData,
-  }));
+//     let userData = _.map(data, function(user) {
+//       let advertCount = 0;
+//       let serviceCount = 0;
+
+//       user.adverts().forEach(function(ad) {
+//         switch (ad.type) {
+//           case 'business':
+//             serviceCount++;
+//             break;
+//           case 'advert':
+//             advertCount++;
+//             break;
+//         }
+//       });
+
+//       let userMarker = {
+//         title: user.name,
+//         lastUpdate: moment(user.updatedAt).fromNow(),
+//       };
+
+//       if (user.location && user.useGps) {
+//         userMarker.location = [
+//           user.location.lat,
+//           user.location.lng,
+//         ];
+//       }
+
+//       userMarkers.push(userMarker);
+
+//       return {
+//         id: user.id,
+//         name: user.name,
+//         phone: user.phoneNumber,
+//         address: user.address,
+//         email: user.email,
+//         adCount: advertCount,
+//         serviceCount: serviceCount,
+//         admin: user.admin,
+//         createdAt: user.createdAt,
+//       };
+//     });
+
+//     res.render('users', _.defaults(utils.getRequestVariables(app, req), {
+//       usersActive: 'active',
+//       pageName: 'User List',
+//       tableName: 'Users',
+//       _users: userData,
+//       _markers: userMarkers,
+//     }));
+//   });
 });
 
 function generateForm() {
@@ -177,30 +208,30 @@ router.get('/:id/installs', auth, function(req, res) {
   let Installations = app.models.installation;
 
   Installations.find({where: {userId: req.params.id}}, function(err, data) {
-    //     let installData = _.map(data, function(install) {
-    //       let debugInstall = 'No';
-    // FIX delete
-    //       if (install.appId == 'rightnow-push-app-debug') {
-    //         debugInstall = 'Yes';
-    //       }
+//     let installData = _.map(data, function(install) {
+//       let debugInstall = 'No';
 
-    //       return {
-    //         id: install.id,
-    //         createdAt: install.created,
-    //         updatedAt: install.modified,
-    //         device: install.deviceType,
-    //         debug: debugInstall,
-    //       };
-    //     });
+//       if (install.appId == 'rightnow-push-app-debug') {
+//         debugInstall = 'Yes';
+//       }
 
-    //     res.render('users/installs', _.defaults(utils.getRequestVariables(app, req), {
-    //       usersActive: 'active',
-    //       pageName: 'User Installs',
-    //       tableName: 'Installations',
-    //       userId: req.params.id,
-    //       _installs: installData,
-    //     }));
-  });
+//       return {
+//         id: install.id,
+//         createdAt: install.created,
+//         updatedAt: install.modified,
+//         device: install.deviceType,
+//         debug: debugInstall,
+//       };
+//     });
+
+//     res.render('users/installs', _.defaults(utils.getRequestVariables(app, req), {
+//       usersActive: 'active',
+//       pageName: 'User Installs',
+//       tableName: 'Installations',
+//       userId: req.params.id,
+//       _installs: installData,
+//     }));
+//   });
 });
 
 router.get('/:userId/installs/:pushId/push-test', auth, function(req, res) {
@@ -217,7 +248,7 @@ router.get('/:userId/installs/:pushId/push-test', auth, function(req, res) {
 //   let note = new Notification({
 //     badge: 10,
 //     sound: 'ksahgdfkldb.caf',
-//     alert: 'Test push notification from Winis backend',
+//     alert: 'Test push notification from RightNow backend',
 //   });
 
 //   let pushQuery = {};

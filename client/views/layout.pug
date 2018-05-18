@@ -3,7 +3,7 @@ html
   head
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    title Winis Admin | #{_page_name}
+    title RightNow Admin | #{_page_name}
     // Tell the browser to be responsive to screen width
     meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', name='viewport')
     // Bootstrap 3.3.6
@@ -34,8 +34,8 @@ html
           // Add the class icon to your logo image or logo icon to add the margining
           span.logo-lg
             b
-              | Winis
-            | Admin
+              | Right
+            | Now
         // Header Navbar: style can be found in header.less
         nav.navbar.navbar-static-top(role='navigation')
           // Sidebar toggle button
@@ -48,14 +48,14 @@ html
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
                   img(class="user-image", alt="User Image", src=_avatar)
                   span(class="hidden-xs")
-                    | #{username}
+                    | #{_username}
                     i.caret
                 ul.dropdown-menu
                   // User image
                   li.user-header.bg-light-blue
                     img.img-circle(src=_avatar, alt='User Image')
                     p
-                      | #{username}
+                      | #{_username}
                   // Menu Body
                   // Menu Footer
                   li.user-footer
@@ -69,7 +69,7 @@ html
           // Sidebar user panel
           .user-panel
             .pull-left.image
-              img.img-circle(src=avatar, alt='User Image')
+              img.img-circle(src=_avatar, alt='User Image')
             .pull-left.info
               p Hello, #{_username}
 
@@ -80,9 +80,9 @@ html
                 i.fa.fa-dashboard
                 span Dashboard
             li(class=_adverts_active)
-              a(href='/deposits')
+              a(href='/adverts')
                 i.fa.fa-bar-chart-o
-                span Deposits
+                span Adverts
                 small.badge.pull-right.bg-green
             li(class=_users_active)
               a(href='/users')
@@ -94,15 +94,10 @@ html
                 i.fa.fa-comments
                 span Chats
                 small.badge.pull-right.bg-green
-            li(class=_battles_active)
-              a(href='/battles')
+            li(class=_searches_active)
+              a(href='/searches')
                 i.fa.fa-search
-                span Battles
-                small.badge.pull-right.bg-green
-            li(class=_transactionLog_active)
-              a(href='/transactionLog')
-                i.fa.fa-search
-                span Transaction Log
+                span Searches
                 small.badge.pull-right.bg-green
       .content-wrapper
         block content
@@ -110,7 +105,7 @@ html
     footer.main-footer
       .pull-right.hidden-xs
         b Version 0.6
-      strong  Copyright &copy; 2018 Winis
+      strong  Copyright &copy; 2016 RightNow
       |  All rights reserved
 
     block message-modal
