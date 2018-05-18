@@ -1,20 +1,22 @@
 'use strict';
 
 module.exports = function(HallOfFame) {
-  HallOfFame.findTopScores = async function(whereQuery) {
+  HallOfFame.executeQuery = async function(sortBy, whereQuery) {
     const UserModel =  HallOfFame.app.models.user;
 
     return await UserModel.find({
-      where: whereQuery, limit: 20, order: 'winis DESC',
-      fields: {username: true, winis: true, id: true, avatar: true},
+      where: whereQuery, limit: 20, order: sortBy + ' DESC',
+      fields: {username: true, winis: true, diamonds: true, id: true, avatar: true},
     });
   };
 
-  HallOfFame.getTopScores = async function() {
-    return HallOfFame.findTopScores({});
+  HallOfFame.getGlobalTop = async function(sortBy) {
+    if (!sortBy) sortBy = 'winis';
+
+    return HallOfFame.executeQuery(sortBy, {});
   };
 
-  HallOfFame.getFriendsTopScores = async function(options) {
+  HallOfFame.getFriendsTop = async function(sortBy, options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = HallOfFame.app.models.user;
@@ -24,8 +26,8 @@ module.exports = function(HallOfFame) {
     friendIds.push(userId);
 
     const whereQuery = {id: {inq: friendIds}};
+    if (!sortBy) sortBy = 'winis';
 
-    const result = await HallOfFame.findTopScores(whereQuery);
-    return result;
+    return await HallOfFame.executeQuery(sortBy, whereQuery);
   };
 };

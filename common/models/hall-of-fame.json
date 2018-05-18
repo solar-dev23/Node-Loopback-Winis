@@ -19,7 +19,16 @@
     }
   ],
   "methods": {
-    "getTopScores": {
+    "getGlobalTop": {
+      "accepts": [
+        {
+          "arg": "sort",
+          "type": "string",
+          "http": {
+            "source": "query"
+          }
+        }
+      ],
       "returns": {
         "arg": "users",
         "type": "array",
@@ -31,8 +40,15 @@
         "verb": "get"
       }
     },
-    "getFriendsTopScores": {
+    "getFriendsTop": {
       "accepts": [
+        {
+          "arg": "sort",
+          "type": "string",
+          "http": {
+            "source": "query"
+          }
+        },
         {
           "arg": "options",
           "type": "object",
