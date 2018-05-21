@@ -8,7 +8,7 @@ block content
   // Content Header (Page header)
   section.content-header
     h1
-      | #{tableName}
+      | #{_table_name}
     ol.breadcrumb
       li
         a(href='/')
@@ -24,7 +24,7 @@ block content
       .col-xs-12
         .box
           .box-header
-            h3.box-title #{tableName}
+            h3.box-title #{_table_name}
           // /.box-header
           .box-body.table-responsive
             table#data.table.table-bordered.table-striped
