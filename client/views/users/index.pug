@@ -8,7 +8,7 @@ block content
   // Content Header (Page header)
   section.content-header
     h1
-      | #{_table_name}
+      | #{tableName}
     ol.breadcrumb
       li
         a(href='/')
@@ -24,7 +24,7 @@ block content
       .col-xs-12
         .box
           .box-header
-            h3.box-title #{_table_name}
+            h3.box-title #{tableName}
           // /.box-header
           .box-body.table-responsive
             table#data.table.table-bordered.table-striped
@@ -42,7 +42,7 @@ block content
                   th Created
                   th Authorization method
               tbody
-                each user in _users
+                each user in users
                   tr(data-href='/users/' + user["id"] class="href-row")
                     td #{user['id']}
                     td #{user['isAdmin']}

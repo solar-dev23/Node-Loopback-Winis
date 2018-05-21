@@ -11,45 +11,11 @@ let auth = require('../middlewares/auth');
 
 router.get('/', auth, async function(req, res, next) {
   let app = req.app;
-  let Users = app.models.user;
+  let User = app.models.user;
 
-  const users = await Users.find();
+  const users = await User.find();
 
-  //     let userMarkers = [];
-
-  //     if (err) {
-  //       return next(err);
-  //     }
-
-  let userData = _.map(users, function(user) {
-    // let advertCount = 0;
-    // let serviceCount = 0;
-
-    // user.adverts().forEach(function(ad) {
-    //   switch (ad.type) {
-    //     case 'business':
-    //       serviceCount++;
-    //       break;
-    //     case 'advert':
-    //       advertCount++;
-    //       break;
-    //   }
-    // });
-
-    // let userMarker = {
-    //   title: user.name,
-    //   lastUpdate: moment(user.updatedAt).fromNow(),
-    // };
-
-    // if (user.location && user.useGps) {
-    //   userMarker.location = [
-    //     user.location.lat,
-    //     user.location.lng,
-    //   ];
-    // }
-
-    // userMarkers.push(userMarker);
-
+  const userData = users.map((user)=>{
     return {
       id: user.id,
       username: user.username,
@@ -62,8 +28,6 @@ router.get('/', auth, async function(req, res, next) {
       spins: user.spins,
       winis: user.winis,
       staked: user.staked,
-      // adCount: advertCount,
-      // serviceCount: serviceCount,
       isAdmin: user.isAdmin,
       createdAt: user.createdAt,
     };
@@ -73,8 +37,7 @@ router.get('/', auth, async function(req, res, next) {
     usersActive: 'active',
     pageName: 'User List',
     tableName: 'Users',
-    _users: userData,
-    _markers: undefined,
+    users: userData,
   }));
 });
 
