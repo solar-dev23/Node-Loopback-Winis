@@ -1,0 +1,91 @@
+extends ../layout
+
+block head
+  link(href='/css/pages/adverts.css', rel='stylesheet', type='text/css')
+  link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | #{_table_name}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li.active #{_page_name}
+
+  // Main content
+  section.content
+    .row
+      #map
+    .row
+      .col-xs-12
+        .box
+          .box-header
+            h3.box-title #{_table_name}
+          // /.box-header
+          .box-body.table-responsive
+            table#data.table.table-bordered.table-striped
+              thead
+                tr
+                  th ID
+                  th Admin
+                  th Phone Number
+                  th Username
+                  th Winis
+                  th Staked
+                  th Spins
+                  th Scratches
+                  th Diamonds
+                  th Created
+                  th Authorization method
+              tbody
+                each user in _users
+                  tr(data-href='/users/' + user["id"] class="href-row")
+                    td #{user['id']}
+                    td #{user['isAdmin']}
+                    td !{user['phoneNumber']}
+                    td !{user['username']}
+                    td #{user["winis"]}
+                    td #{user["staked"]}
+                    td #{user["spins"]}
+                    td #{user["scratches"]}
+                    td #{user["diamonds"]}
+                    td #{user["createdAt"]}
+                    td #{user["externalAuthMethod"]}
+              tfoot
+                tr
+                  th ID
+                  th Admin
+                  th Phone Number
+                  th Username
+                  th Winis
+                  th Staked
+                  th Spins
+                  th Scratches
+                  th Diamonds
+                  th Created
+                  th Authorization method
+
+block javascript
+  //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
+
+  // DataTables Includes
+  script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')
+  script(src='/bower_components/datatables.net-bs/js/dataTables.bootstrap.js', type='text/javascript')
+  script(src='//cdn.datatables.net/plug-ins/1.10.12/dataRender/ellipsis.js', type='text/javascript')
+
+  // FontAwesome Markers
+  script(src='/bower_components/fontawesome-markers/fontawesome-markers.min.js', type='text/javascript')
+
+  // page script
+  script(src='/js/pages/users.js',type='text/javascript')
+
+  // Cluster Google Maps Markers
+  script(src='/js/libs/markerclusterer.js',type='text/javascript')
+
+  // Google Maps
+  script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQ3VNunxMu13MDSewHi-Qt4Nd3HiU7pAw&callback=initMap")
+
