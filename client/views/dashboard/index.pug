@@ -18,7 +18,7 @@ block content
         // small box
         .small-box.bg-aqua
           .inner
-            h3 #{_total_users}
+            h3 #{totalUsers}
             p Total Users
           .icon
             i.ion.ion-person-add
@@ -27,7 +27,7 @@ block content
         // small box
         .small-box.bg-green
           .inner
-            h3  #{_total_searches}
+            h3  #{totalSearches}
             p Total searches
           .icon
             i.ion.ion-stats-bars
@@ -36,7 +36,7 @@ block content
         // small box
         .small-box.bg-yellow
           .inner
-            h3 #{_total_requests}
+            h3 #{totalRequests}
             p Chat requests
           .icon
             i.ion.ion-bag
@@ -45,7 +45,7 @@ block content
         // small box
         .small-box.bg-red
           .inner
-            h3 #{_total_messages}
+            h3 #{totalMessages}
             p Total Adverts
           .icon
             i.ion.ion-pie-graph
@@ -63,7 +63,7 @@ block content
                   th Name
                   th Created
               tbody
-                each user in _latest_users
+                each user in latestUsers
                   tr(data-href='/users/' + user['id'] class="href-row")
                     td #{user["id"]}
                     td #{user["name"]}
@@ -82,7 +82,7 @@ block content
                   th User
                   th Created
               tbody
-                each advert in _latest_adverts
+                each advert in latestAdverts
                   tr(data-href='/adverts/' + advert["id"] class="href-row")
                     td #{advert["id"]}
                     td #{advert["name"]}

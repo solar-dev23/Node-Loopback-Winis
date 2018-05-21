@@ -3,7 +3,7 @@
 let express = require('express');
 let router = express.Router();
 let auth = require('../middlewares/auth');
-let async = require('async');
+
 let _ = require('lodash');
 let utils = require('../utils/utils');
 
@@ -34,14 +34,14 @@ router.get('/', auth, function(req, res) {
   //     adverts = results[5];
 
   res.render('dashboard', _.defaults(utils.getRequestVariables(app, req), {
-    _dashboard_active: 'active',
+    dashboardActive: 'active',
     pageName: 'Dashboard',
-    _total_messages: 0,
-    _total_requests: 0,
-    _total_searches: 0,
-    _total_users: 0,
-    _latest_users: [],
-    _latest_adverts: [],
+    totalMessages: 0,
+    totalRequests: 0,
+    // totalSearches: 0,
+    // totalUsers: 0,
+    latestUsers: [],
+    latestAdverts: [],
   }));
   // });
 });

@@ -48,14 +48,14 @@ html
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
                   img(class="user-image", alt="User Image", src=_avatar)
                   span(class="hidden-xs")
-                    | #{_username}
+                    | #{username}
                     i.caret
                 ul.dropdown-menu
                   // User image
                   li.user-header.bg-light-blue
                     img.img-circle(src=_avatar, alt='User Image')
                     p
-                      | #{_username}
+                      | #{username}
                   // Menu Body
                   // Menu Footer
                   li.user-footer
@@ -69,7 +69,7 @@ html
           // Sidebar user panel
           .user-panel
             .pull-left.image
-              img.img-circle(src=_avatar, alt='User Image')
+              img.img-circle(src=avatar, alt='User Image')
             .pull-left.info
               p Hello, #{_username}
 
@@ -80,9 +80,9 @@ html
                 i.fa.fa-dashboard
                 span Dashboard
             li(class=_adverts_active)
-              a(href='/adverts')
+              a(href='/deposits')
                 i.fa.fa-bar-chart-o
-                span Adverts
+                span Deposits
                 small.badge.pull-right.bg-green
             li(class=_users_active)
               a(href='/users')
@@ -94,10 +94,15 @@ html
                 i.fa.fa-comments
                 span Chats
                 small.badge.pull-right.bg-green
-            li(class=_searches_active)
-              a(href='/searches')
+            li(class=_battles_active)
+              a(href='/battles')
                 i.fa.fa-search
-                span Searches
+                span Battles
+                small.badge.pull-right.bg-green
+            li(class=_transactionLog_active)
+              a(href='/transactionLog')
+                i.fa.fa-search
+                span Transaction Log
                 small.badge.pull-right.bg-green
       .content-wrapper
         block content

@@ -31,34 +31,34 @@ block content
               thead
                 tr
                   th ID
-                  th User
-                  th Location
-                  th Address
-                  th Tags
-                  th Matched
-                  th Created
+                  th Attribute
+                  th Amount
+                  th Operation Type
+                  th First Actor
+                  th Second Actor
+                  th Created At
               tbody
-                each row in _data
-                  tr
-                    td #{row['id']}
-                    td !{row['user']}
-                    td #{row['location']}
-                    td #{row['address']}
-                    td #{row['tags']}
-                    td #{row['matched']}
-                    td(data-sort=row["createdAt"])= moment(row["createdAt"]).fromNow()
+                each transactionLog in transactionLogs
+                  tr(data-href='/transactionLogs/' + transactionLog["id"] class="href-row")
+                    td #{transactionLog['id']}
+                    td #{transactionLog['attribute']}
+                    td #{transactionLog['amount']}
+                    td #{transactionLog['operationType']}
+                    td #{transactionLog['firstActor']}
+                    td #{transactionLog['secondActor']}
+                    td #{transactionLog['createdAt']}
               tfoot
-                  tr
-                    th ID
-                    th User
-                    th Location
-                    th Address
-                    th Tags
-                    th Matched
-                    th Created
+                tr
+                  th ID
+                  th Attribute
+                  th Amount
+                  th Operation Type
+                  th First Actor
+                  th Second Actor
+                  th Created At
 
 block javascript
-  script var searchLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
+  //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
 
   // DataTables Includes
   script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')
@@ -69,10 +69,11 @@ block javascript
   script(src='/bower_components/fontawesome-markers/fontawesome-markers.min.js', type='text/javascript')
 
   // page script
-  script(src='/js/pages/searches.js',type='text/javascript')
+  script(src='/js/pages/users.js',type='text/javascript')
 
   // Cluster Google Maps Markers
   script(src='/js/libs/markerclusterer.js',type='text/javascript')
+
   // Google Maps
   script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQ3VNunxMu13MDSewHi-Qt4Nd3HiU7pAw&callback=initMap")
 
