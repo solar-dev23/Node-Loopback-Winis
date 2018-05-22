@@ -3,10 +3,10 @@
 let express = require('express');
 let router = express.Router();
 let loginModule = require('../utils/login');
-let _ = require('lodash');
 let debug = require('debug')('admin:account');
 let utils = require('../utils/utils');
 let auth = require('../middlewares/auth');
+let md5 = require('md5');
 
 router.get('/login', async function(req, res) {
   res.render('account/login', {
@@ -17,15 +17,13 @@ router.get('/login', async function(req, res) {
 // Check user login post
 router.post('/login', async function(req, res) {
   let app = req.app;
-
-  const entry = await loginModule.authenticate(app, req.body.email, req.body.password);
-  console.log(entry);
+  const entry = await loginModule.authenticate(app, req.body.login, req.body.password);
   if (entry) {
-    debug('Successful login to "%s" from %s', req.body.email, req.connection.remoteAddress);
+    debug('Successful login to "%s" from %s', req.body.login, req.connection.remoteAddress);
     req.session.user = entry;
     res.redirect('/');
   } else {
-    debug('Unsuccessful login attempt to "%s" from %s', req.body.email, req.connection.remoteAddress);
+    debug('Unsuccessful login attempt to "%s" from %s', req.body.login, req.connection.remoteAddress);
     res.redirect('login?error');
   }
 });
@@ -36,37 +34,37 @@ router.get('/logout', auth, function(req, res) {
 });
 
 router.get('/changepass', auth, function(req, res) {
-  // let app = req.app;
+  const app = req.app;
 
-  // res.render('account/changepass', _.defaults(utils.getRequestVariables(app, req), {
-  //   pageName: 'Change Password',
-  // }));
+  res.render('account/changepass', Object.assign(utils.getRequestVariables(app, req), {
+    pageName: 'Change Password',
+  }));
 });
 
-router.post('/changepass', auth, function(req, res) {
-  // let app = req.app;
+router.post('/changepass', auth, async function(req, res) {
+  const app = req.app;
 
-  // if (req.body.new_pass1 == '') {
-  //   res.send('Please insert new password');
-  //   return;
-  // }
+  if (req.body.newPass1 == '') {
+    res.send('Please insert new password');
+    return;
+  }
 
-  // if (req.body.new_pass1 != req.body.new_pass2) {
-  //   res.send('Passwords don\'t match');
-  //   return;
-  // }
+  if (req.body.newPass1 != req.body.newPass2) {
+    res.send('Passwords don\'t match');
+    return;
+  }
 
-  // loginModule.authenticate(app, req.session.user.email, req.body.current_pass, function(result) {
-  //   if (!result) {
-  //     res.send('Current password is not valid');
-  //   } else {
-  //     app.models.User.findById(req.session.user.id, function(err, user) {
-  //       user.updateAttribute('password', req.body.new_pass1);
-  //       console.log('User ' + req.session.user.email + ' has changed password');
-  //       res.send('');
-  //     });
-  //   }
-  // });
+  const result = await loginModule.authenticate(app, req.session.user.login, req.body.currentPass);
+  if (!result) {
+    res.send('Current password is not valid');
+  } else {
+    // let user = app.models.user.find({_id: req.session.user.id});
+    const newUser = await app.models.user.changeAdminPassword(req.session.user.id, req.body.newPass1);
+    console.log(newUser);
+    // await user.changeAdminPassword(req.body.newPass1);
+    console.log('User ' + req.session.user.login + ' has changed password');
+    res.send('');
+  }
 });
 
 module.exports = router;

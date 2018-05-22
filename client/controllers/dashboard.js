@@ -4,7 +4,6 @@ let express = require('express');
 let router = express.Router();
 let auth = require('../middlewares/auth');
 
-let _ = require('lodash');
 let utils = require('../utils/utils');
 
 router.get('/', auth, function(req, res) {
@@ -32,8 +31,7 @@ router.get('/', auth, function(req, res) {
   //     totalSearches = results[3],
   //     users = results[4],
   //     adverts = results[5];
-
-  res.render('dashboard', _.defaults(utils.getRequestVariables(app, req), {
+  const a = Object.assign(utils.getRequestVariables(app, req), {
     dashboardActive: 'active',
     pageName: 'Dashboard',
     totalMessages: 0,
@@ -42,7 +40,9 @@ router.get('/', auth, function(req, res) {
     // totalUsers: 0,
     latestUsers: [],
     latestAdverts: [],
-  }));
+  });
+  console.log(a);
+  res.render('dashboard', a);
   // });
 });
 

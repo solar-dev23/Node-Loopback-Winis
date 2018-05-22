@@ -1,10 +1,12 @@
+'use strict';
+
 module.exports =
 {
   getRequestVariables: function(app, req) {
+    console.log(req.session);
     return {
-      _username: req.session.user.username || req.session.user.name,
-      _avatar: req.session.user.avatar,
-      _email: req.session.user.email,
+      username: req.session.user.adminLogin,
+      avatar: req.session.user.avatar,
     };
   },
 };

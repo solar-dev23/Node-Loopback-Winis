@@ -3,15 +3,14 @@
 let express = require('express');
 let router = express.Router();
 let auth = require('../middlewares/auth');
-let _ = require('lodash');
 let async = require('async');
 let debug = require('debug')('webadmin:chats');
 let SendBird = require('../../common/services/SendBirdService');
 let utils = require('../utils/utils');
 
 router.get('/', auth, function(req, res) {
-//   let app = req.app;
-//   let Chats = app.models.chatLog;
+  let app = req.app;
+  let Chats = app.models.chatLog;
 
 //   Chats.find({'include': ['user', 'advert']}, function(err, data) {
 //     let tableData = _.map(data, function(chat) {

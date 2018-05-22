@@ -50,11 +50,11 @@ module.exports = function(User) {
     }
   };
 
-  User.findByPhones = async (phones) => {
+  User.findByPhones = async(phones) => {
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 
-  User.findByUsername = async (username) => {
+  User.findByUsername = async(username) => {
     const user = await User.findOne({where: {'username': {regexp: `/^${username}$/i`}}});
     if (user === null) {
       const error = new Error('No user found');
@@ -380,7 +380,7 @@ module.exports = function(User) {
     };
   };
 
-  User.beforeRemote('prototype.__link__blocked', async (ctx) => {
+  User.beforeRemote('prototype.__link__blocked', async(ctx) => {
     const user = ctx.instance;
     const blockedId = ctx.args.fk;
 
@@ -388,14 +388,14 @@ module.exports = function(User) {
     await user.pending.remove(blockedId);
   });
 
-  User.afterRemote('prototype.__unlink__blocked', async (ctx) => {
+  User.afterRemote('prototype.__unlink__blocked', async(ctx) => {
     const user = ctx.instance;
     const unblockedId = ctx.args.fk;
 
     await user.friends.add(unblockedId);
   });
 
-  User.afterRemote('prototype.__link__friends', async (ctx) => {
+  User.afterRemote('prototype.__link__friends', async(ctx) => {
     const user = ctx.instance;
     const userId = user.id;
     const friendId = ctx.args.fk;
@@ -437,6 +437,15 @@ module.exports = function(User) {
     } else {
       return null;
     }
+  };
+
+  User.changeAdminPassword = async function(userId, newPassword) {
+    console.log('----');
+    let user = await User.findById(userId);
+    console.log(user);
+    const newUser = await user.updateAttribute('adminPassword', md5(newPassword));
+    // const newUser = await this.updateAttribute('adminPassword', md5(newPassword));
+    return newUser;
   };
 
   User.observe('before save', function addRandomName(ctx, next) {

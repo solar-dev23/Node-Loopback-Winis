@@ -3,8 +3,8 @@
 'use strict';
 
 module.exports.startup = function(app) {
-  // let path = require('path');
-  // let express = require('express');
+  let path = require('path');
+  let express = require('express');
   let cookieParser = require('cookie-parser');
   let bodyParser = require('body-parser');
   let session = require('cookie-session');
@@ -20,9 +20,9 @@ module.exports.startup = function(app) {
     secret: '6GYJ7ExKkTcc5pB8M0K8Gw1PqoGAAWtlRvHKPhA8jDUCZuPM4r',
   }));
   //   // This is for pictures&css to work
-  //   app.use(require('less-middleware')(path.join(__dirname, 'public')));
-  //   app.use(express.static(path.join(__dirname, 'public')));
-  //   app.use('/bower_components',  express.static(__dirname + '/bower_components'));
+  app.use(require('less-middleware')(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'public')));
+  app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
   //   app.locals.moment = moment;
   //   app.locals.shortId = mongoShortId;

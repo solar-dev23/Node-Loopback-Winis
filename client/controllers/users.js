@@ -1,6 +1,5 @@
 'use strict';
 
-let _ = require('lodash');
 let utils = require('../utils/utils');
 // let forms = require('forms');
 let express = require('express');
@@ -21,7 +20,6 @@ router.get('/', auth, async function(req, res, next) {
       username: user.username,
       phoneNumber: user.phoneNumber,
       address: user.address,
-      email: user.email,
       diamonds: user.diamonds,
       externalAuthMethod: user.externalAuthMethod,
       scratches: user.scratches,
@@ -33,7 +31,7 @@ router.get('/', auth, async function(req, res, next) {
     };
   });
 
-  res.render('users', _.defaults(utils.getRequestVariables(app, req), {
+  res.render('users', Object.assign(utils.getRequestVariables(app, req), {
     usersActive: 'active',
     pageName: 'User List',
     tableName: 'Users',
@@ -104,7 +102,7 @@ function renderForm(res, req, formHTML, userId, user) {
 //     }
 //   }
 
-//   res.render('users/view', _.defaults(utils.getRequestVariables(app, req), {
+//   res.render('users/view', Object.assign(utils.getRequestVariables(app, req), {
 //     usersActive: 'active',
 //     pageName: 'User - Details',
 //     _user: user,
@@ -164,7 +162,7 @@ router.get('/:id/delete', auth, function(req, res) {
 //   Users.destroyById(userId, function(err) {
 //     if (err) return res.send('Failed deleting user ' + id + ' because of ' + err);
 
-//     return res.render('users/delete', _.defaults(utils.getRequestVariables(app, req), {
+//     return res.render('users/delete', Object.assign(utils.getRequestVariables(app, req), {
 //       usersActive: 'active',
 //       pageName: 'Users',
 //     }));
@@ -193,7 +191,7 @@ router.get('/:id/installs', auth, function(req, res) {
     //       };
     //     });
 
-    //     res.render('users/installs', _.defaults(utils.getRequestVariables(app, req), {
+    //     res.render('users/installs', Object.assign(utils.getRequestVariables(app, req), {
     //       usersActive: 'active',
     //       pageName: 'User Installs',
     //       tableName: 'Installations',

@@ -1,6 +1,5 @@
 'use strict';
 
-let _ = require('lodash');
 let utils = require('../utils/utils');
 // let forms = require('forms');
 let express = require('express');
@@ -28,7 +27,7 @@ router.get('/', auth, async function(req, res, next) {
     };
   });
   
-  res.render('battles', _.defaults(utils.getRequestVariables(app, req), {
+  res.render('battles', Object.assign(utils.getRequestVariables(app, req), {
     usersActive: 'active',
     pageName: 'Battle List',
     tableName: 'Battles',

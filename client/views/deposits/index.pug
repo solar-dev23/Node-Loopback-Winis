@@ -14,12 +14,10 @@ block content
         a(href='/')
           i.fa.fa-dashboard
           | Dashboard
-      li.active #{_page_name}
+      li.active #{pageName}
 
   // Main content
   section.content
-    .row
-      #map
     .row
       .col-xs-12
         .box
@@ -67,9 +65,4 @@ block javascript
   // page script
   script(src='/js/pages/users.js',type='text/javascript')
 
-  // Cluster Google Maps Markers
-  script(src='/js/libs/markerclusterer.js',type='text/javascript')
-
-  // Google Maps
-  script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQ3VNunxMu13MDSewHi-Qt4Nd3HiU7pAw&callback=initMap")
 

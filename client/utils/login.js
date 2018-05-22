@@ -1,5 +1,5 @@
-let _ = require('lodash');
-
+'use strict';
+const md5 = require('md5');
 // The password check function
 // fn = next function. gets null if error, otherwise the collection entry
 /* Example of returned argument:
@@ -12,13 +12,9 @@ let _ = require('lodash');
 
 exports.authenticate = async function(app, login, pass) {
   const user = await app.models.user.loginAdmin({
-    login: login, // must provide login or "username"
-    password: pass, // required by default
+    login: login,
+    password: pass,
   });
-
-  if (typeof user.avatar == 'undefined') {
-    user.avatar = '/img/avatar.png';
-  }
 
   return user;
 };
