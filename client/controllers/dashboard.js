@@ -31,18 +31,16 @@ router.get('/', auth, function(req, res) {
   //     totalSearches = results[3],
   //     users = results[4],
   //     adverts = results[5];
-  const a = Object.assign(utils.getRequestVariables(app, req), {
+  res.render('dashboard', Object.assign(utils.getRequestVariables(app, req), {
     dashboardActive: 'active',
     pageName: 'Dashboard',
     totalMessages: 0,
     totalRequests: 0,
-    // totalSearches: 0,
-    // totalUsers: 0,
+    totalSearches: 0,
+    totalUsers: 0,
     latestUsers: [],
     latestAdverts: [],
-  });
-  console.log(a);
-  res.render('dashboard', a);
+  }));
   // });
 });
 

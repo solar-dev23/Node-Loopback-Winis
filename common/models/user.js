@@ -440,11 +440,8 @@ module.exports = function(User) {
   };
 
   User.changeAdminPassword = async function(userId, newPassword) {
-    console.log('----');
     let user = await User.findById(userId);
-    console.log(user);
     const newUser = await user.updateAttribute('adminPassword', md5(newPassword));
-    // const newUser = await this.updateAttribute('adminPassword', md5(newPassword));
     return newUser;
   };
 

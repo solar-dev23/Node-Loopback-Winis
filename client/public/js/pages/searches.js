@@ -8,7 +8,7 @@ $('#data').DataTable({
   'info': true,
   'scrollX': true,
   'order': [[6, 'desc']],
-  "columnDefs": [
+  'columnDefs': [
     {
       targets: 0,
       width: '5em',

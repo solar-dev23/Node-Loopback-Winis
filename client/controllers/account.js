@@ -58,11 +58,7 @@ router.post('/changepass', auth, async function(req, res) {
   if (!result) {
     res.send('Current password is not valid');
   } else {
-    // let user = app.models.user.find({_id: req.session.user.id});
-    const newUser = await app.models.user.changeAdminPassword(req.session.user.id, req.body.newPass1);
-    console.log(newUser);
-    // await user.changeAdminPassword(req.body.newPass1);
-    console.log('User ' + req.session.user.login + ' has changed password');
+    await app.models.user.changeAdminPassword(req.session.user.id, req.body.newPass1);
     res.send('');
   }
 });
