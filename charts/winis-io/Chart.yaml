@@ -1,4 +1,0 @@
-apiVersion: v1
-description: Winisapp backend chart
-name: winis-io
-version: 0.1.0
