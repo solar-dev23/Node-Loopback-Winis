@@ -1,6 +1,7 @@
 // var moment = require('moment-timezone');
 // var mongoShortId = require('base64-mongo-id');
 'use strict';
+let moment = require('moment-timezone');
 
 module.exports.startup = function(app) {
   let path = require('path');
@@ -24,7 +25,7 @@ module.exports.startup = function(app) {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-  //   app.locals.moment = moment;
+  app.locals.moment = moment;
   //   app.locals.shortId = mongoShortId;
 
   app.use(require('./routes'));

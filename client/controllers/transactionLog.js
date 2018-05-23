@@ -4,7 +4,7 @@ let utils = require('../utils/utils');
 let forms = require('forms');
 let express = require('express');
 let router = express.Router();
-// let moment = require('moment');
+let moment = require('moment');
 let formUtils = require('../utils/form');
 let auth = require('../middlewares/auth');
 
@@ -15,20 +15,19 @@ router.get('/', auth, async function(req, res, next) {
   const transactionLogs = await TransactionLog.find();
 
   const transactionLogsData = transactionLogs.map((transactionLog)=>{
-    return transactionLog;
-    // {
-    //     "_id" : ObjectId("5a96cd7249e9505b59996036"),
-    //     "attribute" : "winis",
-    //     "amount" : 10,
-    //     "operationType" : "release",
-    //     "firstActor" : "5a4148c2e51b2d00018fb9e2",
-    //     "secondActor" : "not_set",
-    //     "createdAt" : ISODate("2018-02-28T15:40:34.979Z")
-    // }
+    return {
+      id: transactionLog.id,
+      attribute: transactionLog.attribute,
+      amount: transactionLog.amount,
+      operationType: transactionLog.operationType,
+      firstActor: transactionLog.firstActor,
+      secondActor: transactionLog.secondActor,
+      createdAt: transactionLog.createdAt,   
+    };
   });
   
   res.render('transactionLogs', Object.assign(utils.getRequestVariables(app, req), {
-    transactionLogsActive: 'active',
+    transactionLogActive: 'active',
     pageName: 'Transaction List',
     tableName: 'Transactions',
     transactionLogs: transactionLogsData,
@@ -85,6 +84,7 @@ router.post('/:id', auth, async function(req, res) {
     },
   });
 });
+
 /** 
 * generate form
 * @return {string}form configuration

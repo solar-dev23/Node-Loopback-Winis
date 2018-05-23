@@ -1,7 +1,6 @@
 extends ../layout
 
 block head
-  link(href='/css/pages/adverts.css', rel='stylesheet', type='text/css')
   link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
 
 block content
@@ -34,6 +33,9 @@ block content
                   th Amount
                   th UserId
                   th CreatedAt
+                  th q
+                  th w
+                  th e
               tbody
                 each deposit in deposits
                   tr(data-href='/deposits/' + deposit["id"] class="href-row")
@@ -42,14 +44,21 @@ block content
                     td #{deposit['method']}
                     td #{deposit['amount']}
                     td #{deposit['userId']}
-                    td #{deposit['createdAt']}
+                    td(data-sort=deposit["createdAt"])= moment(deposit["createdAt"]).fromNow()
+                    td 1
+                    td 2
+                    td 3
               tfoot
                 tr
                   th ID
                   th External Id
                   th Method
                   th Amount
+                  th UserId
                   th CreatedAt
+                  th q
+                  th w
+                  th e
 
 block javascript
   //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
