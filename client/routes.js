@@ -9,7 +9,7 @@ router.use('/chats', require('./controllers/chats')); // TODO
 router.use('/', require('./controllers/dashboard')); // main dashboadr
 router.use('/deposits', require('./controllers/deposits')); // TODO
 router.use('/_ah', require('./controllers/tools')); // heartbeat
-router.use('/transactionLog', require('./controllers/transactionLog')); // transaction log
+router.use('/transactionLogs', require('./controllers/transactionLog')); // transaction log
 router.use('/users', require('./controllers/users')); // users table
 
 // router.use('/debug', require('./controllers/debug')); // change to transaction log

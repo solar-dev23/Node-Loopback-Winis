@@ -1,11 +1,11 @@
 'use strict';
 
 let utils = require('../utils/utils');
-// let forms = require('forms');
+let forms = require('forms');
 let express = require('express');
 let router = express.Router();
 // let moment = require('moment');
-// let formUtils = require('../utils/form');
+let formUtils = require('../utils/form');
 let auth = require('../middlewares/auth');
 
 router.get('/', auth, async function(req, res, next) {
@@ -38,120 +38,98 @@ router.get('/', auth, async function(req, res, next) {
     users: userData,
   }));
 });
-
+/** 
+* generate form
+* @return {string}form configuration
+*/
 function generateForm() {
-//   let fields = forms.fields;
-//   let widgets = forms.widgets;
+  let fields = forms.fields;
+  let widgets = forms.widgets;
 
-//   return forms.create({
-//     name: fields.string({
-//       required: true,
-//     }),
-//     address: fields.string({
-//       required: false,
-//     }),
-//     email: fields.email({
-//       required: true,
-//       widget: widgets.email(),
-//     }),
-//     phoneNumber: fields.number({
-//       required: true,
-//       widget: widgets.tel(),
-//     }),
-//     deviceType: fields.string({
-//       choices: {
-//         ios: 'iOS',
-//         android: 'Android',
-//       },
-//       widget: widgets.select(),
-//     }),
-//     useGps: fields.boolean({
-//       widget: widgets.checkbox(),
-//     }),
-//     language: fields.string({
-//       choices: {
-//         en: 'English',
-//         he: 'Hebrew',
-//       },
-//       widget: widgets.select(),
-//     }),
-//     admin: fields.boolean({
-//       widget: widgets.checkbox(),
-//     }),
-//   });
+  return forms.create({
+    username: fields.string({
+      required: true,
+    }),
+    phoneNumber: fields.number({
+      required: true,
+      widget: widgets.tel(),
+    }),
+    winis: fields.number({
+      widget: widgets.number(),
+    }),
+    staked: fields.number({
+      widget: widgets.number(),
+    }),
+    diamonds: fields.number({
+      widget: widgets.number(),
+    }),
+    scratches: fields.number({
+      widget: widgets.number(),
+    }),
+    spins: fields.number({
+      widget: widgets.number(),
+    }),
+    isAdmin: fields.boolean({
+      widget: widgets.checkbox(),
+    }),
+    adminLogin: fields.string({
+      required: true,
+    }),
+    adminPassword: fields.string({
+      required: true,
+    }),
+  });
 }
 
-function renderForm(res, req, formHTML, userId, user) {
-//   let app = req.app;
+router.get('/:id', auth, async function(req, res) {
+  let app = req.app;
+  let Users = app.models.user;
+  let userId = req.params.id;
 
-//   let userMarker = {};
-//   if (user) {
-//     userMarker.title = user.name;
+  let userForm = generateForm();
 
-//     userMarker.lastUpdate = moment(user.updatedAt).fromNow();
-
-//     if (user.location) {
-//       userMarker.location = [
-//         user.location.lat,
-//         user.location.lng,
-//       ];
-//     }
-
-//     if (user.address) {
-//       userMarker.address = user.address;
-//     }
-//   }
-
-//   res.render('users/view', Object.assign(utils.getRequestVariables(app, req), {
-//     usersActive: 'active',
-//     pageName: 'User - Details',
-//     _user: user,
-//     _userId: userId,
-//     _userMarker: userMarker,
-//     _userForm: formHTML,
-//     _resError: req.resError,
-//   }));
-}
-
-router.get('/:id', auth, function(req, res) {
-//   let app = req.app;
-//   let Users = app.models.user;
-//   let userId = req.params.id;
-
-//   let userForm = generateForm();
-
-//   Users.findById(userId, function(err, user) {
-//     if (err) {
-//       return res.send(err);
-//     }
-
-//     renderForm(res, req, userForm.bind(user).toHTML(formUtils.bootstrapField), userId, user);
-//   });
+  const currentUser = await Users.findById(userId);
+  res.render('users/view', Object.assign(utils.getRequestVariables(app, req), {
+    usersActive: 'active',
+    pageName: 'User - Details',
+    user: currentUser,
+    userId: userId,
+    userForm: userForm.bind(currentUser).toHTML(formUtils.bootstrapField),
+    resError: req.resError,
+  }));
 });
 
-router.post('/:id', auth, function(req, res) {
-//   let app = req.app;
-//   let Users = app.models.user;
-//   let userId = req.params.id;
+router.post('/:id', auth, async function(req, res) {
+  let app = req.app;
+  let Users = app.models.user;
+  let userId = req.params.id;
 
-//   let userForm = generateForm();
+  let userForm = generateForm();
 
-//   userForm.handle(req, {
-//     success: function(form) {
-//       Users.findById(userId, function(err, user) {
-//         if (err) return cb('Couldn\'t find a user with ID ' + userId);
-
-//         user.updateAttributes(form.data, function(err, user) {
-//           if (err) return res.send(err);
-
-//           renderForm(res, req, form.toHTML(formUtils.bootstrapField), userId, user);
-//         });
-//       });
-//     },
-//     other: function(form) {
-//       renderForm(res, req, form.toHTML(formUtils.bootstrapField), userId);
-//     },
-//   });
+  userForm.handle(req, {
+    success: async function(form) {
+      const user = await Users.findById(userId);
+      const updatedUser = await user.updateAttributes(form.data);
+      res.render('users/view', Object.assign(utils.getRequestVariables(app, req), {
+        usersActive: 'active',
+        pageName: 'User - Details',
+        user: updatedUser,
+        userId: userId,
+        userForm: userForm.bind(updatedUser).toHTML(formUtils.bootstrapField),
+        resError: req.resError,
+      }));
+    },
+    other: function(form) {
+      res.render('users/view', Object.assign(utils.getRequestVariables(app, req), {
+        usersActive: 'active',
+        pageName: 'User - Details',
+        // user: updatedUser,
+        userId: userId,
+        // userForm: userForm.bind(updatedUser).toHTML(formUtils.bootstrapField),
+        resError: req.resError,
+      }));
+    },
+  });
 });
 
 router.get('/:id/delete', auth, function(req, res) {

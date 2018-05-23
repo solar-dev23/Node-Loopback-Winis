@@ -1,3 +1,5 @@
+'use strict';
+
 $('.href-row').css('cursor', 'pointer').click(function() {
   window.document.location = $(this).data('href');
 });

@@ -1,9 +1,15 @@
+'use strict';
+
 $('.href-row').css('cursor', 'pointer').click(function() {
   window.document.location = $(this).data('href');
 });
 
 $('#confirm-delete').on('show.bs.modal', function(e) {
   $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+});
+
+$('#confirm-save').on('show.bs.modal', function(e) {
+  console.log('SAVE');
 });
 
 $('#data').DataTable({

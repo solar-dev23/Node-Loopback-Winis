@@ -40,7 +40,7 @@ router.get('/', auth, function(req, res) {
 
 //     let keys = _.keys(_.first(tableData));
 
-//     res.render('chats', _.defaults(utils.getRequestVariables(app, req), {
+//     res.render('chats', Object.assign(utils.getRequestVariables(app, req), {
 //       _chats_active: 'active',
 //       pageName: 'Chat Requests',
 //       tableName: 'Chat Logs',
@@ -91,12 +91,12 @@ router.get('/:id', auth, function(req, res) {
 //             message.file.category = fileCategory[0];
 //           }
 
-//           return _.defaults({
+//           return Object.assign({
 //             data: data,
 //           }, message);
 //         });
 
-//         res.render('chats/view', _.defaults(utils.getRequestVariables(app, req), {
+//         res.render('chats/view', Object.assign(utils.getRequestVariables(app, req), {
 //           _customerUser: customerUser,
 //           _advertUser: advertUser,
 //           _advert: advert,

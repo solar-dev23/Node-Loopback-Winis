@@ -18,36 +18,36 @@ block content
       li.active #{pageName}
 
   // Main content
-  section.content#userDetails
+  section.content#transactionLogDetails
     #{_resError}
 
-    form(role='form',id='edituser_form',method='post',action='/users/' + userId)
+    form(role='form',id='edittransactionLog_form',method='post',action='/transactionLogs/' + transactionLogId)
       .row
         .col-md-6
             .box
               .box-header.with-border
-                h3.box-title Edit User
+                h3.box-title Edit transactionLog
               div#form_error(style='font-weight: bold; text-align: center;')
                 .box-body
-                  | !{userForm}
-        if user
+                  | !{transactionLogForm}
+        if transactionLog
           .col-md-6
             .box
               .box-header.with-border
                 h3.box-title Additional details
               .box-body
-                p ID: #{userId}
-                p Created date: #{user['createdAt']}
-                p Updated date: #{user['updatedAt']}
+                p ID: #{transactionLogId}
+                p Created date: #{transactionLog['createdAt']}
+                p Updated date: #{transactionLog['updatedAt']}
       .row
         .col-md-12
             .box
               .box-body
                 button.btn.btn-primary(type='submit', data-target="#confirm-save") Save
                 button.btn(type='reset') Cancel
-                if user
+                if transactionLog
                   button.btn.btn-danger.pull-right.action-delete(
-                  type="button", data-href="/users/" + user.id + '/delete',
+                  type="button", data-href="/transactionLogs/" + transactionLog.id + '/delete',
                   data-toggle="modal", data-target="#confirm-delete") Delete
 
   include ../partial/delete_modal.pug
@@ -58,5 +58,5 @@ block content
   script(src='//cdn.datatables.net/plug-ins/1.10.12/dataRender/ellipsis.js', type='text/javascript')
 
   // page script
-  script(src='/js/pages/users.js',type='text/javascript')
+  script(src='/js/pages/transactionLogs.js',type='text/javascript')
 
