@@ -36,9 +36,10 @@ block content
                   th Challenger Status
                   th Opponent Status
                   th Result
+                  th Created At
               tbody
                 each battle in battles
-                  tr(data-href='/deposits/' + battle["id"] class="href-row")
+                  tr(data-href='/battles/' + battle["id"] class="href-row")
                     td #{battle['id']}
                     td #{battle['challengerId']}
                     td #{battle['opponentId']}
@@ -48,6 +49,7 @@ block content
                     td #{battle['challengerStatus']}
                     td #{battle['opponentStatus']}
                     td #{battle['result']}
+                    td(data-sort=battle["createdAt"])= moment(battle["createdAt"]).fromNow()
               tfoot
                 tr
                   th ID
@@ -59,6 +61,7 @@ block content
                   th Challenger Status
                   th Opponent Status
                   th Result
+                  th Created At
 
 block javascript
   //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}

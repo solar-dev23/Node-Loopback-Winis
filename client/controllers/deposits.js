@@ -4,7 +4,6 @@ let utils = require('../utils/utils');
 let forms = require('forms');
 let express = require('express');
 let router = express.Router();
-// let moment = require('moment');
 let formUtils = require('../utils/form');
 let auth = require('../middlewares/auth');
 
@@ -49,6 +48,66 @@ router.get('/:id', auth, async function(req, res) {
     depositId: depositId,
     depositForm: depositForm.bind(currentDeposit).toHTML(formUtils.bootstrapField),
     resError: req.resError,
+  }));
+});
+
+router.post('/:id', auth, async function(req, res) {
+  let app = req.app;
+  let Deposits = app.models.deposit;
+  let depositId = req.params.id;
+
+  let depositForm = generateForm();
+
+  depositForm.handle(req, {
+    success: async function(form) {
+      const deposit = await Deposits.findById(depositId);
+      const updatedDeposit = await deposit.updateAttributes(form.data);
+      res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
+        depositsActive: 'active',
+        pageName: 'deposit - Details',
+        deposit: updatedDeposit,
+        depositId: depositId,
+        depositForm: depositForm.bind(updatedDeposit).toHTML(formUtils.bootstrapField),
+        resError: req.resError,
+      }));
+    },
+    other: async function(form) {
+      const deposit = await Deposits.findById(depositId);
+      const updatedDeposit = await deposit.updateAttributes(form.data);
+      res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
+        depositsActive: 'active',
+        pageName: 'deposit - Details',
+        deposit: updatedDeposit,
+        depositId: depositId,
+        depositForm: depositForm.bind(updatedDeposit).toHTML(formUtils.bootstrapField),
+        resError: req.resError,
+      }));
+    },
+    error: async function(form) {
+      const deposit = await Deposits.findById(depositId);
+      const updatedDeposit = await deposit.updateAttributes(form.data);
+      res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
+        depositsActive: 'active',
+        pageName: 'deposit - Details',
+        deposit: updatedDeposit,
+        depositId: depositId,
+        depositForm: depositForm.bind(updatedDeposit).toHTML(formUtils.bootstrapField),
+        resError: req.resError,
+      }));
+    },
+  });
+});
+
+router.get('/:id/delete', auth, async function(req, res) {
+  let app = req.app;
+  let Deposits = app.models.deposit;
+  let depositId = req.params.id;
+  
+  await Deposits.destroyById(depositId);
+  
+  res.render('deposits/delete', Object.assign(utils.getRequestVariables(app, req), {
+    battlesActive: 'active',
+    pageName: 'Battles',
   }));
 });
 

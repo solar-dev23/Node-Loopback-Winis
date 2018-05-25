@@ -72,19 +72,44 @@ router.post('/:id', auth, async function(req, res) {
         resError: req.resError,
       }));
     },
-    other: function(form) {
+    other: async function(form) {
+      const transactionLog = await TransactionLogs.findById(transactionLogId);
+      const updatedTransactionLog = await transactionLog.updateAttributes(form.data);
       res.render('transactionLogs/view', Object.assign(utils.getRequestVariables(app, req), {
         transactionLogsActive: 'active',
-        pageName: 'transactionLog - Details',
-        // transactionLog: updatedtransactionLog,
+        pageName: 'Transaction Log - Details',
+        transactionLog: updatedTransactionLog,
         transactionLogId: transactionLogId,
-        // transactionLogForm: transactionLogForm.bind(updatedtransactionLog).toHTML(formUtils.bootstrapField),
+        transactionLogForm: transactionLogForm.bind(updatedTransactionLog).toHTML(formUtils.bootstrapField),
+        resError: req.resError,
+      }));
+    },
+    error: async function(form) {
+      const transactionLog = await TransactionLogs.findById(transactionLogId);
+      const updatedTransactionLog = await transactionLog.updateAttributes(form.data);
+      res.render('transactionLogs/view', Object.assign(utils.getRequestVariables(app, req), {
+        transactionLogsActive: 'active',
+        pageName: 'Transaction Log - Details',
+        transactionLog: updatedTransactionLog,
+        transactionLogId: transactionLogId,
+        transactionLogForm: transactionLogForm.bind(updatedTransactionLog).toHTML(formUtils.bootstrapField),
         resError: req.resError,
       }));
     },
   });
 });
 
+router.get('/:id/delete', auth, async function(req, res) {
+  let app = req.app;
+  let TransactionLogs = app.models.transactionLog;
+  let transactionLogId = req.params.id;
+
+  await TransactionLogs.destroyById(transactionLogId);
+  res.render('transactionLogs/delete', Object.assign(utils.getRequestVariables(app, req), {
+    transactionLogsActive: 'active',
+    pageName: 'Transaction Log',
+  }));
+});
 /** 
 * generate form
 * @return {string}form configuration

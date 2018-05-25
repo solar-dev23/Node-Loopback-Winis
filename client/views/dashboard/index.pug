@@ -14,7 +14,7 @@ block content
 
   section.content
     .row.dashboard-boxes
-      .col-lg-3.col-xs-6
+      .col-lg-4.col-xs-6
         // small box
         .small-box.bg-aqua
           .inner
@@ -23,72 +23,24 @@ block content
           .icon
             i.ion.ion-person-add
       // ./col
-      .col-lg-3.col-xs-6
+      .col-lg-4.col-xs-6
         // small box
         .small-box.bg-green
           .inner
-            h3  #{totalSearches}
-            p Total searches
+            h3  #{totalDeposits}
+            p Total deposits
           .icon
             i.ion.ion-stats-bars
       // ./col
-      .col-lg-3.col-xs-6
+      .col-lg-4.col-xs-6
         // small box
         .small-box.bg-yellow
           .inner
-            h3 #{totalRequests}
-            p Chat requests
+            h3 #{totalBattles}
+            p Total battles
           .icon
             i.ion.ion-bag
-      // ./col
-      .col-lg-3.col-xs-6
-        // small box
-        .small-box.bg-red
-          .inner
-            h3 #{totalMessages}
-            p Total Adverts
-          .icon
-            i.ion.ion-pie-graph
-    .row
-      .col-lg-6
-        .box
-          .box-header
-            h3.box-title Latest Users
-            a(href='/users/', class='dashboard-right') Full list
-          .box-body.table-responsive
-            table#users-table.table.table-bordered.table-striped.latest-table
-              thead
-                tr
-                  th ID
-                  th Name
-                  th Created
-              tbody
-                each user in latestUsers
-                  tr(data-href='/users/' + user['id'] class="href-row")
-                    td #{user["id"]}
-                    td #{user["name"]}
-                    td= moment(user["createdAt"]).fromNow()
-      .col-lg-6
-        .box
-          .box-header
-            h3.box-title Latest Adverts
-            a(href='/adverts/', class='dashboard-right') Full list
-          .box-body.table-responsive
-            table#adverts-table.table.table-bordered.table-striped.latest-table
-              thead
-                tr
-                  th ID
-                  th Name
-                  th User
-                  th Created
-              tbody
-                each advert in latestAdverts
-                  tr(data-href='/adverts/' + advert["id"] class="href-row")
-                    td #{advert["id"]}
-                    td #{advert["name"]}
-                    td #{(advert["user"]()).name}
-                    td= moment(advert["createdAt"]).fromNow()
-
+    
 block javascript
   // DataTables Includes
   script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')

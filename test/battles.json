@@ -1,0 +1,21 @@
+
+//   {
+//       "challengerId": ObjectId("5a96cbbbfc4a7d5a8b57f0e1"),
+//       "opponentId": ObjectId("5a96cbbbfc4a7d5a8b57f0e1"),
+//       "status":"pending,accepted,rejected,finished",
+//       "game":"NARDY",
+//       "stake":90,
+//       "challengerStatus":"unset,won,lost",
+//       "opponentStatus":"unset,won,lost",
+//       "result":"unset,challenger won,opponent won,both draw"
+//   }
+  {
+    "challengerId": ObjectId("5a96cbbbfc4a7d5a8b57f0e1"),
+    "opponentId": ObjectId("5a96cbbbfc4a7d5a8b57f0e1"),
+    "status":"pending",
+    "game":"baseball",
+    "stake":30,
+    "challengerStatus":"unset",
+    "opponentStatus":"unset",
+    "result":"unset"
+}

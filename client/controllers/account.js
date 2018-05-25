@@ -6,7 +6,6 @@ let loginModule = require('../utils/login');
 let debug = require('debug')('admin:account');
 let utils = require('../utils/utils');
 let auth = require('../middlewares/auth');
-let md5 = require('md5');
 
 router.get('/login', async function(req, res) {
   res.render('account/login', {

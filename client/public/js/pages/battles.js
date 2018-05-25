@@ -4,12 +4,20 @@ $('.href-row').css('cursor', 'pointer').click(function() {
   window.document.location = $(this).data('href');
 });
 
+$('#confirm-delete').on('show.bs.modal', function(e) {
+  $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+});
+
+$('#confirm-save').on('show.bs.modal', function(e) {
+  console.log('SAVE');
+});
+
 $('#data').DataTable({
   'paging': true,
   'searching': true,
   'info': true,
   'scrollX': true,
-  'order': [[6, 'desc']],
+  'order': [[7, 'desc']],
   'columnDefs': [
     {
       targets: 0,
@@ -18,22 +26,22 @@ $('#data').DataTable({
     },
     {
       targets: 1,
-      width: '5em',
-    },
-    {
-      targets: 2,
-      width: '15em',
-    },
-    {
-      targets: 4,
       width: '10em',
     },
     {
-      targets: 5,
+      targets: 2,
       width: '5em',
     },
     {
-      targets: 6,
+      targets: 4,
+      width: '15em',
+    },
+    {
+      targets: [5, 6],
+      width: '3em',
+    },
+    {
+      targets: 7,
       width: '5em',
     },
   ],

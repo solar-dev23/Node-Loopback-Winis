@@ -50,7 +50,7 @@ block content
                     td #{user["spins"]}
                     td #{user["scratches"]}
                     td #{user["diamonds"]}
-                    td #{user["createdAt"]}
+                    td(data-sort=user["createdAt"])= moment(user["createdAt"]).fromNow()
                     td #{user["externalAuthMethod"]}
               tfoot
                 tr
