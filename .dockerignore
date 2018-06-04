@@ -14,10 +14,10 @@
 
 node_modules
 .dockerignore
-charts
+chart
 Dockerfile
 npm-debug.log
 .git
-.hg
-.svn
+.idea
 client/bower_components
+client/node_modules

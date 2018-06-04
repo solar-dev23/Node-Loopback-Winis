@@ -15,7 +15,7 @@ service:
   enabled: true
   name: web
   type: ClusterIP
-  url: http://my.host.com/
+  url: http://api.winisapp.com
   externalPort: 80
   internalPort: 3000
 resources:
