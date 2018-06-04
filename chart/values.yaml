@@ -16,10 +16,8 @@ service:
   name: web
   type: ClusterIP
   url: http://my.host.com/
-  externalPort: 3000
+  externalPort: 80
   internalPort: 3000
-postgresql:
-  enabled: true
 resources:
 #  limits:
 #    cpu: 100m
