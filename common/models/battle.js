@@ -17,7 +17,7 @@ module.exports = function(Battle) {
       error.status = 404;
       throw error;
     }
-    
+
     const opponent = await UserModel.findById(opponentId);
     if (!opponent) {
       const error = new Error('Opponent not found');
@@ -26,9 +26,9 @@ module.exports = function(Battle) {
     }
     const existingBattle = (await Battle.find()).filter((value) =>{ return value.challengerId == challenger.id && value.opponentId == opponent.id && value.result == 'unset' && value.status == 'pending'; })[0];
     if (!existingBattle) {
-      existingBattle = (await Battle.find()).filter((value) =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset' && value.status == 'pending'; })[0];
+      const existingBattle = (await Battle.find()).filter((value) =>{ return value.challengerId == opponent.id && value.opponentId == challenger.id && value.result == 'unset' && value.status == 'pending'; })[0];
     }
-    
+
     if (existingBattle) {
       const error = new Error('You have already started battle with this user');
       error.status = 409;
@@ -57,7 +57,7 @@ module.exports = function(Battle) {
       game: gameType,
       stake: stake,
     });
-    
+
     return newBattle;
   };
 
@@ -130,7 +130,7 @@ module.exports = function(Battle) {
       error.status = 409;
       throw error;
     }
-    
+
     if (callerId == currentBattle.challengerId) {
       if (currentBattle.challengerStatus != 'unset') {
         const error = new Error('You have already commited your status');
@@ -144,7 +144,7 @@ module.exports = function(Battle) {
         throw error;
       };
     }
-    
+
     let updatedBattle;
     if (currentBattle.challengerId == callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'won');
@@ -210,7 +210,7 @@ module.exports = function(Battle) {
       error.status = 409;
       throw error;
     }
-    
+
     if (callerId == currentBattle.challengerId) {
       if (currentBattle.challengerStatus != 'unset') {
         const error = new Error('You have already commited your status');
