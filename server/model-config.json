@@ -73,5 +73,9 @@
   "transaction-log": {
     "dataSource": "db",
     "public": false
+  },
+  "competition": {
+    "dataSource": "db",
+    "public": true
   }
 }
