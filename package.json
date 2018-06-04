@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
-    "async": "^2.6.0",
+    "async": "^2.6.1",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",
@@ -44,7 +44,7 @@
     "pug": "^2.0.3",
     "request-promise-native": "^1.0.5",
     "serve-favicon": "^2.5.0",
-    "stream-buffers": "^3.0.1",
+    "stream-buffers": "^3.0.2",
     "strong-error-handler": "^2.3.2"
   },
   "devDependencies": {
