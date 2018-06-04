@@ -1,0 +1,46 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    title RightNow Login
+    // Tell the browser to be responsive to screen width
+    meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', name='viewport')
+    // Bootstrap 3.3.6
+    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+    // Font Awesome
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css')
+    // Ionicons
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css')
+    // Theme style
+    link(rel='stylesheet', href='/bower_components/AdminLTE/dist/css/AdminLTE.min.css')
+    //
+        AdminLTE Skins. Choose a skin from the css/skins
+        folder instead of downloading all of them to reduce the load.
+    link(rel='stylesheet', href='/bower_components/AdminLTE/dist/css/skins/skin-blue.min.css')
+
+  body.hold-transcation.login-page
+    div.login-box
+      div.login-logo
+        img(width='180', style='margin-left: -5px;', src='/public/img/winis_admin_logo.png')
+      div.login-box-body
+        .header Sign In
+        form(action='/account/login', method='post')
+          .body
+            if isError
+              .alert.alert-danger.alert-dismissable
+                i.fa.fa-ban
+                button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
+                b &nbsp;Error!&nbsp;
+                | Login credentials are incorrect.
+            .form-group
+              input.form-control(type='text', name='login', placeholder='Login')
+            .form-group
+              input.form-control(type='password', name='password', placeholder='Password')
+          .footer
+            button.btn.bg-coffee.btn-block(type='submit') Sign me in
+
+    // jQuery 2.2.3
+    script(src='/bower_components/jquery/dist/jquery.min.js')
+    // Bootstrap 3.3.6
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')

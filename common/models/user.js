@@ -7,6 +7,7 @@ const util = require('util');
 const fs = require('fs');
 const streambuffer = require('stream-buffers');
 const jimp = require('jimp');
+const md5 = require('md5');
 
 module.exports = function(User) {
   delete User.validations.email;
@@ -424,6 +425,18 @@ module.exports = function(User) {
       ]);
     }
     return currentUser;
+  };
+
+  User.loginAdmin = async function({login, password}) {
+    const admins = await User.find({where: {and: [{adminLogin: login}, {adminPassword: md5(password)}, {isAdmin: true}]}});
+    if (admins.length == 1) {
+      const accessToken = await admins[0].createAccessToken();
+      let result = admins[0];
+      result.accessToken = accessToken;
+      return result;
+    } else {
+      return null;
+    }
   };
 
   User.observe('before save', function addRandomName(ctx, next) {
