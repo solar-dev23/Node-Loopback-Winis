@@ -1,0 +1,14 @@
+{
+  "db": {
+    "database": "winis",
+    "name": "db",
+    "host": "localhost",
+    "port": "27018",
+    "connector": "mongodb"
+  },
+  "storage": {
+    "provider": "google",
+    "keyFilename": "server/credentials/winis-be-ceff3b26aff9.json",
+    "projectId": "winis-be"
+  }
+}
