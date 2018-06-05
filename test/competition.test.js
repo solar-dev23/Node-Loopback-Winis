@@ -24,7 +24,12 @@ describe('Competition', function() {
   });
 
   it('should return the next scheduled competition', function() {
-
+    request
+      .get('/competitions/next')
+      .send()
+      .then((res) => {
+        expect()
+      });
   });
 
   it('should return the currently running competition', function() {
