@@ -208,7 +208,7 @@ production:
       --set replicaCount="$replicas" \
       --namespace="$KUBE_NAMESPACE" \
       --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
-      winis chart
+      "$name" chart
   }
 
   function scale() {
