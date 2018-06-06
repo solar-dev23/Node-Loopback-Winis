@@ -32,6 +32,7 @@ variables:
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
   AUTO_DEVOPS_DOMAIN: dev.winisapp.com
   PRODUCTION_REPLICAS: 3
+  MONGODB_ENABLED: "false"
 
   KUBERNETES_VERSION: 1.8.6
   HELM_VERSION: 2.6.1

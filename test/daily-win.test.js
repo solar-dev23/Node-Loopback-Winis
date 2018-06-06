@@ -5,7 +5,6 @@ const expect = require('chai').expect;
 const mute = require('mute');
 const request = require('supertest')(app);
 const moment = require('moment-timezone');
-const time = require('time');
 
 let accessToken, UserModel, DailyWinModel, originalGetStartOfDayFunction;
 describe('Daily-win', async function() {

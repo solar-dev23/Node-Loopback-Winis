@@ -8,9 +8,10 @@ WORKDIR /usr/src/app
 
 # Install nodejs dependencies
 COPY package.json package-lock.json ./
-RUN apk add --no-cache --virtual .build-deps make gcc g++ python \
- && npm install --production --silent \
- && apk del .build-deps
+#RUN apk add --no-cache --virtual .build-deps make gcc g++ python \
+# && npm install --production --silent \
+# && apk del .build-deps
+RUN npm install --production --silent
 
 # Copy actual application
 COPY . /usr/src/app
