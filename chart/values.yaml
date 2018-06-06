@@ -18,6 +18,8 @@ service:
   url: http://api.winisapp.com
   externalPort: 80
   internalPort: 3000
+mongodb:
+  enabled: true
 resources:
 #  limits:
 #    cpu: 100m
