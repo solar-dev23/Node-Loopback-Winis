@@ -186,7 +186,6 @@ production:
     # re-use all attached resources
     if [[ "$track" != "stable" ]]; then
       name="$name-$track"
-      service_enabled="false"
       mongodb_enabled="false"
     fi
 
