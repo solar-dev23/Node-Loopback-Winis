@@ -81,6 +81,8 @@ review:
     name: review/$CI_COMMIT_REF_NAME
     url: http://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.dev.winisapp.com
     on_stop: stop_review
+  application:
+    track: review
   artifacts:
     paths: [environment_url.txt]
   only:
@@ -100,6 +102,8 @@ stop_review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
+  application:
+    track: review
   when: manual
   allow_failure: true
   only:
@@ -138,7 +142,7 @@ production:
   export CI_APPLICATION_REPOSITORY=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
   export CI_APPLICATION_TAG=$CI_COMMIT_SHA
   export CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}
-  export TILLER_NAMESPACE=$KUBE_NAMESPACE
+  export TILLER_NAMESPACE=gitlab-managed-apps
 
   function get_replicas() {
     track="${1:-stable}"
@@ -179,12 +183,14 @@ production:
 
     replicas="1"
     service_enabled="true"
+    mongodb_enabled="$MONGODB_ENABLED"
 
     # if track is different than stable,
     # re-use all attached resources
     if [[ "$track" != "stable" ]]; then
       name="$name-$track"
       service_enabled="false"
+      mongodb_enabled="false"
     fi
 
     replicas=$(get_replicas "$track" "$percentage")
@@ -203,6 +209,7 @@ production:
       --set image.tag="$CI_APPLICATION_TAG" \
       --set image.pullPolicy=IfNotPresent \
       --set image.secrets[0].name="$secret_name" \
+      --set mongodb.enabled="$mongodb_enabled" \
       --set application.track="$track" \
       --set service.url="$CI_ENVIRONMENT_URL" \
       --set replicaCount="$replicas" \
