@@ -75,14 +75,12 @@ review:
     - ensure_namespace
     - install_tiller
     - create_secret
-    - deploy
+    - deploy review
     - persist_environment_url
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_SLUG.dev.winisapp.com
     on_stop: stop_review
-  application:
-    track: review
   artifacts:
     paths: [environment_url.txt]
   only:
@@ -98,12 +96,10 @@ stop_review:
     GIT_STRATEGY: none
   script:
     - install_dependencies
-    - delete
+    - delete review
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
-  application:
-    track: review
   when: manual
   allow_failure: true
   only:
