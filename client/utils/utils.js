@@ -4,7 +4,7 @@ module.exports =
 {
   getRequestVariables: function(app, req) {
     return {
-      username: req.session.user.adminLogin,
+      user: req.session.user,
       avatar: req.session.user.avatar,
     };
   },
