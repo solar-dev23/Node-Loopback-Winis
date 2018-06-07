@@ -9,14 +9,12 @@
     "lint": "eslint .",
     "start": "node .",
     "check": "npm run lint && nsp check",
-    "test": "NODE_ENV=test mocha",
-    "postinstall": "bower install"
+    "test": "NODE_ENV=test mocha"
   },
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
     "async": "^2.6.1",
     "bcryptjs": "^2.4.3",
-    "bower": "^1.8.4",
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.3",
