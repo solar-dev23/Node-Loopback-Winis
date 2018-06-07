@@ -182,6 +182,30 @@ describe('User', function() {
     });
   });
 
+  describe('Share Image', function() {
+    this.timeout(5000);
+
+    it('should generate a generic share image', function(done) {
+      request
+        .get(`/api/users/${strangerUser.id}/share/basketball/winner.jpg`)
+        .then((res) => jimp.read(res.body))
+        .then((shareImage) => {
+          expect(shareImage.hash()).to.be.equal('8cFfa0sx0hF');
+          done();
+        });
+    });
+
+    it('should generate an instagram share image', function(done) {
+      request
+        .get(`/api/users/${strangerUser.id}/share/ig/basketball/winner.jpg`)
+        .then((res) => jimp.read(res.body))
+        .then((shareImage) => {
+          expect(shareImage.hash()).to.be.equal('8c8bGEqx2N8');
+          done();
+        });
+    });
+  });
+
   describe('Avatar', function() {
     describe('Upload', function() {
       beforeEach(function(done) {
