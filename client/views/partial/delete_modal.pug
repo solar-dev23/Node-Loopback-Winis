@@ -1,0 +1,13 @@
+.modal.fade(id="confirm-delete", tabindex="-1", role="dialog", aria-hidden=true)
+  .model-dialog
+    .modal-content
+      .modal-header
+        button.close(type="button", data-dismiss="modal", aria-hidden=true) &times;
+        h4.modal-title#myModalLabel Confirm Delete
+      .modal-body
+        p You are about to delete this item and all it's related items.
+        p This procedure is irreversible.
+        p Do you want to proceed?
+      .modal-footer
+        button.btn.btn-default(type="button", data-dismiss="modal") Cancel
+        a.btn.btn-danger.btn-ok Delete

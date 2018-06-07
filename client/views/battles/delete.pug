@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li Battle
+      li.active Battle deleted
+
+  // Main content
+  section.content
+      .row
+        .box
+          .box-header.with-border
+            h3.box-title User deleted
+          .box-body
+            a.btn.btn-primary.action-delete(type="button", href="/battles/") Return to list

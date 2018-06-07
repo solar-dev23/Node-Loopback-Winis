@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li Transaction Log
+      li.active Transaction Log deleted
+
+  // Main content
+  section.content
+      .row
+        .box
+          .box-header.with-border
+            h3.box-title Transaction Log deleted
+          .box-body
+            a.btn.btn-primary.action-delete(type="button", href="/transactionLogs/") Return to list

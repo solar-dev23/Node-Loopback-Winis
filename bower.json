@@ -1,0 +1,31 @@
+{
+    "name": "winis",
+    "description": "",
+    "main": "",
+    "authors": [
+      "David Tabachnikov <nethunter@studiosh.com>",
+      "Andriy Khamurda <khamurdik@gmail.com.com>"
+    ],
+    "license": "MIT",
+    "homepage": "",
+    "private": true,
+    "ignore": [
+      "**/.*",
+      "node_modules",
+      "bower_components",
+      "test",
+      "tests"
+    ],
+    "dependencies": {
+      "moment": "^2.14.1",
+      "raphael": "^2.2.1",
+      "AdminLTE": "adminlte#^2.3.5",
+      "font-awesome": "fontawesome#^4.6.3",
+      "fontawesome-markers": "^4.6.1",
+      "tags-input": "^1.1.1"
+    },
+    "resolutions": {
+      "jquery": "^3.2.1"
+    }
+  }
+  

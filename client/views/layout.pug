@@ -1,0 +1,144 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    // jQuery 2.2.3
+    script(src='/bower_components/jquery/dist/jquery.min.js')
+    title Winis Admin | #{pageName}
+    // Tell the browser to be responsive to screen width
+    meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', name='viewport')
+    // Bootstrap 3.3.6
+    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+    // Font Awesome
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css')
+    // Ionicons
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css')
+    // Theme style
+    link(rel='stylesheet', href='/bower_components/AdminLTE/dist/css/AdminLTE.min.css')
+    //
+        AdminLTE Skins. Choose a skin from the css/skins
+        folder instead of downloading all of them to reduce the load.
+    link(rel='stylesheet', href='/bower_components/AdminLTE/dist/css/skins/skin-blue.min.css')
+    // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+    // WARNING: Respond.js doesn't work if you view the page via file://
+    //if lt IE 9
+        script(src='https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js')
+        script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+    link(rel='stylesheet', href='/css/style.css')
+
+    block head
+  body.hold-transition.skin-blue.sidebar-mini.fixed
+    .wrapper
+      // header logo: style can be found in header.less
+      header.main-header
+        a.logo(href='/')
+          // Add the class icon to your logo image or logo icon to add the margining
+          span.logo-lg
+            b
+              | Winis
+            | Admin
+        // Header Navbar: style can be found in header.less
+        nav.navbar.navbar-static-top(role='navigation')
+          // Sidebar toggle button
+          a.sidebar-toggle(href='#', data-toggle='offcanvas', role='button')
+            span.sr-only Toggle navigation
+          .navbar-custom-menu
+            ul.nav.navbar-nav
+              // User Account: style can be found in dropdown.less
+              li.dropdown.user.user-menu
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                  img(class="user-image", alt="User Image", src='/api/users/' + user.id + '/avatar.jpg')
+                  span(class="hidden-xs")
+                    | #{user.username}
+                    i.caret
+                ul.dropdown-menu
+                  // User image
+                  li.user-header.bg-light-blue
+                    img.img-circle(src='/api/users/' + user.id + '/avatar.jpg', alt='User Image')
+                    p
+                      | #{user.username}
+                  // Menu Body
+                  // Menu Footer
+                  li.user-footer
+                    .pull-left
+                      a.btn.btn-default.btn-flat(href='/account/changepass')  Change Password
+                    .pull-right
+                      a.btn.btn-default.btn-flat(href='/account/logout')  Sign out
+      aside.main-sidebar
+        // sidebar: style can be found in sidebar.less
+        section.sidebar
+          // Sidebar user panel
+          .user-panel
+            .pull-left.image
+              img.img-circle(src='/api/users/' + user.id + '/avatar.jpg', alt='User Image')
+            .pull-left.info
+              p Hello, #{user.username}
+
+          // sidebar menu: : style can be found in sidebar.less
+          ul.sidebar-menu
+            li(class=_dashboard_active)
+              a(href='/')
+                i.fa.fa-dashboard
+                span Dashboard
+            li(class=_adverts_active)
+              a(href='/deposits')
+                i.fa.fa-bar-chart-o
+                span Deposits
+                small.badge.pull-right.bg-green
+            li(class=_users_active)
+              a(href='/users')
+                i.fa.fa-user
+                span Users
+                small.badge.pull-right.bg-green
+            //li(class=_chats_active)
+            //  a(href='#')
+            //    i.fa.fa-comments
+            //    span Chats
+            //    small.badge.pull-right.bg-green
+            li(class=_battles_active)
+              a(href='/battles')
+                i.fa.fa-search
+                span Battles
+                small.badge.pull-right.bg-green
+            li(class=_transactionLog_active)
+              a(href='/transactionLogs')
+                i.fa.fa-search
+                span Transaction Log
+                small.badge.pull-right.bg-green
+      .content-wrapper
+        block content
+
+    footer.main-footer
+      .pull-right.hidden-xs
+        b Version 0.6
+      strong  Copyright &copy; 2018 Winis
+      |  All rights reserved
+
+    block message-modal
+    // Bootstrap 3.3.6
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    // SlimScroll
+    script(src='/bower_components/jquery-slimscroll/jquery.slimscroll.min.js')
+    // FastClick
+    script(src='/bower_components/fastclick/lib/fastclick.js')
+    // AdminLTE App
+    script.
+      /**
+       * Settings for AdminLTE initialization
+       *
+       * @abstract
+       */
+      var AdminLTEOptions = {
+        //Enable sidebar expand on hover effect for sidebar mini
+        //This option is forced to true if both the fixed layout and sidebar mini
+        sidebarToggleSelector: "[data-toggle='offcanvas']",
+        //are used together
+        sidebarExpandOnHover: true,
+        //BoxRefresh Plugin
+        enableBoxRefresh: true,
+        //Bootstrap.js tooltip
+        enableBSToppltip: true
+      };
+    script(src="/bower_components/AdminLTE/dist/js/adminlte.min.js",type="text/javascript")
+    block javascript

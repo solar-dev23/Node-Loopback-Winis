@@ -1,0 +1,28 @@
+extends ../layout
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | Change Password
+  // Main content
+  section.content
+    .row
+      .col-xs-12
+        div#form_error(style='font-weight: bold; text-align: center;')
+        form(role='form',id='changepass_form')
+          .box-body
+            .form-group
+              label(for='current_pass') Current password
+              input#current_pass.form-control(name='currentPass', type='password')
+            .form-group
+              label(for='new_pass1') New password
+              input#new_pass1.form-control(name='newPass1', type='password')
+            .form-group
+              label(for='new_pass2') Confirm new password
+              input#new_pass2.form-control(name='newPass2', type='password')
+          .box-footer
+            button.btn.btn-primary(type='submit') Change
+
+
+block javascript
+  script(src='/js/pages/change_pass.js', type='text/javascript')

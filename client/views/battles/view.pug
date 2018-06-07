@@ -1,0 +1,61 @@
+extends ../layout
+
+block head
+  link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li Chats
+      li.active #{pageName}
+
+  // Main content
+  section.content#battleDetails
+    #{_resError}
+
+    form(role='form',id='editbattle_form',method='post',action='/battles/' + battleId)
+      .row
+        .col-md-6
+            .box
+              .box-header.with-border
+                h3.box-title Edit battle
+              div#form_error(style='font-weight: bold; text-align: center;')
+                .box-body
+                  | !{battleForm}
+        if battle
+          .col-md-6
+            .box
+              .box-header.with-border
+                h3.box-title Additional details
+              .box-body
+                p ID: #{battleId}
+                p Created date: #{battle['createdAt']}
+                p Updated date: #{battle['updatedAt']}
+      .row
+        .col-md-12
+            .box
+              .box-body
+                button.btn.btn-primary(type='submit', data-target="#confirm-save") Save
+                button.btn(type='reset') Cancel
+                if battle
+                  button.btn.btn-danger.pull-right.action-delete(
+                  type="button", data-href="/battles/" + battle.id + '/delete',
+                  data-toggle="modal", data-target="#confirm-delete") Delete
+
+  include ../partial/delete_modal.pug
+
+  // DataTables Includes
+  script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')
+  script(src='/bower_components/datatables.net-bs/js/dataTables.bootstrap.js', type='text/javascript')
+  script(src='//cdn.datatables.net/plug-ins/1.10.12/dataRender/ellipsis.js', type='text/javascript')
+
+  // page script
+  script(src='/js/pages/battles.js',type='text/javascript')
+

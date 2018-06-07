@@ -63,6 +63,10 @@
     "lastDailySpinGrantingDate": {
       "type": "date",
       "default": 0
+    },
+    "isAdmin": {
+      "type": "boolean",
+      "default": false
     }
   },
   "validations": [],

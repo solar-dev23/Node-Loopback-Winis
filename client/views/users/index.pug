@@ -1,0 +1,80 @@
+extends ../layout
+
+block head
+  link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li.active #{pageName}
+
+  // Main content
+  section.content
+    .row
+      .col-xs-12
+        .box
+          .box-header
+            h3.box-title #{tableName}
+          // /.box-header
+          .box-body.table-responsive
+            table#data.table.table-bordered.table-striped
+              thead
+                tr
+                  th ID
+                  th Phone Number
+                  th Username
+                  th Winis
+                  th Staked
+                  th Spins
+                  th Scratches
+                  th Diamonds
+                  th Created
+                  th Admin
+              tbody
+                each user in users
+                  tr(data-href='/users/' + user["id"] class="href-row")
+                    td #{user['id']}
+                    td !{user['phoneNumber']}
+                    td !{user['username']}
+                    td #{user["winis"]}
+                    td #{user["staked"]}
+                    td #{user["spins"]}
+                    td #{user["scratches"]}
+                    td #{user["diamonds"]}
+                    td(data-sort=user["createdAt"])= moment(user["createdAt"]).fromNow()
+                    td #{user['isAdmin']}
+              tfoot
+                tr
+                  th ID
+                  th Phone Number
+                  th Username
+                  th Winis
+                  th Staked
+                  th Spins
+                  th Scratches
+                  th Diamonds
+                  th Created
+                  th Admin
+
+block javascript
+  //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
+
+  // DataTables Includes
+  script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')
+  script(src='/bower_components/datatables.net-bs/js/dataTables.bootstrap.js', type='text/javascript')
+  script(src='//cdn.datatables.net/plug-ins/1.10.12/dataRender/ellipsis.js', type='text/javascript')
+
+  // FontAwesome Markers
+  script(src='/bower_components/fontawesome-markers/fontawesome-markers.min.js', type='text/javascript')
+
+  // page script
+  script(src='/js/pages/users.js',type='text/javascript')
+
+

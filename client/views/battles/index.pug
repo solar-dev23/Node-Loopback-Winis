@@ -1,0 +1,80 @@
+extends ../layout
+
+block head
+  link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li.active #{pageName}
+
+  // Main content
+  section.content
+    .row
+      .col-xs-12
+        .box
+          .box-header
+            h3.box-title #{tableName}
+          // /.box-header
+          .box-body.table-responsive
+            table#data.table.table-bordered.table-striped
+              thead
+                tr
+                  th ID
+                  th Challenger Id
+                  th Opponent Id
+                  th Status
+                  th Game
+                  th Stake
+                  th Challenger Status
+                  th Opponent Status
+                  th Result
+                  th Created At
+              tbody
+                each battle in battles
+                  tr(data-href='/battles/' + battle["id"] class="href-row")
+                    td #{battle['id']}
+                    td #{battle['challengerId']}
+                    td #{battle['opponentId']}
+                    td #{battle['status']}
+                    td #{battle['game']}
+                    td #{battle['stake']}
+                    td #{battle['challengerStatus']}
+                    td #{battle['opponentStatus']}
+                    td #{battle['result']}
+                    td(data-sort=battle["createdAt"])= moment(battle["createdAt"]).fromNow()
+              tfoot
+                tr
+                  th ID
+                  th Challenger Id
+                  th Opponent Id
+                  th Status
+                  th Game
+                  th Stake
+                  th Challenger Status
+                  th Opponent Status
+                  th Result
+                  th Created At
+
+block javascript
+  //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
+
+  // DataTables Includes
+  script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')
+  script(src='/bower_components/datatables.net-bs/js/dataTables.bootstrap.js', type='text/javascript')
+  script(src='//cdn.datatables.net/plug-ins/1.10.12/dataRender/ellipsis.js', type='text/javascript')
+
+  // FontAwesome Markers
+  script(src='/bower_components/fontawesome-markers/fontawesome-markers.min.js', type='text/javascript')
+
+  // page script
+  script(src='/js/pages/battles.js',type='text/javascript')
+
+
