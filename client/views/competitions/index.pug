@@ -1,0 +1,61 @@
+extends ../layout
+
+block head
+  link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li.active #{pageName}
+
+  // Main content
+  section.content
+    .row
+      .col-xs-12
+        .box
+          .box-header
+            h3.box-title #{tableName}
+          // /.box-header
+          .box-body.table-responsive
+            table#data.table.table-bordered.table-striped
+              thead
+                tr
+                  th ID
+                  th Prize
+                  th Start Date
+                  th End Date
+                  th Image
+              tbody
+                each competition in competitions
+                  tr(data-href='/competitions/' + competition["id"] class="href-row")
+                    td #{competition['id']}
+                    td #{competition['prize']}
+                    td(data-sort=competition["startDate"])= moment(competition["startDate"]).fromNow()
+                    td(data-sort=competition["endDate"])= moment(competition["endDate"]).fromNow()
+                    td #{competition['image']}
+              tfoot
+                tr
+                  th ID
+                  th Prize
+                  th Start Date
+                  th End Date
+                  th Image
+
+block javascript
+  // DataTables Includes
+  script(src='/bower_components/datatables.net/js/jquery.dataTables.js', type='text/javascript')
+  script(src='/bower_components/datatables.net-bs/js/dataTables.bootstrap.js', type='text/javascript')
+  script(src='//cdn.datatables.net/plug-ins/1.10.12/dataRender/ellipsis.js', type='text/javascript')
+
+  // FontAwesome Markers
+  script(src='/bower_components/fontawesome-markers/fontawesome-markers.min.js', type='text/javascript')
+
+  // page script
+  script(src='/js/pages/competitions.js',type='text/javascript')

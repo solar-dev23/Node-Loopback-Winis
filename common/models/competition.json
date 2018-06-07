@@ -1,0 +1,58 @@
+{
+  "name": "competition",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "TimeStamp": true
+  },
+  "properties": {
+    "prize": {
+      "type": "string",
+      "required": true
+    },
+    "startDate": {
+      "type": "date",
+      "required": true
+    },
+    "endDate": {
+      "type": "date",
+      "required": true
+    },
+    "image": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "winner": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {
+    "nearest": {
+      "accepts": [],
+      "returns": [
+        {
+          "arg": "competition",
+          "type": "object",
+          "root": true,
+          "description": "Details of the current or next competition"
+        }
+      ],
+      "description": "Return the current or next competition",
+      "http": [
+        {
+          "path": "/nearest",
+          "verb": "get"
+        }
+      ]
+    }
+  }
+}

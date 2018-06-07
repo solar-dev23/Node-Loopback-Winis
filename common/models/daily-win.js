@@ -21,17 +21,28 @@ module.exports = function(Dailywin) {
     const user = await UserModel.findById(self.userId);
 
     switch (prizesObject[day].prize) {
-      case 'empty': break;
-      case 'diamond': await user.updateAttribute('diamonds', user.diamonds + prizesObject[day].count); break;
-      case 'winis':  await user.updateAttribute('winis', user.winis + prizesObject[day].count); break;
-      case 'scratch': await user.updateAttribute('scratches', user.scratches + prizesObject[day].count); break;
-      case 'present': await Promise.all([
-        user.updateAttribute('diamonds', user.diamonds + 1 * prizesObject[day].count),
-        user.updateAttribute('winis', user.winis + 10 * prizesObject[day].count),
-        user.updateAttribute('scratches', user.scratches + 1 * prizesObject[day].count),
-        user.updateAttribute('spins', user.spins + 1 * prizesObject[day].count),
-      ]); break;
-      case 'spin': await user.updateAttribute('spins', user.spins + prizesObject[day].count); break;
+      case 'empty':
+        break;
+      case 'diamond':
+        await user.updateAttribute('diamonds', user.diamonds + prizesObject[day].count);
+        break;
+      case 'winis':
+        await user.updateAttribute('winis', user.winis + prizesObject[day].count);
+        break;
+      case 'scratch':
+        await user.updateAttribute('scratches', user.scratches + prizesObject[day].count);
+        break;
+      case 'present':
+        await Promise.all([
+          user.updateAttribute('diamonds', user.diamonds + 1 * prizesObject[day].count),
+          user.updateAttribute('winis', user.winis + 10 * prizesObject[day].count),
+          user.updateAttribute('scratches', user.scratches + 1 * prizesObject[day].count),
+          user.updateAttribute('spins', user.spins + 1 * prizesObject[day].count),
+        ]);
+        break;
+      case 'spin':
+        await user.updateAttribute('spins', user.spins + prizesObject[day].count);
+        break;
     }
     return updatedDailyWin;
   };
@@ -53,7 +64,7 @@ module.exports = function(Dailywin) {
     } else if (allActiveDailywin.length == 1) {
       currentDailyWin = allActiveDailywin[0];
     } else {
-      const error = new Error('To many daily-win instances');
+      const error = new Error('Too many daily-win instances');
       error.status = 500;
       throw error;
     }
