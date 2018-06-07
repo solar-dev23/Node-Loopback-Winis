@@ -144,6 +144,7 @@ module.exports = function(User) {
             } else {
               image
                 .cover(resizeWidth, resizeHeight)
+                .quality(70)
                 .getBuffer(jimp.MIME_JPEG, (err, buffer) => {
                   return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
                 });
