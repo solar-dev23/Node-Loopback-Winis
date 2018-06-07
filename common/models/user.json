@@ -235,6 +235,13 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "freeSpins"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getShareImage"
     }
   ],
   "methods": {
@@ -451,6 +458,40 @@
         "verb": "post",
         "path": "/freeSpins/"
       }
+    },
+    "prototype.getShareImage": {
+      "accepts": [
+        {
+          "arg": "game",
+          "type": "string",
+          "required": false,
+          "description": "The type of game this user has won"
+        }
+      ],
+      "returns": [
+        {
+          "arg": "image",
+          "type": "file",
+          "root": true,
+          "description": "The returned winner image"
+        },
+        {
+          "arg": "Content-Type",
+          "type": "string",
+          "root": false,
+          "description": "The content type of the returned file",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "description": "Generate and return an image for social media posting",
+      "http": [
+        {
+          "path": "/share/:game/winner.jpg",
+          "verb": "get"
+        }
+      ]
     }
   }
 }

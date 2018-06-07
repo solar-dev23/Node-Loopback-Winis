@@ -167,6 +167,90 @@ module.exports = function(User) {
     return User.returnResizedImage(this.id, this.avatar, 250, 250, next);
   };
 
+  User.measureText = function(font, text) {
+    let x = 0;
+    for (let i = 0; i < text.length; i++) {
+      if (font.chars[text[i]]) {
+        x += font.chars[text[i]].xoffset +
+          (font.kernings[text[i]] && font.kernings[text[i]][text[i + 1]] ? font.kernings[text[i]][text[i + 1]] : 0) +
+          (font.chars[text[i]].xadvance || 0);
+      }
+    }
+    return x;
+  };
+
+  User.generateShareImage = async function(userId, userName, avatarBuffer, game) {
+    const backgroundImage = `${__dirname}/../../assets/share/smm_background.png`;
+    const starsOverlayImage = `${__dirname}/../../assets/share/stars_overlay.png`;
+    const topStarsOverlayImage = `${__dirname}/../../assets/share/topstar_overlay.png`;
+    const avatarMaskImage = `${__dirname}/../../assets/share/avatar_mask.png`;
+    const gameImage = `${__dirname}/../../assets/games/${game}.png`;
+    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo.fnt`;
+
+    const background = await jimp.read(backgroundImage);
+    const starsOverlay = await jimp.read(starsOverlayImage);
+    const avatarOverlay = await jimp.read(avatarBuffer);
+    const avatarMaskOverlay = await jimp.read(avatarMaskImage);
+    const gameIconOverlay = await jimp.read(gameImage);
+    const topStarsOverlay = await jimp.read(topStarsOverlayImage);
+    const font = await jimp.loadFont(titleFont);
+
+    avatarOverlay.cover(265, 265);
+    avatarOverlay.mask(avatarMaskOverlay, 0, 0);
+    background.composite(avatarOverlay, 765, 580);
+    background.composite(starsOverlay, 430, 500);
+    background.composite(gameIconOverlay, 790, 20);
+    background.composite(topStarsOverlay, 530, 0);
+
+    const winnerText = `${userName.toUpperCase()} ROCKS AGAIN!`;
+    const textWidth = User.measureText(font, winnerText);
+    const textPosition = Math.floor((background.bitmap.width / 2) - (textWidth / 2) * 0.93);
+
+    background.print(font, textPosition, 215, winnerText);
+
+    return background;
+  };
+
+  User.prototype.getShareImage = function(game, cb) {
+    const app = User.app;
+    const containerName = app.get('container');
+    const storage = app.models.storage;
+    const writeBuffer = new streambuffer.WritableStreamBuffer();
+    const defaultAvatar = `${__dirname}/../../assets/avatar/avatar.jpg`;
+    const next = cb;
+    const userId = this.id;
+    const userName = this.username;
+
+    const fileName = `${userId}_avatar.jpg`;
+    storage.getFile(containerName, fileName, (err) => {
+      let fileStream;
+
+      if (err && (err.code === 'ENOENT' || err.code === 404)) {
+        fileStream = fs.createReadStream(defaultAvatar);
+      } else {
+        fileStream = storage.downloadStream(containerName, fileName);
+      }
+
+      fileStream.pipe(writeBuffer);
+      fileStream.on('end', (err) => {
+        if (err) {
+          const error = new Error('Failed fetching a avatar');
+          error.status = 409;
+          throw error;
+        }
+
+        const buffer = writeBuffer.getContents();
+        User.generateShareImage(userId, userName, buffer, game)
+          .then((finalImage) => {
+            finalImage.write('/tmp/output.jpg');
+            finalImage.getBuffer(jimp.MIME_JPEG, (err, buffer) => {
+              return next(null, buffer, 'image/jpeg');
+            });
+          });
+      });
+    });
+  };
+
   User.transferFunds = async function(amount, sender, recipient) {
     debug(`Sending ${amount} winis from ${sender.id} to ${recipient.id}`);
     if (sender.winis - sender.staked < amount) {
@@ -312,7 +396,7 @@ module.exports = function(User) {
     }
     if ((Date.now() - currentUser.lastDailySpinGrantingDate.getTime()) > 24 * 60 * 60 * 1000) {
       await Promise.all([
-        currentUser.updateAttribute('spins', currentUser.spins + 1), 
+        currentUser.updateAttribute('spins', currentUser.spins + 1),
         currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now()),
         User.app.models.transactionLog.create({
           attribute: 'spins',
