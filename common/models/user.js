@@ -140,12 +140,12 @@ module.exports = function(User) {
         jimp.read(buffer)
           .then((image) => {
             if (image.bitmap.width === resizeWidth && image.bitmap.height === resizeHeight) {
-              return next(null, buffer, 'image/jpeg');
+              return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
             } else {
               image
                 .cover(resizeWidth, resizeHeight)
                 .getBuffer(jimp.MIME_JPEG, (err, buffer) => {
-                  return next(null, buffer, 'image/jpeg');
+                  return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
                 });
             }
           });
@@ -260,7 +260,7 @@ module.exports = function(User) {
           .then((finalImage) => {
             finalImage.quality(60);
             finalImage.getBuffer(jimp.MIME_JPEG, (err, buffer) => {
-              return next(null, buffer, 'image/jpeg');
+              return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
             });
           });
       });
