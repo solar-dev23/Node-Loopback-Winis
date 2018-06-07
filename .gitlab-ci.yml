@@ -233,7 +233,15 @@ production:
   }
 
   function init_helm() {
-    helm init --client-only
+    helm init --upgrade
+
+    kubectl rollout status -n "gitlab-managed-apps" -w "deployment/tiller-deploy"
+    if ! helm version --debug; then
+      echo "Failed to init Tiller."
+      return 1
+    fi
+    echo ""
+
     helm dependency update chart/
     helm dependency build chart/
   }
