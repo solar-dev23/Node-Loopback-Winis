@@ -35,63 +35,63 @@ router.get('/', auth, async function(req, res, next) {
 
 router.get('/:id', auth, async function(req, res) {
   let app = req.app;
-  let deposits = app.models.deposit;
-  let depositId = req.params.id;
+  let competitions = app.models.competition;
+  let competitionId = req.params.id;
 
-  let depositForm = generateForm();
+  let competitionForm = generateForm();
 
-  const currentDeposit = await deposits.findById(depositId);
-  res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
-    depositsActive: 'active',
-    pageName: 'deposit - Details',
-    deposit: currentDeposit,
-    depositId: depositId,
-    depositForm: depositForm.bind(currentDeposit).toHTML(formUtils.bootstrapField),
+  const currentCompetition = await competitions.findById(competitionId);
+  res.render('competitions/view', Object.assign(utils.getRequestVariables(app, req), {
+    competitionsActive: 'active',
+    pageName: 'Competitions - Details',
+    competition: currentCompetition,
+    competitionId: competitionId,
+    competitionForm: competitionForm.bind(currentCompetition).toHTML(formUtils.bootstrapField),
     resError: req.resError,
   }));
 });
 
 router.post('/:id', auth, async function(req, res) {
   let app = req.app;
-  let Deposits = app.models.deposit;
-  let depositId = req.params.id;
+  let Competitions = app.models.competition;
+  let competitionId = req.params.id;
 
-  let depositForm = generateForm();
+  let competitionForm = generateForm();
 
-  depositForm.handle(req, {
+  competitionForm.handle(req, {
     success: async function(form) {
-      const deposit = await Deposits.findById(depositId);
-      const updatedDeposit = await deposit.updateAttributes(form.data);
-      res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
-        depositsActive: 'active',
-        pageName: 'deposit - Details',
-        deposit: updatedDeposit,
-        depositId: depositId,
-        depositForm: depositForm.bind(updatedDeposit).toHTML(formUtils.bootstrapField),
+      const competition = await Competitions.findById(competitionId);
+      const updatedCompetition = await competition.updateAttributes(form.data);
+      res.render('competitions/view', Object.assign(utils.getRequestVariables(app, req), {
+        competitionsActive: 'active',
+        pageName: 'Competition - Details',
+        competition: updatedCompetition,
+        competitionId: competitionId,
+        competitionForm: competitionForm.bind(updatedCompetition).toHTML(formUtils.bootstrapField),
         resError: req.resError,
       }));
     },
     other: async function(form) {
-      const deposit = await Deposits.findById(depositId);
-      const updatedDeposit = await deposit.updateAttributes(form.data);
-      res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
-        depositsActive: 'active',
-        pageName: 'deposit - Details',
-        deposit: updatedDeposit,
-        depositId: depositId,
-        depositForm: depositForm.bind(updatedDeposit).toHTML(formUtils.bootstrapField),
+      const competition = await Competitions.findById(competitionId);
+      const updatedCompetition = await competition.updateAttributes(form.data);
+      res.render('competitions/view', Object.assign(utils.getRequestVariables(app, req), {
+        competitionsActive: 'active',
+        pageName: 'Competition - Details',
+        competition: updatedCompetition,
+        competitionId: competitionId,
+        competitionForm: competitionForm.bind(updatedCompetition).toHTML(formUtils.bootstrapField),
         resError: req.resError,
       }));
     },
     error: async function(form) {
-      const deposit = await Deposits.findById(depositId);
-      const updatedDeposit = await deposit.updateAttributes(form.data);
-      res.render('deposits/view', Object.assign(utils.getRequestVariables(app, req), {
-        depositsActive: 'active',
-        pageName: 'deposit - Details',
-        deposit: updatedDeposit,
-        depositId: depositId,
-        depositForm: depositForm.bind(updatedDeposit).toHTML(formUtils.bootstrapField),
+      const competition = await Competitions.findById(competitionId);
+      const updatedCompetition = await competition.updateAttributes(form.data);
+      res.render('competitions/view', Object.assign(utils.getRequestVariables(app, req), {
+        competitionsActive: 'active',
+        pageName: 'Competition - Details',
+        competition: updatedCompetition,
+        competitionId: competitionId,
+        competitionForm: competitionForm.bind(updatedCompetition).toHTML(formUtils.bootstrapField),
         resError: req.resError,
       }));
     },
@@ -100,14 +100,14 @@ router.post('/:id', auth, async function(req, res) {
 
 router.get('/:id/delete', auth, async function(req, res) {
   let app = req.app;
-  let Deposits = app.models.deposit;
-  let depositId = req.params.id;
+  let Competitions = app.models.competition;
+  let competitionId = req.params.id;
 
-  await Deposits.destroyById(depositId);
+  await Competitions.destroyById(competitionId);
 
-  res.render('deposits/delete', Object.assign(utils.getRequestVariables(app, req), {
-    battlesActive: 'active',
-    pageName: 'Battles',
+  res.render('competitions/delete', Object.assign(utils.getRequestVariables(app, req), {
+    competitionsActive: 'active',
+    pageName: 'Competitions',
   }));
 });
 
@@ -120,16 +120,15 @@ function generateForm() {
   let widgets = forms.widgets;
 
   return forms.create({
-    externalId: fields.string({
+    prize: fields.string({
       required: true,
     }),
-    amount: fields.number({
-      widget: widgets.number(),
-    }),
-    method: fields.string({
+    startDate: fields.date({
+      widget: widgets.date(),
       required: true,
     }),
-    userId: fields.string({
+    endDate: fields.date({
+      widget: widgets.date(),
       required: true,
     }),
   });
