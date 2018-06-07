@@ -147,7 +147,7 @@ function generateForm() {
     isAdmin: fields.boolean({
       widget: widgets.checkbox(),
     }),
-    adminPassword: fields.string({
+    password: fields.password({
       required: true,
     }),
   });
