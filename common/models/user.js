@@ -140,12 +140,12 @@ module.exports = function(User) {
         jimp.read(buffer)
           .then((image) => {
             if (image.bitmap.width === resizeWidth && image.bitmap.height === resizeHeight) {
-              return next(null, buffer, 'image/jpeg');
+              return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
             } else {
               image
                 .cover(resizeWidth, resizeHeight)
                 .getBuffer(jimp.MIME_JPEG, (err, buffer) => {
-                  return next(null, buffer, 'image/jpeg');
+                  return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
                 });
             }
           });
@@ -165,6 +165,106 @@ module.exports = function(User) {
 
   User.prototype.getDefaultAvatar = function(next) {
     return User.returnResizedImage(this.id, this.avatar, 250, 250, next);
+  };
+
+  User.measureText = function(font, text) {
+    let x = 0;
+    for (let i = 0; i < text.length; i++) {
+      if (font.chars[text[i]]) {
+        x += font.chars[text[i]].xoffset +
+          (font.kernings[text[i]] && font.kernings[text[i]][text[i + 1]] ? font.kernings[text[i]][text[i + 1]] : 0) +
+          (font.chars[text[i]].xadvance || 0);
+      }
+    }
+    return x;
+  };
+
+  User.generateShareImage = async function(type, userId, userName, avatarBuffer, game) {
+    const backgroundImage = `${__dirname}/../../assets/share/${type}/smm_background.png`;
+    const starsOverlayImage = `${__dirname}/../../assets/share/${type}/stars_overlay.png`;
+    const topStarsOverlayImage = `${__dirname}/../../assets/share/${type}/topstar_overlay.png`;
+    const avatarMaskImage = `${__dirname}/../../assets/share/${type}/avatar_mask.png`;
+    const gameImage = `${__dirname}/../../assets/games/${game}.png`;
+    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo_74.fnt`;
+
+    const background = await jimp.read(backgroundImage);
+    const starsOverlay = await jimp.read(starsOverlayImage);
+    const avatarOverlay = await jimp.read(avatarBuffer);
+    const avatarMaskOverlay = await jimp.read(avatarMaskImage);
+    const gameIconOverlay = await jimp.read(gameImage);
+    const topStarsOverlay = await jimp.read(topStarsOverlayImage);
+
+    const font = await jimp.loadFont(titleFont);
+
+    const winnerText = `${userName.toUpperCase()} ROCKS AGAIN!`;
+    const textWidth = User.measureText(font, winnerText);
+    const textPosition = Math.floor((background.bitmap.width / 2) - (textWidth / 2) * 0.85);
+
+    if (type == 'instagram') {
+      avatarOverlay.cover(355, 355);
+      avatarOverlay.mask(avatarMaskOverlay, 0, 0);
+      background.composite(avatarOverlay, 715, 880);
+      background.composite(starsOverlay, 250, 783);
+      background.composite(gameIconOverlay, 794, 78);
+      background.composite(topStarsOverlay, 718, 90);
+      background.print(font, textPosition, 320, winnerText);
+    } else {
+      avatarOverlay.cover(265, 265);
+      avatarOverlay.mask(avatarMaskOverlay, 0, 0);
+      background.composite(avatarOverlay, 765, 580);
+      background.composite(starsOverlay, 414, 504);
+      background.composite(gameIconOverlay, 790, 12);
+      background.composite(topStarsOverlay, 539, 0);
+      background.print(font, textPosition, 215, winnerText);
+    }
+
+    return background;
+  };
+
+  User.prototype.getShareImage = function(type, game, cb) {
+    const app = User.app;
+    const containerName = app.get('container');
+    const storage = app.models.storage;
+    const writeBuffer = new streambuffer.WritableStreamBuffer();
+    const defaultAvatar = `${__dirname}/../../assets/avatar/avatar.jpg`;
+    const next = cb;
+    const userId = this.id;
+    const userName = this.username;
+
+    if (type == 'ig') {
+      type = 'instagram';
+    } else {
+      type = 'general';
+    }
+
+    const fileName = `${userId}_avatar.jpg`;
+    storage.getFile(containerName, fileName, (err) => {
+      let fileStream;
+
+      if (err && (err.code === 'ENOENT' || err.code === 404)) {
+        fileStream = fs.createReadStream(defaultAvatar);
+      } else {
+        fileStream = storage.downloadStream(containerName, fileName);
+      }
+
+      fileStream.pipe(writeBuffer);
+      fileStream.on('end', (err) => {
+        if (err) {
+          const error = new Error('Failed fetching a avatar');
+          error.status = 409;
+          throw error;
+        }
+
+        const buffer = writeBuffer.getContents();
+        User.generateShareImage(type, userId, userName, buffer, game)
+          .then((finalImage) => {
+            finalImage.quality(60);
+            finalImage.getBuffer(jimp.MIME_JPEG, (err, buffer) => {
+              return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
+            });
+          });
+      });
+    });
   };
 
   User.transferFunds = async function(amount, sender, recipient) {
@@ -312,7 +412,7 @@ module.exports = function(User) {
     }
     if ((Date.now() - currentUser.lastDailySpinGrantingDate.getTime()) > 24 * 60 * 60 * 1000) {
       await Promise.all([
-        currentUser.updateAttribute('spins', currentUser.spins + 1), 
+        currentUser.updateAttribute('spins', currentUser.spins + 1),
         currentUser.updateAttribute('lastDailySpinGrantingDate', Date.now()),
         User.app.models.transactionLog.create({
           attribute: 'spins',

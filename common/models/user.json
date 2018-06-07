@@ -235,6 +235,13 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "freeSpins"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "getShareImage"
     }
   ],
   "methods": {
@@ -346,6 +353,15 @@
           "http": {
             "target": "header"
           }
+        },
+        {
+          "arg": "Cache-Control",
+          "type": "string",
+          "root": false,
+          "description": "How long to store the image in cache",
+          "http": {
+            "target": "header"
+          }
         }
       ],
       "http": {
@@ -376,6 +392,15 @@
           "http": {
             "target": "header"
           }
+        },
+        {
+          "arg": "Cache-Control",
+          "type": "string",
+          "root": false,
+          "description": "How long to store the image in cache",
+          "http": {
+            "target": "header"
+          }
         }
       ],
       "http": {
@@ -399,6 +424,15 @@
         {
           "arg": "Content-Type",
           "type": "string",
+          "http": {
+            "target": "header"
+          }
+        },
+        {
+          "arg": "Cache-Control",
+          "type": "string",
+          "root": false,
+          "description": "How long to store the image in cache",
           "http": {
             "target": "header"
           }
@@ -451,6 +485,59 @@
         "verb": "post",
         "path": "/freeSpins/"
       }
+    },
+    "prototype.getShareImage": {
+      "accepts": [
+        {
+          "arg": "type",
+          "type": "string",
+          "required": false,
+          "description": "Instagram or general share image"
+        },
+        {
+          "arg": "game",
+          "type": "string",
+          "required": false,
+          "description": "The type of game this user has won"
+        }
+      ],
+      "returns": [
+        {
+          "arg": "image",
+          "type": "file",
+          "root": true,
+          "description": "The returned winner image"
+        },
+        {
+          "arg": "Content-Type",
+          "type": "string",
+          "root": false,
+          "description": "The content type of the returned file",
+          "http": {
+            "target": "header"
+          }
+        },
+        {
+          "arg": "Cache-Control",
+          "type": "string",
+          "root": false,
+          "description": "How long to store the image in cache",
+          "http": {
+            "target": "header"
+          }
+        }
+      ],
+      "description": "Generate and return an image for social media posting",
+      "http": [
+        {
+          "path": "/share/:game/winner.jpg",
+          "verb": "get"
+        },
+        {
+          "path": "/share/:type/:game/winner.jpg",
+          "verb": "get"
+        }
+      ]
     }
   }
 }
