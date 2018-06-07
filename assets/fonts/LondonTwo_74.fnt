@@ -1,6 +1,6 @@
-info face=LondonTwo size=74 bold=0 italic=0 charset= unicode= stretchH=100 smooth=1 aa=1 padding=2,2,2,2 spacing=0,0 outline=0
+info face=LondonTwo_74 size=74 bold=0 italic=0 charset= unicode= stretchH=100 smooth=1 aa=1 padding=2,2,2,2 spacing=0,0 outline=0
 common lineHeight=71 base=57 scaleW=408 scaleH=512 pages=1 packed=0
-page id=0 file="LondonTwo.png"
+page id=0 file="LondonTwo_74.png"
 chars count=64
 char id=65 x=2 y=2 width=58 height=61 xoffset=0 yoffset=4 xadvance=54 page=0 chnl=15
 char id=66 x=2 y=65 width=40 height=57 xoffset=6 yoffset=6 xadvance=45 page=0 chnl=15

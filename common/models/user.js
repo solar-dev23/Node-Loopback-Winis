@@ -179,13 +179,13 @@ module.exports = function(User) {
     return x;
   };
 
-  User.generateShareImage = async function(userId, userName, avatarBuffer, game) {
-    const backgroundImage = `${__dirname}/../../assets/share/smm_background.png`;
-    const starsOverlayImage = `${__dirname}/../../assets/share/stars_overlay.png`;
-    const topStarsOverlayImage = `${__dirname}/../../assets/share/topstar_overlay.png`;
-    const avatarMaskImage = `${__dirname}/../../assets/share/avatar_mask.png`;
+  User.generateShareImage = async function(type, userId, userName, avatarBuffer, game) {
+    const backgroundImage = `${__dirname}/../../assets/share/${type}/smm_background.png`;
+    const starsOverlayImage = `${__dirname}/../../assets/share/${type}/stars_overlay.png`;
+    const topStarsOverlayImage = `${__dirname}/../../assets/share/${type}/topstar_overlay.png`;
+    const avatarMaskImage = `${__dirname}/../../assets/share/${type}/avatar_mask.png`;
     const gameImage = `${__dirname}/../../assets/games/${game}.png`;
-    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo.fnt`;
+    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo_74.fnt`;
 
     const background = await jimp.read(backgroundImage);
     const starsOverlay = await jimp.read(starsOverlayImage);
@@ -193,25 +193,35 @@ module.exports = function(User) {
     const avatarMaskOverlay = await jimp.read(avatarMaskImage);
     const gameIconOverlay = await jimp.read(gameImage);
     const topStarsOverlay = await jimp.read(topStarsOverlayImage);
-    const font = await jimp.loadFont(titleFont);
 
-    avatarOverlay.cover(265, 265);
-    avatarOverlay.mask(avatarMaskOverlay, 0, 0);
-    background.composite(avatarOverlay, 765, 580);
-    background.composite(starsOverlay, 430, 500);
-    background.composite(gameIconOverlay, 790, 20);
-    background.composite(topStarsOverlay, 530, 0);
+    const font = await jimp.loadFont(titleFont);
 
     const winnerText = `${userName.toUpperCase()} ROCKS AGAIN!`;
     const textWidth = User.measureText(font, winnerText);
-    const textPosition = Math.floor((background.bitmap.width / 2) - (textWidth / 2) * 0.93);
+    const textPosition = Math.floor((background.bitmap.width / 2) - (textWidth / 2) * 0.85);
 
-    background.print(font, textPosition, 215, winnerText);
+    if (type == 'instagram') {
+      avatarOverlay.cover(355, 355);
+      avatarOverlay.mask(avatarMaskOverlay, 0, 0);
+      background.composite(avatarOverlay, 715, 880);
+      background.composite(starsOverlay, 250, 783);
+      background.composite(gameIconOverlay, 794, 78);
+      background.composite(topStarsOverlay, 718, 90);
+      background.print(font, textPosition, 320, winnerText);
+    } else {
+      avatarOverlay.cover(265, 265);
+      avatarOverlay.mask(avatarMaskOverlay, 0, 0);
+      background.composite(avatarOverlay, 765, 580);
+      background.composite(starsOverlay, 414, 504);
+      background.composite(gameIconOverlay, 790, 12);
+      background.composite(topStarsOverlay, 539, 0);
+      background.print(font, textPosition, 215, winnerText);
+    }
 
     return background;
   };
 
-  User.prototype.getShareImage = function(game, cb) {
+  User.prototype.getShareImage = function(type, game, cb) {
     const app = User.app;
     const containerName = app.get('container');
     const storage = app.models.storage;
@@ -220,6 +230,12 @@ module.exports = function(User) {
     const next = cb;
     const userId = this.id;
     const userName = this.username;
+
+    if (type == 'ig') {
+      type = 'instagram';
+    } else {
+      type = 'general';
+    }
 
     const fileName = `${userId}_avatar.jpg`;
     storage.getFile(containerName, fileName, (err) => {
@@ -240,9 +256,8 @@ module.exports = function(User) {
         }
 
         const buffer = writeBuffer.getContents();
-        User.generateShareImage(userId, userName, buffer, game)
+        User.generateShareImage(type, userId, userName, buffer, game)
           .then((finalImage) => {
-            finalImage.write('/tmp/output.jpg');
             finalImage.getBuffer(jimp.MIME_JPEG, (err, buffer) => {
               return next(null, buffer, 'image/jpeg');
             });

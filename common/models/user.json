@@ -462,6 +462,12 @@
     "prototype.getShareImage": {
       "accepts": [
         {
+          "arg": "type",
+          "type": "string",
+          "required": false,
+          "description": "Instagram or general share image"
+        },
+        {
           "arg": "game",
           "type": "string",
           "required": false,
@@ -489,6 +495,10 @@
       "http": [
         {
           "path": "/share/:game/winner.jpg",
+          "verb": "get"
+        },
+        {
+          "path": "/share/:type/:game/winner.jpg",
           "verb": "get"
         }
       ]
