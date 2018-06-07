@@ -380,7 +380,7 @@ module.exports = function(User) {
     };
   };
 
-  User.beforeRemote('prototype.__link__blocked', async(ctx) => {
+  User.beforeRemote('prototype.__link__blocked', async (ctx) => {
     const user = ctx.instance;
     const blockedId = ctx.args.fk;
 
@@ -388,14 +388,14 @@ module.exports = function(User) {
     await user.pending.remove(blockedId);
   });
 
-  User.afterRemote('prototype.__unlink__blocked', async(ctx) => {
+  User.afterRemote('prototype.__unlink__blocked', async (ctx) => {
     const user = ctx.instance;
     const unblockedId = ctx.args.fk;
 
     await user.friends.add(unblockedId);
   });
 
-  User.afterRemote('prototype.__link__friends', async(ctx) => {
+  User.afterRemote('prototype.__link__friends', async (ctx) => {
     const user = ctx.instance;
     const userId = user.id;
     const friendId = ctx.args.fk;
