@@ -258,6 +258,7 @@ module.exports = function(User) {
         const buffer = writeBuffer.getContents();
         User.generateShareImage(type, userId, userName, buffer, game)
           .then((finalImage) => {
+            finalImage.quality(60);
             finalImage.getBuffer(jimp.MIME_JPEG, (err, buffer) => {
               return next(null, buffer, 'image/jpeg');
             });
