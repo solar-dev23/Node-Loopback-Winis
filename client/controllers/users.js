@@ -101,7 +101,7 @@ router.post('/:id', auth, async function(req, res) {
   });
 });
 
-router.get('/:id/delete', auth, async function(req, res) { 
+router.get('/:id/delete', auth, async function(req, res) {
   let app = req.app;
   let Users = app.models.user;
   let userId = req.params.id;
@@ -113,7 +113,7 @@ router.get('/:id/delete', auth, async function(req, res) {
   }));
 });
 
-/** 
+/**
 * generate form
 * @return {string}form configuration
 */
@@ -146,9 +146,6 @@ function generateForm() {
     }),
     isAdmin: fields.boolean({
       widget: widgets.checkbox(),
-    }),
-    adminLogin: fields.string({
-      required: true,
     }),
     adminPassword: fields.string({
       required: true,

@@ -17,7 +17,7 @@ $('#data').DataTable({
   'searching': true,
   'info': true,
   'scrollX': true,
-  'order': [[7, 'desc']],
+  'order': [[9, 'desc']],
   'columnDefs': [
     {
       targets: 0,
@@ -30,19 +30,27 @@ $('#data').DataTable({
     },
     {
       targets: 2,
-      width: '5em',
+      width: '10em',
     },
     {
       targets: 4,
-      width: '15em',
+      width: '5em',
     },
     {
-      targets: [5, 6],
-      width: '3em',
+      targets: 6,
+      width: '5em',
     },
     {
       targets: 7,
       width: '5em',
+    },
+    {
+      targets: 8,
+      width: '8em',
+    },
+    {
+      targets: 9,
+      width: '8em',
     },
   ],
 });

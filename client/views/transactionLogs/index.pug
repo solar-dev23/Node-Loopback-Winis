@@ -35,7 +35,6 @@ block content
                   th First Actor
                   th Second Actor
                   th Created At
-                  th One
               tbody
                 each transactionLog in transactionLogs
                   tr(data-href='/transactionLogs/' + transactionLog["id"] class="href-row")
@@ -46,7 +45,6 @@ block content
                     td #{transactionLog['firstActor']}
                     td #{transactionLog['secondActor']}
                     td(data-sort=transactionLog["createdAt"])= moment(transactionLog["createdAt"]).fromNow()
-                    td Why this row
               tfoot
                 tr
                   th ID
@@ -56,7 +54,6 @@ block content
                   th First Actor
                   th Second Actor
                   th Created At
-                  th One
 
 block javascript
   //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
@@ -70,6 +67,6 @@ block javascript
   script(src='/bower_components/fontawesome-markers/fontawesome-markers.min.js', type='text/javascript')
 
   // page script
-  script(src='/js/pages/users.js',type='text/javascript')
+  script(src='/js/pages/transactionLogs.js',type='text/javascript')
 
 

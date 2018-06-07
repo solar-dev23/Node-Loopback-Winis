@@ -28,7 +28,6 @@ block content
               thead
                 tr
                   th ID
-                  th Admin
                   th Phone Number
                   th Username
                   th Winis
@@ -37,12 +36,11 @@ block content
                   th Scratches
                   th Diamonds
                   th Created
-                  th Authorization method
+                  th Admin
               tbody
                 each user in users
                   tr(data-href='/users/' + user["id"] class="href-row")
                     td #{user['id']}
-                    td #{user['isAdmin']}
                     td !{user['phoneNumber']}
                     td !{user['username']}
                     td #{user["winis"]}
@@ -51,11 +49,10 @@ block content
                     td #{user["scratches"]}
                     td #{user["diamonds"]}
                     td(data-sort=user["createdAt"])= moment(user["createdAt"]).fromNow()
-                    td #{user["externalAuthMethod"]}
+                    td #{user['isAdmin']}
               tfoot
                 tr
                   th ID
-                  th Admin
                   th Phone Number
                   th Username
                   th Winis
@@ -64,7 +61,7 @@ block content
                   th Scratches
                   th Diamonds
                   th Created
-                  th Authorization method
+                  th Admin
 
 block javascript
   //script var userLocations = !{JSON.stringify(_markers).replace(/<\//g, '<\\/')}
