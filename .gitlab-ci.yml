@@ -233,7 +233,7 @@ production:
   }
 
   function init_helm() {
-    helm init --upgrade
+    helm init --upgrade --namespace="gitlab-managed-apps"
 
     kubectl rollout status -n "gitlab-managed-apps" -w "deployment/tiller-deploy"
     if ! helm version --debug; then
