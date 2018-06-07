@@ -36,7 +36,7 @@
   },
   "acls": [],
   "methods": {
-    "next": {
+    "nearest": {
       "accepts": [],
       "returns": [
         {
@@ -49,7 +49,7 @@
       "description": "Return the current or next competition",
       "http": [
         {
-          "path": "next",
+          "path": "/nearest",
           "verb": "get"
         }
       ]
