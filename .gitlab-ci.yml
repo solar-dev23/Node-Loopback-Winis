@@ -72,7 +72,7 @@ review:
   script:
     - check_kube_domain
     - install_dependencies
-    - init_helm
+    - update_chart_deps
     - ensure_namespace
     - create_secret
     - deploy review
@@ -114,7 +114,7 @@ production:
   script:
     - check_kube_domain
     - install_dependencies
-    - init_helm
+    - update_chart_deps
     - ensure_namespace
     - create_secret
     - deploy
@@ -232,16 +232,7 @@ production:
     fi
   }
 
-  function init_helm() {
-    helm init --upgrade --namespace="gitlab-managed-apps"
-
-    kubectl rollout status -n "gitlab-managed-apps" -w "deployment/tiller-deploy"
-    if ! helm version --debug; then
-      echo "Failed to init Tiller."
-      return 1
-    fi
-    echo ""
-
+  function update_chart_deps() {
     helm dependency update chart/
     helm dependency build chart/
   }
