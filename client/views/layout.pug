@@ -77,16 +77,16 @@ html
 
           // sidebar menu: : style can be found in sidebar.less
           ul.sidebar-menu
-            li(class=_dashboard_active)
+            li(class=dashboardActive)
               a(href='/')
                 i.fa.fa-dashboard
                 span Dashboard
-            li(class=_adverts_active)
+            li(class=depositsActive)
               a(href='/deposits')
                 i.fa.fa-bar-chart-o
                 span Deposits
                 small.badge.pull-right.bg-green
-            li(class=_users_active)
+            li(class=usersActive)
               a(href='/users')
                 i.fa.fa-user
                 span Users
@@ -96,15 +96,20 @@ html
             //    i.fa.fa-comments
             //    span Chats
             //    small.badge.pull-right.bg-green
-            li(class=_battles_active)
+            li(class=battlesActive)
               a(href='/battles')
                 i.fa.fa-search
                 span Battles
                 small.badge.pull-right.bg-green
-            li(class=_transactionLog_active)
+            li(class=transactionLogActive)
               a(href='/transactionLogs')
                 i.fa.fa-search
                 span Transaction Log
+                small.badge.pull-right.bg-green
+            li(class=competitionsActive)
+              a(href='/competitions')
+                i.fa.fa-trophy
+                span Competitions
                 small.badge.pull-right.bg-green
       .content-wrapper
         block content
