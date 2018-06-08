@@ -187,7 +187,7 @@ module.exports = function(User) {
     const topStarsOverlayImage = `${__dirname}/../../assets/share/${type}/topstar_overlay.png`;
     const avatarMaskImage = `${__dirname}/../../assets/share/${type}/avatar_mask.png`;
     const gameImage = `${__dirname}/../../assets/games/${game}.png`;
-    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo_74.fnt`;
+    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo.fnt`;
 
     const background = await jimp.read(backgroundImage);
     const starsOverlay = await jimp.read(starsOverlayImage);
@@ -198,7 +198,7 @@ module.exports = function(User) {
 
     const font = await jimp.loadFont(titleFont);
 
-    const winnerText = `${userName.toUpperCase()} ROCKS AGAIN!`;
+    const winnerText = `${userName.toUpperCase()}`;
     const textWidth = User.measureText(font, winnerText);
     const textPosition = Math.floor((background.bitmap.width / 2) - (textWidth / 2) * 0.85);
 
@@ -209,7 +209,7 @@ module.exports = function(User) {
       background.composite(starsOverlay, 250, 783);
       background.composite(gameIconOverlay, 794, 78);
       background.composite(topStarsOverlay, 718, 90);
-      background.print(font, textPosition, 320, winnerText);
+      background.print(font, textPosition, 1290, winnerText);
     } else {
       avatarOverlay.cover(265, 265);
       avatarOverlay.mask(avatarMaskOverlay, 0, 0);
@@ -217,7 +217,7 @@ module.exports = function(User) {
       background.composite(starsOverlay, 414, 504);
       background.composite(gameIconOverlay, 790, 12);
       background.composite(topStarsOverlay, 539, 0);
-      background.print(font, textPosition, 215, winnerText);
+      background.print(font, textPosition, 880, winnerText);
     }
 
     return background;

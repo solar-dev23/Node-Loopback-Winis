@@ -190,7 +190,7 @@ describe('User', function() {
         .get(`/api/users/${strangerUser.id}/share/basketball/winner.jpg`)
         .then((res) => jimp.read(res.body))
         .then((shareImage) => {
-          expect(shareImage.hash()).to.be.equal('8cFfa0sx0hF');
+          expect(shareImage.hash()).to.be.equal('8cFba2gx0gF');
           done();
         });
     });
@@ -200,7 +200,7 @@ describe('User', function() {
         .get(`/api/users/${strangerUser.id}/share/ig/basketball/winner.jpg`)
         .then((res) => jimp.read(res.body))
         .then((shareImage) => {
-          expect(shareImage.hash()).to.be.equal('8c8bGEqx2N8');
+          expect(shareImage.hash()).to.be.equal('ac8bGwUxig8');
           done();
         });
     });
