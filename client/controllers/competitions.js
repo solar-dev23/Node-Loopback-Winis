@@ -123,6 +123,9 @@ function generateForm() {
     prize: fields.string({
       required: true,
     }),
+    image: fields.string({
+      required: true,
+    }),
     startDate: fields.date({
       widget: widgets.date(),
       required: true,
