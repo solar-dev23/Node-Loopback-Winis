@@ -12,6 +12,7 @@
         "challenge",
         "prototype.acceptBattle",
         "prototype.rejectBattle",
+        "prototype.cancelBattle",
         "prototype.won",
         "prototype.lost",
         "prototype.draw"
