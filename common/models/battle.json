@@ -211,6 +211,28 @@
         "path": "/draw",
         "verb": "post"
       }
+    },
+    "prototype.cancelBattle": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "battle",
+        "type": "object",
+        "root": true,
+        "description": "The response body contains cancelled battle object. All stakes related to this battle are released."
+      },
+      "description": "Cancel a pending battle",
+      "http": [
+        {
+          "path": "/cancel",
+          "verb": "post"
+        }
+      ]
     }
   }
 }
