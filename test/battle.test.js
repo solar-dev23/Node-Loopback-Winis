@@ -546,7 +546,7 @@ describe('Battle', function() {
         done();
       });
     });
-    
+
     it('should finish battle with lose/win configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/lost`)
@@ -615,7 +615,7 @@ describe('Battle', function() {
         done();
       });
     });
-    
+
     it('should finish battle with draw/draw configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/draw`)
@@ -755,7 +755,7 @@ describe('Battle', function() {
         done();
       });
     });
-    
+
     it('should finish battle with lose/lose error configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/lost`)
@@ -825,7 +825,7 @@ describe('Battle', function() {
         done();
       });
     });
-    
+
     it('should finish battle with win/draw error configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/won`)
@@ -895,7 +895,7 @@ describe('Battle', function() {
         done();
       });
     });
-    
+
     it('should finish battle with draw/win error configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/draw`)
@@ -1035,7 +1035,7 @@ describe('Battle', function() {
         done();
       });
     });
-    
+
     it('should finish battle with draw/lose error configuration. opponent challenger', function(done) {
       request
       .post(`/api/battles/${freshBattle.id}/draw`)
@@ -1176,6 +1176,75 @@ describe('Battle', function() {
         unmute();
         done();
       });
+    });
+  });
+
+  describe('Cancellation', function() {
+    let freshBattle;
+
+    beforeEach(async function() {
+      await request
+        .post('/api/battles/challenge/')
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send({
+          game: 'test-game',
+          opponentId: opponentUser.id.toString(),
+          stake: 20,
+        })
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.status).to.be.equal('pending');
+          expect(res.body.result).to.be.equal('unset');
+          expect(res.body.game).to.be.equal('test-game');
+          expect(res.body.opponentStatus).to.be.equal('unset');
+          expect(res.body.challengerStatus).to.be.equal('unset');
+          freshBattle = res.body;
+        });
+    });
+
+    it('should cancel a pending battle and return the staked winis', function(done) {
+      request
+        .post(`/api/battles/${freshBattle.id}/cancel`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
+          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.status).to.be.equal('cancelled');
+          expect(res.body.result).to.be.equal('finished');
+          expect(res.body.game).to.be.equal('test-game');
+          expect(res.body.opponentStatus).to.be.equal('unset');
+          expect(res.body.challengerStatus).to.be.equal('unset');
+
+          return UserModel.findById(challengerUser.id.toString());
+        })
+        .then(challenger => {
+          expect(challenger.staked).to.be.equal(0);
+          return UserModel.findById(opponentUser.id.toString());
+        })
+        .then(opponent => {
+          expect(opponent.staked).to.be.equal(0);
+          done();
+        });
+    });
+
+    it('shouldn\'t allow to cancel somebody elses challenge', function(done) {
+      const unmute = mute();
+      request
+        .post(`/api/battles/${freshBattle.id}/cancel`)
+        .set('Authorization', opponentAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then(res =>{
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+          done();
+        });
     });
   });
 });

@@ -115,6 +115,43 @@ module.exports = function(Battle) {
     return currentBattle;
   };
 
+  /**
+   * Cancel a pending battle
+   * @param {Function(Error)} callback
+   */
+
+  Battle.prototype.cancelBattle = async function(options) {
+    const currentBattle = this;
+    const token = options && options.accessToken;
+    const challengerId = token && token.userId;
+
+    if (currentBattle.challengerId != challengerId) {
+      const error = new Error('You cannot cancel somebody else\'s battle');
+      error.status = 409;
+      throw error;
+    }
+
+    if (currentBattle.status != 'pending') {
+      const error = new Error('You cannot cancel an active battle');
+      error.status = 409;
+      throw error;
+    }
+
+    const UserModel = Battle.app.models.user;
+    const challenger = await UserModel.findById(currentBattle.challengerId);
+    const opponent = await UserModel.findById(currentBattle.opponentId);
+
+    Promise.all([
+      currentBattle.updateAttribute('status', 'cancelled'),
+      currentBattle.updateAttribute('result', 'finished'),
+    ]);
+
+    const updatedChallenger = await challenger.releaseFunds(currentBattle.stake);
+    const updatedOpponent = await opponent.releaseFunds(currentBattle.stake);
+
+    return currentBattle;
+  };
+
   Battle.prototype.won = async function(options) {
     const currentBattle = this;
     const token = options && options.accessToken;
