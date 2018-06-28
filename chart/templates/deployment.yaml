@@ -21,15 +21,6 @@ spec:
     spec:
       imagePullSecrets:
 {{ toYaml .Values.image.secrets | indent 10 }}
-      {{- if eq .Values.application.track "stable" }}
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                - key: cloud.google.com/gke-preemptible
-                  operator: DoesNotExist
-      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
