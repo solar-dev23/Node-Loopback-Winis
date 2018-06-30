@@ -2,9 +2,7 @@
   "db": {
     "database": "winis",
     "name": "db",
-    "host": "winis-mongodb",
-    "user": "winis",
-    "password": "MjRCLDR49Sz2gE",
+    "host": "winis-mongodb-mongodb-replicaset",
     "connector": "mongodb"
   },
   "storage": {
