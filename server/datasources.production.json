@@ -3,6 +3,8 @@
     "database": "winis",
     "name": "db",
     "host": "winis-mongodb",
+    "user": "winis",
+    "password": "MjRCLDR49Sz2gE",
     "connector": "mongodb"
   },
   "storage": {
