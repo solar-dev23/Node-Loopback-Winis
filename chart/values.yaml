@@ -20,6 +20,8 @@ service:
   internalPort: 3000
 mongodb:
   enabled: true
+  replicaSet:
+    enabled: true
 resources:
 #  limits:
 #    cpu: 100m
