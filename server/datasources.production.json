@@ -1,7 +1,7 @@
 {
   "db": {
     "database": "winis",
-    "url": "mongodb://winis-mongodb-mongodb-replicaset-0,winis-mongodb-mongodb-replicaset-1,winis-mongodb-mongodb-replicaset-2?replicaSet=rs0",
+    "url": "mongodb://winis-mongodb-mongodb-replicaset-0,winis-mongodb-mongodb-replicaset-1,winis-mongodb-mongodb-replicaset-2/winis?replicaSet=rs0",
     "connector": "mongodb"
   },
   "storage": {
