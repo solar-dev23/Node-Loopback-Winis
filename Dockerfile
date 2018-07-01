@@ -9,9 +9,13 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json bower.json .bowerrc ./
 
 RUN apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing fftw vips
+RUN apk add --update git \
+  && npm install --silent -g bower && bower install --silent --allow-root && npm uninstall -g bower \
+  && apk del git
+
 RUN apk add --update --virtual .build-deps --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
-     fftw-dev vips-dev make gcc g++ python git \
-  && npm install --silent -g bower && npm install --production --silent && npm uninstall -g bower \
+     fftw-dev vips-dev make gcc g++ python \
+  && npm install --production --silent \
   && apk del .build-deps && rm -rf /var/cache/apk/*
 
 # Copy actual application

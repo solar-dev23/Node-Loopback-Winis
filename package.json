@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "start": "node .",
     "check": "npm run lint && nsp check",
-    "test": "NODE_ENV=test mocha",
-    "postinstall": "bower install --silent --allow-root"
+    "test": "NODE_ENV=test mocha"
   },
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
