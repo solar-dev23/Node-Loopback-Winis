@@ -61,7 +61,7 @@ module.exports = function(User) {
 
     const insertResult = await userContactsModel.upsertWithWhere(
       {'user': user},
-      {'user': user, 'contacts': phones});
+      {'userId': userId, 'contacts': phones});
 
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
