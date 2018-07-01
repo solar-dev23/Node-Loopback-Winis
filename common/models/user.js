@@ -7,6 +7,7 @@ const util = require('util');
 const fs = require('fs');
 const streambuffer = require('stream-buffers');
 const jimp = require('jimp');
+const sharp = require('sharp');
 const md5 = require('md5');
 
 module.exports = function(User) {
@@ -141,28 +142,22 @@ module.exports = function(User) {
         fileStream = storage.downloadStream(containerName, fileName);
       }
 
-      fileStream.pipe(writeBuffer);
+      const imageTransofmer = sharp()
+        .resize(resizeWidth, resizeHeight)
+        .jpeg({
+          quality: 70
+        })
+        .toBuffer((err, data, info) => {
+          return next(null, data, 'image/jpeg', 'public, max-age=315360000');
+        });
+
+      fileStream.pipe(imageTransofmer);
       fileStream.on('end', (err) => {
         if (err) {
           const error = new Error('Failed fetching a avatar');
           error.status = 409;
           throw error;
         }
-
-        const buffer = writeBuffer.getContents();
-        jimp.read(buffer)
-          .then((image) => {
-            if (image.bitmap.width === resizeWidth && image.bitmap.height === resizeHeight) {
-              return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
-            } else {
-              image
-                .cover(resizeWidth, resizeHeight)
-                .quality(70)
-                .getBuffer(jimp.MIME_JPEG, (err, buffer) => {
-                  return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
-                });
-            }
-          });
       });
     });
   };
