@@ -48,7 +48,6 @@ test:
   stage: test
   image: node:9
   script:
-    - mkdir /tmp/storage
     - npm install
     - npm test
   only:
