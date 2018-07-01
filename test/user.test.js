@@ -117,10 +117,10 @@ describe('User', function() {
       });
 
       it('should store the users phone book for future user', async function() {
-        const userContacts = app.models.userContacts;
+        const userContactsModel = app.models.userContacts;
         const userContactList = ['+123456789', '+97212345678'];
 
-        await userContacts.deleteAll();
+        await userContactsModel.deleteAll();
 
         await request
           .post('/api/users/findByPhones')
@@ -128,7 +128,7 @@ describe('User', function() {
           .set('Authorization', accessToken.id)
           .expect('Content-Type', /json/);
 
-        const userStoredContacts = await userContacts.findOne({userId: ownerUser.id});
+        const userStoredContacts = await userContactsModel.findOne({user: ownerUser});
         expect(userStoredContacts.contacts).to.have.members(userContactList);
       });
     });

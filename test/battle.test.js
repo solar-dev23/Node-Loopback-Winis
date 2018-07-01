@@ -67,7 +67,7 @@ describe('Battle', function() {
         });
     });
 
-    it('should fail create a new pending battle there is already one', function(done) {
+    it('should reject duplicate battle betweek the same actors', function(done) {
       const unmute = mute();
       request
         .post('/api/battles/challenge/')
