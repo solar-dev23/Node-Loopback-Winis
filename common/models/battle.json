@@ -20,14 +20,6 @@
     }
   },
   "properties": {
-    "challengerId": {
-      "type": "string",
-      "required": true
-    },
-    "opponentId": {
-      "type": "string",
-      "required": true
-    },
     "status": {
       "type": "string",
       "required": true,

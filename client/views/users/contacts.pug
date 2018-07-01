@@ -1,0 +1,23 @@
+extends ../layout
+
+block head
+  link(href='/bower_components/datatables.net-bs/css/dataTables.bootstrap.css', rel='stylesheet', type='text/css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | #{tableName}
+    ol.breadcrumb
+      li
+        a(href='/')
+          i.fa.fa-dashboard
+          | Dashboard
+      li #{user.username}
+      li.active #{pageName}
+
+  // Main content
+  section.content#userDetails
+  ol
+      each contact in contacts
+        li #{contact}

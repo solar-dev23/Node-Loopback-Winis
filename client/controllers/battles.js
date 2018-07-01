@@ -1,39 +1,29 @@
 'use strict';
 
-let utils = require('../utils/utils');
-let forms = require('forms');
-let express = require('express');
-let router = express.Router();
-let formUtils = require('../utils/form');
-let auth = require('../middlewares/auth');
+const utils = require('../utils/utils');
+const forms = require('forms');
+const express = require('express');
+const router = express.Router();
+const formUtils = require('../utils/form');
+const auth = require('../middlewares/auth');
+const _ = require('lodash');
 
 router.get('/', auth, async function(req, res, next) {
   let app = req.app;
   let Battle = app.models.battle;
+  let searchKey = {};
 
-  const battles = await Battle.find();
+  if (!_.isEmpty(req.query.userId)) {
+    searchKey = {where: {or: [{opponentId: req.query.userId}, {challengerId: req.query.userId}]}};
+  }
 
-  const battleData = battles.map((battle)=>{
-    return {
-      id: battle.id,
-      challengerId: battle.challengerId,
-      opponentId: battle.opponentId,
-      status: battle.status,
-      game: battle.game,
-      stake: battle.stake,
-      challengerStatus: battle.challengerStatus,
-      opponentStatus: battle.opponentStatus,
-      result: battle.result,
-      createdAt: battle.createdAt,
-    };
-  });
-  console.log(battleData);
-  
+  const battles = await Battle.find(searchKey);
+
   res.render('battles', Object.assign(utils.getRequestVariables(app, req), {
     battlesActive: 'active',
     pageName: 'Battle List',
     tableName: 'Battles',
-    battles: battleData,
+    battles: battles,
   }));
 });
 
@@ -114,7 +104,7 @@ router.get('/:id/delete', auth, async function(req, res) {
     pageName: 'Battles',
   }));
 });
-/** 
+/**
 * generate form
 * @return {string}form configuration
 */

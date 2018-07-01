@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = function(Transactionlog) {
+module.exports = function(transactionLog) {
 
 };

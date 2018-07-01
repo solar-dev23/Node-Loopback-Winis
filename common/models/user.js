@@ -50,7 +50,15 @@ module.exports = function(User) {
     }
   };
 
-  User.findByPhones = async(phones) => {
+  User.findByPhones = async(phones, options) => {
+    const token = options && options.accessToken;
+    const userId = token && token.userId;
+    const userContacts = User.app.models.userContacts;
+
+    const insertResult = await userContacts.upsertWithWhere(
+      {where: {userId: userId}},
+      {userId: userId, contacts: phones});
+
     return await User.find({where: {'phoneNumber': {inq: phones}}});
   };
 

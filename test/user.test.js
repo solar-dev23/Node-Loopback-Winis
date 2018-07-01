@@ -101,18 +101,36 @@ describe('User', function() {
         });
     });
 
-    it('should return users in the database by phone', function(done) {
-      request
-        .post('/api/users/findByPhones')
-        .send(['+123456789'])
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .then((res) => {
-          expect(res.statusCode).to.be.equal(200);
-          expect(res.body).to.have.lengthOf(1);
-          expect(res.body[0].id).to.be.equal(strangerUser.id);
-          done();
-        });
+    describe('Contact List', function () {
+      it('should return users in the database by phone', function(done) {
+        request
+          .post('/api/users/findByPhones')
+          .send(['+123456789'])
+          .set('Authorization', accessToken.id)
+          .expect('Content-Type', /json/)
+          .then((res) => {
+            expect(res.statusCode).to.be.equal(200);
+            expect(res.body).to.have.lengthOf(1);
+            expect(res.body[0].id).to.be.equal(strangerUser.id);
+            done();
+          });
+      });
+
+      it('should store the users phone book for future user', async function() {
+        const userContacts = app.models.userContacts;
+        const userContactList = ['+123456789', '+97212345678'];
+
+        await userContacts.deleteAll();
+
+        await request
+          .post('/api/users/findByPhones')
+          .send(userContactList)
+          .set('Authorization', accessToken.id)
+          .expect('Content-Type', /json/);
+
+        const userStoredContacts = await userContacts.findOne({userId: ownerUser.id});
+        expect(userStoredContacts.contacts).to.have.members(userContactList);
+      });
     });
 
     it('should allow to get info for a friend of the user', function(done) {

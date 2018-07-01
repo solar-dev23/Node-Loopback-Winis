@@ -13,7 +13,7 @@ block content
         a(href='/')
           i.fa.fa-dashboard
           | Dashboard
-      li Chats
+      li Users
       li.active #{pageName}
 
   // Main content
@@ -36,6 +36,10 @@ block content
                 h3.box-title Additional details
               .box-body
                 p ID: #{userId}
+                p Contacts:&nbsp;
+                  a(href="/users/" + userId + "/contacts") List
+                p Battles:&nbsp;
+                  a(href="/battles/?userId=" + userId) List
                 p Created date: #{user['createdAt']}
                 p Updated date: #{user['updatedAt']}
       .row

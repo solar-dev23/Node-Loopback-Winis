@@ -1,5 +1,4 @@
 FROM node:9-alpine
-
 ENV NODE_ENV production
 
 # Create app directory
@@ -8,9 +7,6 @@ WORKDIR /usr/src/app
 
 # Install nodejs dependencies
 COPY package.json package-lock.json bower.json .bowerrc ./
-#RUN apk add --no-cache --virtual .build-deps make gcc g++ python \
-# && npm install --production --silent \
-# && apk del .build-deps
 RUN npm install --production --silent
 
 # Install bower components
