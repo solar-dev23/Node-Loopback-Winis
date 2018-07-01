@@ -19,6 +19,7 @@ test:
   stage: test
   image: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
   variables:
+    GIT_STRATEGY: none
     NODE_ENV: test
   script:
     - cd /usr/src/app
@@ -42,6 +43,8 @@ build:
 
 review:
   stage: review
+  variables:
+    GIT_STRATEGY: fetch
   script:
     - check_kube_domain
     - install_dependencies
@@ -85,6 +88,8 @@ stop_review:
 
 production:
   stage: production
+  variables:
+    GIT_STRATEGY: fetch
   script:
     - check_kube_domain
     - install_dependencies
