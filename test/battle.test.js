@@ -47,19 +47,19 @@ describe('Battle', function() {
         })
         .then(res =>{
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.challengerId).to.be.equal(challengerUser.id);
+          expect(res.body.opponentId).to.be.equal(opponentUser.id);
           expect(res.body.status).to.be.equal('pending');
           expect(res.body.result).to.be.equal('unset');
           expect(res.body.game).to.be.equal('test-game');
           expect(res.body.opponentStatus).to.be.equal('unset');
           expect(res.body.challengerStatus).to.be.equal('unset');
 
-          return UserModel.findById(challengerUser.id.toString());
+          return UserModel.findById(challengerUser.id);
         })
         .then(challenger => {
           expect(challenger.staked).to.be.equal(20);
-          return UserModel.findById(opponentUser.id.toString());
+          return UserModel.findById(opponentUser.id);
         })
         .then(opponent => {
           expect(opponent.staked).to.be.equal(20);
@@ -128,11 +128,11 @@ describe('Battle', function() {
         })
         .then(res =>{
           expect(res.statusCode).to.be.equal(200);
-          return UserModel.findById(challengerUser.id.toString());
+          return UserModel.findById(challengerUser.id);
         })
         .then(challenger => {
           expect(challenger.staked).to.be.equal(40);
-          return UserModel.findById(opponentUser.id.toString());
+          return UserModel.findById(opponentUser.id);
         })
         .then(opponent => {
           expect(opponent.staked).to.be.equal(40);
@@ -161,7 +161,7 @@ describe('Battle', function() {
         .expect('Content-Type', /json/)
         .send({
           game: 'test-game',
-          opponentId: opponentUser.id.toString() + 10,
+          opponentId: '100',
           stake: 20,
         })
         .then(res =>{
@@ -204,8 +204,8 @@ describe('Battle', function() {
       })
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-        expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+        expect(res.body.challengerId).to.be.equal(challengerUser.id);
+        expect(res.body.opponentId).to.be.equal(opponentUser.id);
         expect(res.body.status).to.be.equal('pending');
         expect(res.body.result).to.be.equal('unset');
         expect(res.body.game).to.be.equal('test-game');
@@ -248,8 +248,8 @@ describe('Battle', function() {
         })
         .then(res=>{
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.challengerId).to.be.equal(challengerUser.id);
+          expect(res.body.opponentId).to.be.equal(opponentUser.id);
           expect(res.body.status).to.be.equal('pending');
           expect(res.body.result).to.be.equal('unset');
           expect(res.body.game).to.be.equal('test-game');
@@ -327,8 +327,8 @@ describe('Battle', function() {
       })
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-        expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+        expect(res.body.challengerId).to.be.equal(challengerUser.id);
+        expect(res.body.opponentId).to.be.equal(opponentUser.id);
         expect(res.body.status).to.be.equal('pending');
         expect(res.body.result).to.be.equal('unset');
         expect(res.body.game).to.be.equal('test-game');
@@ -348,11 +348,11 @@ describe('Battle', function() {
         expect(res.statusCode).to.be.equal(200);
         expect(res.body.status).to.be.equal('rejected');
         expect(res.body.result).to.be.equal('finished');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(res =>{
         expect(res.staked).to.be.equal(0);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(res =>{
         expect(res.staked).to.be.equal(0);
@@ -380,8 +380,8 @@ describe('Battle', function() {
         })
         .then(res=>{
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.challengerId).to.be.equal(challengerUser.id);
+          expect(res.body.opponentId).to.be.equal(opponentUser.id);
           expect(res.body.status).to.be.equal('pending');
           expect(res.body.result).to.be.equal('unset');
           expect(res.body.game).to.be.equal('test-game');
@@ -418,7 +418,7 @@ describe('Battle', function() {
     it('should fail to reject non existing battle', function(done) {
       const unmute = mute();
       request
-      .post(`/api/battles/${freshBattle.id + 1}/reject`)
+      .post(`/api/battles/500/reject`)
       .set('Authorization', opponentAccessToken.id)
       .expect('Content-Type', /json/)
       .send()
@@ -458,8 +458,8 @@ describe('Battle', function() {
       })
       .then(res =>{
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-        expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+        expect(res.body.challengerId).to.be.equal(challengerUser.id);
+        expect(res.body.opponentId).to.be.equal(opponentUser.id);
         expect(res.body.status).to.be.equal('pending');
         expect(res.body.game).to.be.equal('test-game');
         expect(res.body.opponentStatus).to.be.equal('unset');
@@ -498,12 +498,12 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('opponent won');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(30);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -533,12 +533,12 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('opponent won');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(30);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -568,12 +568,12 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('challenger won');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(70);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -602,12 +602,12 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('challenger won');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(70);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -637,12 +637,12 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('both draw');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(50);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -672,12 +672,12 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('both draw');
-        return UserModel.findById(challengerUser.id.toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
         expect(challenger.winis).to.be.equal(50);
-        return UserModel.findById(opponentUser.id.toString());
+        return UserModel.findById(opponentUser.id);
       })
       .then(opponent => {
         expect(opponent.staked).to.be.equal(0);
@@ -707,7 +707,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -742,7 +742,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -777,7 +777,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -812,7 +812,7 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -847,7 +847,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -882,7 +882,7 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -917,7 +917,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('won');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -952,7 +952,7 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -987,7 +987,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -1022,7 +1022,7 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -1057,7 +1057,7 @@ describe('Battle', function() {
         expect(res.body.challengerStatus).to.be.equal('lost');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -1092,7 +1092,7 @@ describe('Battle', function() {
         expect(res.body.opponentStatus).to.be.equal('draw');
         expect(res.body.status).to.be.equal('finished');
         expect(res.body.result).to.be.equal('error state');
-        return UserModel.findById(challengerUser.id.toString().toString());
+        return UserModel.findById(challengerUser.id);
       })
       .then(challenger => {
         expect(challenger.staked).to.be.equal(0);
@@ -1194,8 +1194,8 @@ describe('Battle', function() {
         })
         .then(res =>{
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.challengerId).to.be.equal(challengerUser.id);
+          expect(res.body.opponentId).to.be.equal(opponentUser.id);
           expect(res.body.status).to.be.equal('pending');
           expect(res.body.result).to.be.equal('unset');
           expect(res.body.game).to.be.equal('test-game');
@@ -1213,19 +1213,19 @@ describe('Battle', function() {
         .send()
         .then(res =>{
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.challengerId).to.be.equal(challengerUser.id.toString());
-          expect(res.body.opponentId).to.be.equal(opponentUser.id.toString());
+          expect(res.body.challengerId).to.be.equal(challengerUser.id);
+          expect(res.body.opponentId).to.be.equal(opponentUser.id);
           expect(res.body.status).to.be.equal('cancelled');
           expect(res.body.result).to.be.equal('finished');
           expect(res.body.game).to.be.equal('test-game');
           expect(res.body.opponentStatus).to.be.equal('unset');
           expect(res.body.challengerStatus).to.be.equal('unset');
 
-          return UserModel.findById(challengerUser.id.toString());
+          return UserModel.findById(challengerUser.id);
         })
         .then(challenger => {
           expect(challenger.staked).to.be.equal(0);
-          return UserModel.findById(opponentUser.id.toString());
+          return UserModel.findById(opponentUser.id);
         })
         .then(opponent => {
           expect(opponent.staked).to.be.equal(0);

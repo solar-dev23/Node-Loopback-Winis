@@ -1,5 +1,5 @@
 {
-  "name": "transaction-log",
+  "name": "transactionLog",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {

@@ -70,12 +70,16 @@
     "dataSource": "db",
     "public": true
   },
-  "transaction-log": {
+  "transactionLog": {
     "dataSource": "db",
     "public": false
   },
   "competition": {
     "dataSource": "db",
     "public": true
+  },
+  "userContacts": {
+    "dataSource": "db",
+    "public": false
   }
 }

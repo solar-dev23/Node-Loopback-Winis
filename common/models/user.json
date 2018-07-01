@@ -288,6 +288,11 @@
           "http": {
             "source": "body"
           }
+        },
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
         }
       ],
       "returns": {

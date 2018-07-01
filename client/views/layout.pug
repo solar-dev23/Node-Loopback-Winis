@@ -48,16 +48,16 @@ html
               // User Account: style can be found in dropdown.less
               li.dropdown.user.user-menu
                 a.dropdown-toggle(href='#', data-toggle='dropdown')
-                  img(class="user-image", alt="User Image", src='/api/users/' + user.id + '/avatar.jpg')
+                  img(class="user-image", alt="User Image", src='/api/users/' + currentUser.id + '/avatar.jpg')
                   span(class="hidden-xs")
-                    | #{user.username}
+                    | #{currentUser.username}
                     i.caret
                 ul.dropdown-menu
                   // User image
                   li.user-header.bg-light-blue
-                    img.img-circle(src='/api/users/' + user.id + '/avatar.jpg', alt='User Image')
+                    img.img-circle(src='/api/users/' + currentUser.id + '/avatar.jpg', alt='User Image')
                     p
-                      | #{user.username}
+                      | #{currentUser.username}
                   // Menu Body
                   // Menu Footer
                   li.user-footer
@@ -71,9 +71,9 @@ html
           // Sidebar user panel
           .user-panel
             .pull-left.image
-              img.img-circle(src='/api/users/' + user.id + '/avatar.jpg', alt='User Image')
+              img.img-circle(src='/api/users/' + currentUser.id + '/avatar.jpg', alt='User Image')
             .pull-left.info
-              p Hello, #{user.username}
+              p Hello, #{currentUser.username}
 
           // sidebar menu: : style can be found in sidebar.less
           ul.sidebar-menu

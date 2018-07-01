@@ -39,20 +39,39 @@ router.get('/', auth, async function(req, res, next) {
 });
 
 router.get('/:id', auth, async function(req, res) {
-  let app = req.app;
-  let Users = app.models.user;
-  let userId = req.params.id;
+  const app = req.app;
+  const Users = app.models.user;
+  const userId = req.params.id;
 
-  let userForm = generateForm();
+  const userForm = generateForm();
 
-  const currentUser = await Users.findById(userId);
+  const user = await Users.findById(userId);
   res.render('users/view', Object.assign(utils.getRequestVariables(app, req), {
     usersActive: 'active',
-    pageName: 'User - Details',
-    user: currentUser,
+    pageName: user.username,
+    user: user,
     userId: userId,
-    userForm: userForm.bind(currentUser).toHTML(formUtils.bootstrapField),
+    userForm: userForm.bind(user).toHTML(formUtils.bootstrapField),
     resError: req.resError,
+  }));
+});
+
+router.get('/:id/contacts', auth, async function(req, res) {
+  const app = req.app;
+  const Users = app.models.user;
+  const UserContacts = app.models.userContacts;
+  const userId = req.params.id;
+
+  const user = await Users.findById(userId);
+  let userContacts = await UserContacts.findOne({where: {userId: userId}});
+  userContacts = (userContacts ? userContacts.contacts : [ 'No contacts saved' ]);
+
+  res.render('users/contacts', Object.assign(utils.getRequestVariables(app, req), {
+    usersActive: 'active',
+    pageName: 'User - Contacts',
+    user: user,
+    userId: userId,
+    contacts: userContacts
   }));
 });
 
