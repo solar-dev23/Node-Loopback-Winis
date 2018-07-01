@@ -35,7 +35,7 @@ module.exports = function(Battle) {
       throw error;
     }
 
-    if (challenger.id == opponent.id) {
+    if (challenger.id === opponent.id) {
       const error = new Error('You cannot start battle with yourself');
       error.status = 409;
       throw error;
@@ -66,13 +66,13 @@ module.exports = function(Battle) {
     const token = options && options.accessToken;
     const opponentId = token && token.userId;
 
-    if (currentBattle.opponentId != opponentId) {
+    if (currentBattle.opponentId.toString() !== opponentId.toString()) {
       const error = new Error('You cannot accept someone else\'s battle');
       error.status = 409;
       throw error;
     }
 
-    if (currentBattle.status != 'pending') {
+    if (currentBattle.status !== 'pending') {
       const error = new Error('Battle is already accepted or rejected');
       error.status = 409;
       throw error;
@@ -88,13 +88,13 @@ module.exports = function(Battle) {
     const token = options && options.accessToken;
     const opponentId = token && token.userId;
 
-    if (currentBattle.opponentId != opponentId) {
+    if (currentBattle.opponentId.toString() !== opponentId.toString()) {
       const error = new Error('You cannot reject someone else\'s battle');
       error.status = 409;
       throw error;
     }
 
-    if (currentBattle.status != 'pending') {
+    if (currentBattle.status !== 'pending') {
       const error = new Error('Battle is already accepted or rejected');
       error.status = 409;
       throw error;
@@ -123,9 +123,9 @@ module.exports = function(Battle) {
   Battle.prototype.cancelBattle = async function(options) {
     const currentBattle = this;
     const token = options && options.accessToken;
-    const challengerId = token && token.userId;
+    const challengerId = token && token.userId.toString();
 
-    if (currentBattle.challengerId != challengerId) {
+    if (currentBattle.challengerId.toString() !== challengerId) {
       const error = new Error('You cannot cancel somebody else\'s battle');
       error.status = 409;
       throw error;
@@ -155,8 +155,8 @@ module.exports = function(Battle) {
   Battle.prototype.won = async function(options) {
     const currentBattle = this;
     const token = options && options.accessToken;
-    const callerId = token && token.userId;
-    if (!(currentBattle.challengerId == callerId || currentBattle.opponentId == callerId)) {
+    const callerId = token && token.userId.toString();
+    if (!(currentBattle.challengerId.toString() === callerId || currentBattle.opponentId.toString() === callerId)) {
       const error = new Error('You cannot end someone else\'s battle');
       error.status = 409;
       throw error;
@@ -168,7 +168,7 @@ module.exports = function(Battle) {
       throw error;
     }
 
-    if (callerId == currentBattle.challengerId) {
+    if (callerId === currentBattle.challengerId.toString()) {
       if (currentBattle.challengerStatus != 'unset') {
         const error = new Error('You have already commited your status');
         error.status = 409;
@@ -183,7 +183,7 @@ module.exports = function(Battle) {
     }
 
     let updatedBattle;
-    if (currentBattle.challengerId == callerId) {
+    if (currentBattle.challengerId.toString() === callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'won');
     } else {
       updatedBattle = await currentBattle.updateAttribute('opponentStatus', 'won');
@@ -195,20 +195,20 @@ module.exports = function(Battle) {
   Battle.prototype.lost = async function(options) {
     const currentBattle = this;
     const token = options && options.accessToken;
-    const callerId = token && token.userId;
-    if (!(currentBattle.challengerId == callerId || currentBattle.opponentId == callerId)) {
+    const callerId = token && token.userId.toString();
+    if (!(currentBattle.challengerId.toString() === callerId || currentBattle.opponentId.toString() === callerId)) {
       const error = new Error('You cannot end someone else\'s battle');
       error.status = 409;
       throw error;
     }
 
-    if (currentBattle.status != 'accepted') {
+    if (currentBattle.status !== 'accepted') {
       const error = new Error('You cannot lose unaccepted game');
       error.status = 409;
       throw error;
     }
 
-    if (callerId == currentBattle.challengerId) {
+    if (callerId === currentBattle.challengerId.toString()) {
       if (currentBattle.challengerStatus != 'unset') {
         const error = new Error('You have already commited your status');
         error.status = 409;
@@ -223,7 +223,7 @@ module.exports = function(Battle) {
     }
 
     let updatedBattle;
-    if (currentBattle.challengerId == callerId) {
+    if (currentBattle.challengerId.toString() === callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'lost');
     } else {
       updatedBattle = await currentBattle.updateAttribute('opponentStatus', 'lost');
@@ -235,27 +235,28 @@ module.exports = function(Battle) {
   Battle.prototype.draw = async function(options) {
     const currentBattle = this;
     const token = options && options.accessToken;
-    const callerId = token && token.userId;
-    if (!(currentBattle.challengerId == callerId || currentBattle.opponentId == callerId)) {
+    const callerId = token && token.userId.toString();
+
+    if (!(currentBattle.challengerId.toString() === callerId || currentBattle.opponentId.toString() === callerId)) {
       const error = new Error('You cannot end someone else\'s battle');
       error.status = 409;
       throw error;
     }
 
-    if (currentBattle.status != 'accepted') {
+    if (currentBattle.status !== 'accepted') {
       const error = new Error('You cannot draw unaccepted game');
       error.status = 409;
       throw error;
     }
 
-    if (callerId == currentBattle.challengerId) {
+    if (callerId === currentBattle.challengerId.toString()) {
       if (currentBattle.challengerStatus != 'unset') {
         const error = new Error('You have already commited your status');
         error.status = 409;
         throw error;
       };
     } else {
-      if (currentBattle.opponentStatus != 'unset') {
+      if (currentBattle.opponentStatus !== 'unset') {
         const error = new Error('You have already commited your status');
         error.status = 409;
         throw error;
@@ -263,7 +264,7 @@ module.exports = function(Battle) {
     }
 
     let updatedBattle;
-    if (currentBattle.challengerId == callerId) {
+    if (currentBattle.challengerId.toString() === callerId) {
       updatedBattle = await currentBattle.updateAttribute('challengerStatus', 'draw');
     } else {
       updatedBattle = await currentBattle.updateAttribute('opponentStatus', 'draw');
@@ -276,20 +277,20 @@ module.exports = function(Battle) {
     if (ctx.currentInstance) {
       let bothUpdated = false;
       if (ctx.data.challengerStatus) {
-        if (ctx.currentInstance.opponentStatus != 'unset') {
+        if (ctx.currentInstance.opponentStatus !== 'unset') {
           bothUpdated = true;
         }
       }
       if (ctx.data.opponentStatus) {
-        if (ctx.currentInstance.challengerStatus != 'unset') {
+        if (ctx.currentInstance.challengerStatus !== 'unset') {
           bothUpdated = true;
         }
       }
       if (bothUpdated) {
-        if (ctx.currentInstance.status == 'accepted') {
+        if (ctx.currentInstance.status === 'accepted') {
           let UserModel = Battle.app.models.user;
           ctx.data.status = 'finished';
-          if (ctx.data.challengerStatus == 'won' && ctx.currentInstance.opponentStatus == 'lost') {
+          if (ctx.data.challengerStatus === 'won' && ctx.currentInstance.opponentStatus === 'lost') {
             let winner = await UserModel.findById(ctx.currentInstance.challengerId);
             let losser = await UserModel.findById(ctx.currentInstance.opponentId);
             await winner.releaseFunds(ctx.currentInstance.stake);
@@ -297,7 +298,7 @@ module.exports = function(Battle) {
             ctx.data.result = 'challenger won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
             await winner.updateAttribute('diamonds', winner.diamonds + 1);
-          } else if (ctx.currentInstance.challengerStatus == 'won' && ctx.data.opponentStatus == 'lost') {
+          } else if (ctx.currentInstance.challengerStatus === 'won' && ctx.data.opponentStatus === 'lost') {
             let winner = await UserModel.findById(ctx.currentInstance.challengerId);
             let losser = await UserModel.findById(ctx.currentInstance.opponentId);
             await winner.releaseFunds(ctx.currentInstance.stake);
@@ -305,7 +306,7 @@ module.exports = function(Battle) {
             ctx.data.result = 'challenger won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
             await winner.updateAttribute('diamonds', winner.diamonds + 1);
-          } else if (ctx.data.challengerStatus == 'lost' && ctx.currentInstance.opponentStatus == 'won') {
+          } else if (ctx.data.challengerStatus === 'lost' && ctx.currentInstance.opponentStatus === 'won') {
             let winner = await UserModel.findById(ctx.currentInstance.opponentId);
             let losser = await UserModel.findById(ctx.currentInstance.challengerId);
             await winner.releaseFunds(ctx.currentInstance.stake);
@@ -313,7 +314,7 @@ module.exports = function(Battle) {
             ctx.data.result = 'opponent won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
             await winner.updateAttribute('diamonds', winner.diamonds + 1);
-          } else if (ctx.currentInstance.challengerStatus == 'lost' && ctx.data.opponentStatus == 'won') {
+          } else if (ctx.currentInstance.challengerStatus === 'lost' && ctx.data.opponentStatus === 'won') {
             let winner = await UserModel.findById(ctx.currentInstance.opponentId);
             let losser = await UserModel.findById(ctx.currentInstance.challengerId);
             await winner.releaseFunds(ctx.currentInstance.stake);
@@ -321,13 +322,13 @@ module.exports = function(Battle) {
             ctx.data.result = 'opponent won';
             await UserModel.transferFunds(ctx.currentInstance.stake, losser, winner);
             await winner.updateAttribute('diamonds', winner.diamonds + 1);
-          } else if (ctx.data.challengerStatus == 'draw' && ctx.currentInstance.opponentStatus == 'draw') {
+          } else if (ctx.data.challengerStatus === 'draw' && ctx.currentInstance.opponentStatus === 'draw') {
             let drawwer1 = await UserModel.findById(ctx.currentInstance.opponentId);
             let drawwer2 = await UserModel.findById(ctx.currentInstance.challengerId);
             await drawwer1.releaseFunds(ctx.currentInstance.stake);
             await drawwer2.releaseFunds(ctx.currentInstance.stake);
             ctx.data.result = 'both draw';
-          } else if (ctx.currentInstance.challengerStatus == 'draw' && ctx.data.opponentStatus == 'draw') {
+          } else if (ctx.currentInstance.challengerStatus === 'draw' && ctx.data.opponentStatus === 'draw') {
             let drawwer1 = await UserModel.findById(ctx.currentInstance.opponentId);
             let drawwer2 = await UserModel.findById(ctx.currentInstance.challengerId);
             await drawwer1.releaseFunds(ctx.currentInstance.stake);
