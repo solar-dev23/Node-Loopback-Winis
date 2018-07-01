@@ -142,7 +142,7 @@ module.exports = function(User) {
         fileStream = storage.downloadStream(containerName, fileName);
       }
 
-      const imageTransofmer = sharp()
+      const imageTransformer = sharp()
         .resize(resizeWidth, resizeHeight)
         .jpeg({
           quality: 70
@@ -151,7 +151,7 @@ module.exports = function(User) {
           return next(null, data, 'image/jpeg', 'public, max-age=315360000');
         });
 
-      fileStream.pipe(imageTransofmer);
+      fileStream.pipe(imageTransformer);
       fileStream.on('end', (err) => {
         if (err) {
           const error = new Error('Failed fetching a avatar');
@@ -188,46 +188,96 @@ module.exports = function(User) {
     return x;
   };
 
+  User.generateShareImageText = async function(outputText, width) {
+    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo.fnt`;
+
+    const font = await jimp.loadFont(titleFont);
+    const textImage = new jimp(width, 60);
+    const textWidth = User.measureText(font, outputText);
+    const textPosition = Math.floor((1764 / 2) - (textWidth / 2) * 0.85);
+    await textImage.print(font, textPosition, 0, outputText);
+    jimp.prototype.getBufferAsync = util.promisify( jimp.prototype.getBuffer );
+    return textImage.getBufferAsync(jimp.MIME_PNG);
+  };
+
   User.generateShareImage = async function(type, userId, userName, avatarBuffer, game) {
     const backgroundImage = `${__dirname}/../../assets/share/${type}/smm_background.png`;
     const starsOverlayImage = `${__dirname}/../../assets/share/${type}/stars_overlay.png`;
     const topStarsOverlayImage = `${__dirname}/../../assets/share/${type}/topstar_overlay.png`;
     const avatarMaskImage = `${__dirname}/../../assets/share/${type}/avatar_mask.png`;
     const gameImage = `${__dirname}/../../assets/games/${game}.png`;
-    const titleFont = `${__dirname}/../../assets/fonts/LondonTwo.fnt`;
+    let imageSizes;
 
-    const background = await jimp.read(backgroundImage);
-    const starsOverlay = await jimp.read(starsOverlayImage);
-    const avatarOverlay = await jimp.read(avatarBuffer);
-    const avatarMaskOverlay = await jimp.read(avatarMaskImage);
-    const gameIconOverlay = await jimp.read(gameImage);
-    const topStarsOverlay = await jimp.read(topStarsOverlayImage);
-
-    const font = await jimp.loadFont(titleFont);
-
-    const winnerText = `${userName.toUpperCase()}`;
-    const textWidth = User.measureText(font, winnerText);
-    const textPosition = Math.floor((background.bitmap.width / 2) - (textWidth / 2) * 0.85);
-
-    if (type == 'instagram') {
-      avatarOverlay.cover(355, 355);
-      avatarOverlay.mask(avatarMaskOverlay, 0, 0);
-      background.composite(avatarOverlay, 715, 880);
-      background.composite(starsOverlay, 250, 783);
-      background.composite(gameIconOverlay, 794, 78);
-      background.composite(topStarsOverlay, 718, 90);
-      background.print(font, textPosition, 1290, winnerText);
+    if (type === 'instagram') {
+      imageSizes = {
+        base:{
+          raw: {
+            width: 1764,
+            height: 1764,
+            channels: 4
+          },
+        },
+        avatar: {
+          size: 355,
+          pos: {
+            top: 880,
+            left: 715
+          }
+        },
+        layers: [
+          [starsOverlayImage, 250, 783],
+          [gameImage, 794, 78],
+          [topStarsOverlayImage, 718, 90],
+        ],
+        textLayerTop: 1290
+      };
     } else {
-      avatarOverlay.cover(265, 265);
-      avatarOverlay.mask(avatarMaskOverlay, 0, 0);
-      background.composite(avatarOverlay, 765, 580);
-      background.composite(starsOverlay, 414, 504);
-      background.composite(gameIconOverlay, 790, 12);
-      background.composite(topStarsOverlay, 539, 0);
-      background.print(font, textPosition, 880, winnerText);
+      imageSizes = {
+        base: {
+          raw: {
+            width: 1764,
+            height: 1191,
+            channels: 4
+          },
+        },
+        avatar: {
+          size: 265,
+          pos:{
+            top: 580,
+            left: 765
+          }
+        },
+        layers: [
+          [starsOverlayImage, 414, 504],
+          [gameImage, 790, 12],
+          [topStarsOverlayImage, 539, 0],
+        ],
+        textLayerTop: 880
+      };
     }
 
-    return background;
+    const avatarImage = await sharp(avatarBuffer)
+      .resize(imageSizes.avatar.size, imageSizes.avatar.size)
+      .overlayWith(avatarMaskImage, {cutout: true})
+      .png().toBuffer();
+
+    const base = sharp(backgroundImage)
+      .overlayWith(avatarImage, imageSizes.avatar.pos)
+      .raw().toBuffer();
+
+    const winnerText = `${userName.toUpperCase()}`;
+    const textLayer = await User.generateShareImageText(winnerText, imageSizes.base.raw.width);
+    imageSizes.layers.push([textLayer, 0, imageSizes.textLayerTop]);
+
+    const composite = imageSizes.layers.reduce( function(input, overlay) {
+      return input.then( function(data) {
+        const [layer, left, top] = overlay;
+        return sharp(data, imageSizes.base).overlayWith(layer, {left: left, top: top}).raw().toBuffer();
+      });
+    }, base);
+
+    const compositeBuffer = await composite;
+    return sharp(compositeBuffer, imageSizes.base);
   };
 
   User.prototype.getShareImage = function(type, game, cb) {
@@ -267,10 +317,12 @@ module.exports = function(User) {
         const buffer = writeBuffer.getContents();
         User.generateShareImage(type, userId, userName, buffer, game)
           .then((finalImage) => {
-            finalImage.quality(60);
-            finalImage.getBuffer(jimp.MIME_JPEG, (err, buffer) => {
-              return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
-            });
+            finalImage
+              .jpeg({quality: 60})
+              .toBuffer()
+              .then((buffer) => {
+                return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
+              });
           });
       });
     });
