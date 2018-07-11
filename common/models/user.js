@@ -13,6 +13,11 @@ const md5 = require('md5');
 module.exports = function(User) {
   delete User.validations.email;
   delete User.validations.password;
+  User.validatesUniquenessOf('username', {
+    message: 'must be unique',
+    ignoreCase: true
+  });
+
 
   User.authenticate = async function(method, credentials) {
     switch (method) {

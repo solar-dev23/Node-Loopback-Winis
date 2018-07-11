@@ -53,6 +53,20 @@ describe('User', function() {
       expect(ownerUser.avatar).to.equal('default');
     });
 
+    it('should refuse to set username to an existing name even if different case', function(done) {
+      var unmute = mute();
+      request
+        .patch(`/api/users/${ownerUser.id}`)
+        .set('Authorization', accessToken.id)
+        .send({username: strangerUser.username.toLowerCase()})
+        .expect('Content-Type', /json/)
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(422);
+          unmute();
+          done();
+        });
+    });
+
     it('should refuse to get info on some other user', function(done) {
       const unmute = mute();
       request
