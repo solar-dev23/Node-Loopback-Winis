@@ -14,7 +14,9 @@
 
 node_modules
 .dockerignore
+docker-compose.yml
 chart
+data
 Dockerfile
 npm-debug.log
 .git

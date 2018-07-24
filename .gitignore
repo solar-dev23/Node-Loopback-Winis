@@ -16,6 +16,7 @@
 .strong-pm
 .nyc_output
 coverage
+data
 node_modules
 npm-debug.log
 client/bower_components

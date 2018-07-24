@@ -1,0 +1,15 @@
+{
+  "db": {
+    "database": "winis",
+    "name": "db",
+    "connector": "mongodb",
+    "host": "mongodb"
+  },
+  "storage": {
+    "name": "storage",
+    "connector": "loopback-component-storage",
+    "provider": "filesystem",
+    "root": "/tmp",
+    "maxFileSize": "10485760"
+  }
+}
