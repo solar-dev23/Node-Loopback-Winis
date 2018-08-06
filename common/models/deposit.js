@@ -95,7 +95,6 @@ module.exports = function(Deposit) {
 
   Deposit.getAppStoreRewardConfiguration = async function() {
     return [
-      {productId: '1_spin_iap', iconId: 'spin', amount: 1},
       {productId: '10_Spins', iconId: 'spin', amount: 10},
       {productId: '15_scratch', iconId: 'scratch', amount: 15},
       {productId: '300_Winis', iconId: 'winis', amount: 300},
