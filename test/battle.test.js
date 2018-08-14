@@ -1233,6 +1233,34 @@ describe('Battle', function() {
         });
     });
 
+    it('should cancel a battle started more than 3 hours ago', function(done) {
+      request
+        .post(`/api/battles/${freshBattle.id}/cancel`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then(res => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.challengerId).to.be.equal(challengerUser.id);
+          expect(res.body.opponentId).to.be.equal(opponentUser.id);
+          expect(res.body.status).to.be.equal('cancelled');
+          expect(res.body.result).to.be.equal('finished');
+          expect(res.body.game).to.be.equal('test-game');
+          expect(res.body.opponentStatus).to.be.equal('unset');
+          expect(res.body.challengerStatus).to.be.equal('unset');
+
+          return UserModel.findById(challengerUser.id);
+        })
+        .then(challenger => {
+          expect(challenger.staked).to.be.equal(0);
+          return UserModel.findById(opponentUser.id);
+        })
+        .then(opponent => {
+          expect(opponent.staked).to.be.equal(0);
+          done();
+        });
+    });
+
     it('shouldn\'t allow to cancel somebody elses challenge', function(done) {
       const unmute = mute();
       request

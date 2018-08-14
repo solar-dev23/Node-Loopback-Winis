@@ -104,10 +104,10 @@ module.exports = function(Battle) {
     const challenger = await UserModel.findById(currentBattle.challengerId);
     const opponent = await UserModel.findById(currentBattle.opponentId);
 
-    Promise.all([
-      currentBattle.updateAttribute('status', 'rejected'),
-      currentBattle.updateAttribute('result', 'finished'),
-    ]);
+    await currentBattle.updateAttributes({
+      status: 'rejected',
+      result: 'finished',
+    });
 
     const updatedChallenger = await challenger.releaseFunds(currentBattle.stake);
     const updatedOpponent = await opponent.releaseFunds(currentBattle.stake);
@@ -141,10 +141,10 @@ module.exports = function(Battle) {
     const challenger = await UserModel.findById(currentBattle.challengerId);
     const opponent = await UserModel.findById(currentBattle.opponentId);
 
-    Promise.all([
-      currentBattle.updateAttribute('status', 'cancelled'),
-      currentBattle.updateAttribute('result', 'finished'),
-    ]);
+    await currentBattle.updateAttributes({
+      status: 'cancelled',
+      result: 'finished',
+    })
 
     const updatedChallenger = await challenger.releaseFunds(currentBattle.stake);
     const updatedOpponent = await opponent.releaseFunds(currentBattle.stake);
@@ -196,6 +196,7 @@ module.exports = function(Battle) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const callerId = token && token.userId.toString();
+
     if (!(currentBattle.challengerId.toString() === callerId || currentBattle.opponentId.toString() === callerId)) {
       const error = new Error('You cannot end someone else\'s battle');
       error.status = 409;
