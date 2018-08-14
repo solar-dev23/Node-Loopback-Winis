@@ -1,9 +1,8 @@
 module.exports = function (Battle) {
-  const UserModel = Battle.app.models.user;
-
   Battle.challenge = async function (opponentId, stake, gameType, options) {
     const token = options && options.accessToken;
     const challengerId = token && token.userId;
+    const UserModel = Battle.app.models.user;
 
     if (!challengerId) {
       const error = new Error('Wrong userToken');
@@ -98,6 +97,7 @@ module.exports = function (Battle) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const opponentId = token && token.userId;
+    const UserModel = Battle.app.models.user;
 
     if (currentBattle.opponentId.toString() !== opponentId.toString()) {
       const error = new Error('You cannot reject someone else\'s battle');
@@ -134,6 +134,7 @@ module.exports = function (Battle) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const challengerId = token && token.userId.toString();
+    const UserModel = Battle.app.models.user;
 
     if (currentBattle.challengerId.toString() !== challengerId) {
       const error = new Error('You cannot cancel somebody else\'s battle');
@@ -269,6 +270,8 @@ module.exports = function (Battle) {
   };
 
   Battle.observe('before save', async (ctx) => {
+    const UserModel = Battle.app.models.user;
+
     if (ctx.currentInstance) {
       let bothUpdated = false;
       if (ctx.data.challengerStatus) {
