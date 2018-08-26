@@ -29,7 +29,7 @@ module.exports = function(User) {
         });
 
         if (authResponse.application &&
-          authResponse.application.id !== '224347058051395') {
+          authResponse.application.id !== '848472012025317') {
           throw new Error('Wrong application');
         }
 
