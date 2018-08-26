@@ -15,45 +15,59 @@ module.exports = function(User) {
   delete User.validations.password;
   User.validatesUniquenessOf('username', {
     message: 'must be unique',
-    ignoreCase: true
+    ignoreCase: true,
   });
 
 
   User.authenticate = async function(method, credentials) {
-    switch (method) {
-      case 'accountkit':
-        const token = credentials.token;
-        const authResponse = await request({
-          uri: `https://graph.accountkit.com/v1.2/me/?access_token=${token}`,
-          json: true,
-        });
-
-        if (authResponse.application &&
-          authResponse.application.id !== '848472012025317') {
-          throw new Error('Wrong application');
-        }
-
-        const userAttributes = {
-          'externalUserId': authResponse.id,
-          'externalAuthMethod': method,
-        };
-
-        const phoneNumber = authResponse.phone.number;
-        const [user, created] = await User.findOrCreate({where: userAttributes}, Object.assign({}, userAttributes, {
-          phoneNumber: phoneNumber,
-        }));
-
-        if (!created && phoneNumber !== user.phoneNumber) {
-          user.phoneNumber = phoneNumber;
-          await user.save();
-        }
-
-        const accessToken = await user.createAccessToken();
-        return {
-          acessToken: accessToken,
-          user: user,
-        };
+    if (method !== 'accountkit') {
+      throw new Error('Unknown authentication method');
     }
+
+    const { token } = credentials;
+    const authResponse = await request({
+      uri: `https://graph.accountkit.com/v1.2/me/?access_token=${token}`,
+      json: true,
+    });
+
+    if (authResponse.application
+      && authResponse.application.id !== '848472012025317') {
+      throw new Error('Wrong application');
+    }
+
+    const phoneNumber = authResponse.phone.number;
+    const userAttributes = {
+      externalUserId: authResponse.id,
+      externalAuthMethod: method,
+    };
+
+    const query = {
+      or:
+      [
+        userAttributes,
+        { phoneNumber },
+      ],
+    };
+
+    const [user, created] = await User.findOrCreate({ where: query },
+      Object.assign({}, userAttributes, {
+        phoneNumber,
+      }));
+
+    if (!created
+      && ((phoneNumber !== user.phoneNumber) || (authResponse.id !== user.externalUserId))) {
+      await user.updateAttributes({
+        externalUserId: authResponse.id,
+        externalAuthMethod: method,
+        phoneNumber,
+      });
+    }
+
+    const accessToken = await user.createAccessToken();
+    return {
+      acessToken: accessToken,
+      user,
+    };
   };
 
   User.findByPhones = async(phones, options) => {
