@@ -1,14 +1,12 @@
-'use strict';
-
-const app = require('../server/server');
 const expect = require('chai').expect;
-const request = require('supertest')(app);
 const moment = require('moment-timezone');
+const app = require('../server/server');
+const request = require('supertest')(app);
 
 let CompetitionModel;
 
-describe('Competition', function() {
-  beforeEach(async function() {
+describe('Competition', () => {
+  beforeEach(async() => {
     CompetitionModel = app.models.competition;
     await CompetitionModel.deleteAll();
     const [competition1] = await CompetitionModel.create([
@@ -21,11 +19,11 @@ describe('Competition', function() {
     ]);
   });
 
-  after(async function() {
+  after(async() => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  it('should return the next scheduled competition', function(done) {
+  it('should return the next scheduled competition', (done) => {
     request
       .get('/api/competitions/nearest')
       .then((res) => {
@@ -35,7 +33,7 @@ describe('Competition', function() {
       });
   });
 
-  it('should return the currently running competition', function(done) {
+  it('should return the currently running competition', (done) => {
     CompetitionModel.getStartOfDay = function() {
       return moment(new Date()).tz('UTC').startOf('day').add(8, 'days');
     };
@@ -49,7 +47,7 @@ describe('Competition', function() {
       });
   });
 
-  it('should return nothing after the last competition', function(done) {
+  it('should return nothing after the last competition', (done) => {
     CompetitionModel.getStartOfDay = function() {
       return moment(new Date()).tz('UTC').startOf('day').add(15, 'days');
     };

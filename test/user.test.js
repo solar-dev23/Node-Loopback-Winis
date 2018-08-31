@@ -1,15 +1,18 @@
-'use strict';
-
-const app = require('../server/server');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const mute = require('mute');
-const request = require('supertest')(app);
 const jimp = require('jimp');
+const app = require('../server/server');
+const request = require('supertest')(app);
 
-describe('User', function() {
-  let accessToken, UserModel, ownerUser, friendUser, strangerUser, blockedUser;
+describe('User', () => {
+  let accessToken,
+    UserModel,
+    ownerUser,
+    friendUser,
+    strangerUser,
+    blockedUser;
 
-  beforeEach(async function() {
+  beforeEach(async() => {
     UserModel = app.models.user;
     await UserModel.deleteAll();
     [ownerUser, friendUser, strangerUser, blockedUser] = await UserModel.create([
@@ -28,12 +31,12 @@ describe('User', function() {
     accessToken = await ownerUser.createAccessToken();
   });
 
-  after(async function() {
+  after(async() => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('Owner', function() {
-    it('should allow to get users own info', function(done) {
+  describe('Owner', () => {
+    it('should allow to get users own info', (done) => {
       request
         .get(`/api/users/${ownerUser.id}`)
         .set('Authorization', accessToken.id)
@@ -45,20 +48,20 @@ describe('User', function() {
         });
     });
 
-    it('should generate a random name to a new user', function() {
+    it('should generate a random name to a new user', () => {
       expect(ownerUser.username).to.match(/^\w+-\w+-\d{2}/);
     });
 
-    it('have a default value for users avatar', function() {
+    it('have a default value for users avatar', () => {
       expect(ownerUser.avatar).to.equal('default');
     });
 
-    it('should refuse to set username to an existing name even if different case', function(done) {
-      var unmute = mute();
+    it('should refuse to set username to an existing name even if different case', (done) => {
+      const unmute = mute();
       request
         .patch(`/api/users/${ownerUser.id}`)
         .set('Authorization', accessToken.id)
-        .send({username: strangerUser.username.toLowerCase()})
+        .send({ username: strangerUser.username.toLowerCase() })
         .expect('Content-Type', /json/)
         .then((res) => {
           expect(res.statusCode).to.be.equal(422);
@@ -67,7 +70,7 @@ describe('User', function() {
         });
     });
 
-    it('should refuse to get info on some other user', function(done) {
+    it('should refuse to get info on some other user', (done) => {
       const unmute = mute();
       request
         .get(`/api/users/${strangerUser.id}`)
@@ -83,8 +86,8 @@ describe('User', function() {
     });
   });
 
-  describe('Friends', function() {
-    it('should add another user to friends', function(done) {
+  describe('Friends', () => {
+    it('should add another user to friends', (done) => {
       request
         .put(`/api/users/${ownerUser.id}/friends/rel/${strangerUser.id}`)
         .set('Authorization', accessToken.id)
@@ -100,7 +103,7 @@ describe('User', function() {
         });
     });
 
-    it('should add us to the pending list for the new friend', function(done) {
+    it('should add us to the pending list for the new friend', (done) => {
       request
         .put(`/api/users/${ownerUser.id}/friends/rel/${strangerUser.id}`)
         .set('Authorization', accessToken.id)
@@ -115,8 +118,8 @@ describe('User', function() {
         });
     });
 
-    describe('Contact List', function () {
-      it('should return users in the database by phone', function(done) {
+    describe('Contact List', () => {
+      it('should return users in the database by phone', (done) => {
         request
           .post('/api/users/findByPhones')
           .send(['+123456789'])
@@ -130,7 +133,7 @@ describe('User', function() {
           });
       });
 
-      it('should store the users phone book for future user', async function() {
+      it('should store the users phone book for future user', async() => {
         const userContactsModel = app.models.userContacts;
         const userContactList = ['+123456789', '+97212345678'];
 
@@ -142,12 +145,12 @@ describe('User', function() {
           .set('Authorization', accessToken.id)
           .expect('Content-Type', /json/);
 
-        const userStoredContacts = await userContactsModel.findOne({user: ownerUser});
+        const userStoredContacts = await userContactsModel.findOne({ user: ownerUser });
         expect(userStoredContacts.contacts).to.have.members(userContactList);
       });
     });
 
-    it('should allow to get info for a friend of the user', function(done) {
+    it('should allow to get info for a friend of the user', (done) => {
       request
         .get(`/api/users/${ownerUser.id}/friends/${friendUser.id}`)
         .set('Authorization', accessToken.id)
@@ -159,7 +162,7 @@ describe('User', function() {
         });
     });
 
-    it('should refuse to get info for a random user', function(done) {
+    it('should refuse to get info for a random user', (done) => {
       const unmute = mute();
       request
         .get(`/api/users/${ownerUser.id}/friends/${strangerUser.id}`)
@@ -173,7 +176,7 @@ describe('User', function() {
         });
     });
 
-    it('should find a friend by username', function(done) {
+    it('should find a friend by username', (done) => {
       request
         .get('/api/users/findByUsername/username-test')
         .set('Authorization', accessToken.id)
@@ -185,7 +188,7 @@ describe('User', function() {
         });
     });
 
-    it('should not find a friend by partial username', function(done) {
+    it('should not find a friend by partial username', (done) => {
       const unmute = mute();
       request
         .get('/api/users/findByUsername/test')
@@ -199,7 +202,7 @@ describe('User', function() {
         });
     });
 
-    it('should return a 404 for a non-existent user', function(done) {
+    it('should return a 404 for a non-existent user', (done) => {
       const unmute = mute();
       request
         .get('/api/users/findByUsername/no-idea')
@@ -214,23 +217,23 @@ describe('User', function() {
     });
   });
 
-  describe('Share Image', function() {
+  describe('Share Image', function shareImage() {
     this.timeout(5000);
 
-    it('should generate a generic share image', function(done) {
+    it('should generate a generic share image', (done) => {
       request
         .get(`/api/users/${strangerUser.id}/share/basketball/winner.jpg`)
-        .then((res) => jimp.read(res.body))
+        .then(res => jimp.read(res.body))
         .then((shareImage) => {
           expect(shareImage.hash()).to.be.equal('8cFba2gx0gF');
           done();
         });
     });
 
-    it('should generate an instagram share image', function(done) {
+    it('should generate an instagram share image', (done) => {
       request
         .get(`/api/users/${strangerUser.id}/share/ig/basketball/winner.jpg`)
-        .then((res) => jimp.read(res.body))
+        .then(res => jimp.read(res.body))
         .then((shareImage) => {
           expect(shareImage.hash()).to.be.equal('ac8bGwUxig8');
           done();
@@ -238,17 +241,18 @@ describe('User', function() {
     });
   });
 
-  describe('Avatar', function() {
-    describe('Upload', function() {
-      beforeEach(function(done) {
-        const storage = app.models.storage;
+  describe('Avatar', () => {
+    describe('Upload', () => {
+      beforeEach((done) => {
+        const { storage } = app.models;
         storage.destroyContainer(app.get('container'), (err) => {
-          if (err && err.code === 'ENOENT') err = null;
-          done(err);
+          let newErr = err;
+          if (err && err.code === 'ENOENT') newErr = null;
+          done(newErr);
         });
       });
 
-      it('should upload an avatar with post with a proper size', function(done) {
+      it('should upload an avatar with post with a proper size', (done) => {
         const fileName = './test/test-images/avatar.jpg';
 
         request
@@ -259,38 +263,38 @@ describe('User', function() {
             const avatar = res.body.avatarData;
             expect(res.body.success).to.be.equal(true);
             expect(avatar.name).to.match(/^\w+_avatar\.jpg/);
-            expect(avatar).includes({type: 'image/jpeg'});
+            expect(avatar).includes({ type: 'image/jpeg' });
             done();
           });
       });
     });
 
-    describe('Default Avatar', function() {
-      it('should return the default avatar in the default size', function(done) {
+    describe('Default Avatar', () => {
+      it('should return the default avatar in the default size', (done) => {
         request
           .get(`/api/users/${ownerUser.id}/avatar.jpg`)
           .end((err, res) => {
             jimp.read(res.body)
               .then((avatar) => {
-                expect(avatar.bitmap).to.includes({width: 250, height: 250});
+                expect(avatar.bitmap).to.includes({ width: 250, height: 250 });
                 done();
               });
           });
       });
 
-      it('should return default the avatar in a specific size', function(done) {
+      it('should return default the avatar in a specific size', (done) => {
         request
           .get(`/api/users/${ownerUser.id}/avatar/400x400/avatar.jpg`)
           .end((err, res) => {
             jimp.read(res.body)
               .then((avatar) => {
-                expect(avatar.bitmap).to.includes({width: 400, height: 400});
+                expect(avatar.bitmap).to.includes({ width: 400, height: 400 });
                 done();
               });
           });
       });
 
-      it('should return a proper error when requesting a non-existant user', function(done) {
+      it('should return a proper error when requesting a non-existant user', (done) => {
         const unmute = mute();
         request
           .get('/api/users/n0nex1st4nt/avatar.jpg')
@@ -302,15 +306,15 @@ describe('User', function() {
       });
     });
 
-    describe('Uploaded Avatar', function() {
+    describe('Uploaded Avatar', () => {
       let avatarTimestamp;
 
-      beforeEach(function(done) {
-        const storage = app.models.storage;
+      beforeEach((done) => {
+        const { storage } = app.models;
         storage.destroyContainer(app.get('container'), (err) => {
           if (err && err.code !== 'ENOENT') return done(err);
 
-          request
+          return request
             .post(`/api/users/${ownerUser.id}/avatar`)
             .set('Authorization', accessToken.id)
             .attach('avatar', './test/test-images/avatar.jpg')
@@ -321,25 +325,25 @@ describe('User', function() {
         });
       });
 
-      it('should return the avatar in the default size', function(done) {
+      it('should return the avatar in the default size', (done) => {
         request
           .get(`/api/users/${ownerUser.id}/avatar.jpg`)
           .end((err, res) => {
             jimp.read(res.body)
               .then((avatar) => {
-                expect(avatar.bitmap).to.includes({width: 250, height: 250});
+                expect(avatar.bitmap).to.includes({ width: 250, height: 250 });
                 done();
               });
           });
       });
 
-      it('should return the avatar in a specific size', function(done) {
+      it('should return the avatar in a specific size', (done) => {
         request
           .get(`/api/users/${ownerUser.id}/avatar/${avatarTimestamp}/400x400/avatar.jpg`)
           .end((err, res) => {
             jimp.read(res.body)
               .then((avatar) => {
-                expect(avatar.bitmap).to.includes({width: 400, height: 400});
+                expect(avatar.bitmap).to.includes({ width: 400, height: 400 });
                 done();
               });
           });
@@ -347,8 +351,8 @@ describe('User', function() {
     });
   });
 
-  describe('Blocked', function() {
-    it('should add a user to blocked', function(done) {
+  describe('Blocked', () => {
+    it('should add a user to blocked', (done) => {
       request
         .put(`/api/users/${ownerUser.id}/blocked/rel/${strangerUser.id}`)
         .set('Authorization', accessToken.id)
@@ -364,7 +368,7 @@ describe('User', function() {
         });
     });
 
-    it('should remove a blocked friend from friend list', function(done) {
+    it('should remove a blocked friend from friend list', (done) => {
       request
         .put(`/api/users/${ownerUser.id}/blocked/rel/${friendUser.id}`)
         .set('Authorization', accessToken.id)
@@ -379,7 +383,7 @@ describe('User', function() {
         });
     });
 
-    it('should remove a user from the blocked users', function(done) {
+    it('should remove a user from the blocked users', (done) => {
       request
         .delete(`/api/users/${ownerUser.id}/blocked/rel/${blockedUser.id}`)
         .set('Authorization', accessToken.id)
@@ -394,7 +398,7 @@ describe('User', function() {
         });
     });
 
-    it('return an unblocked user to the friend list', function(done) {
+    it('return an unblocked user to the friend list', (done) => {
       request
         .delete(`/api/users/${ownerUser.id}/blocked/rel/${blockedUser.id}`)
         .set('Authorization', accessToken.id)
@@ -409,7 +413,7 @@ describe('User', function() {
         });
     });
 
-    it('should return the list of blocked users', function(done) {
+    it('should return the list of blocked users', (done) => {
       request
         .get(`/api/users/${ownerUser.id}/blocked`)
         .set('Authorization', accessToken.id)
@@ -422,11 +426,11 @@ describe('User', function() {
     });
   });
 
-  describe('Devkit', function() {
-    it('should mark a user as interested in the dev-kit', function(done) {
+  describe('Devkit', () => {
+    it('should mark a user as interested in the dev-kit', (done) => {
       request
         .patch(`/api/users/${ownerUser.id}`)
-        .send({devkit: true})
+        .send({ devkit: true })
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .then((res) => {
@@ -438,8 +442,8 @@ describe('User', function() {
     });
   });
 
-  describe('SendWinis', function() {
-    it('should send winis from one user to another', function(done) {
+  describe('SendWinis', () => {
+    it('should send winis from one user to another', (done) => {
       request
         .post(`/api/users/${strangerUser.id}/sendWinis/25`)
         .set('Authorization', accessToken.id)
@@ -453,7 +457,7 @@ describe('User', function() {
         });
     });
 
-    it('should refuse to send if not enough funds', function(done) {
+    it('should refuse to send if not enough funds', (done) => {
       const unmute = mute();
       request
         .post(`/api/users/${strangerUser.id}/sendWinis/100`)
@@ -467,7 +471,7 @@ describe('User', function() {
         });
     });
 
-    it('should refuse to send if funds are staked', function(done) {
+    it('should refuse to send if funds are staked', (done) => {
       const unmute = mute();
       request
         .post(`/api/users/${strangerUser.id}/sendWinis/40`)
@@ -482,22 +486,22 @@ describe('User', function() {
     });
   });
 
-  describe('Staking', function() {
-    it('should stake requested funds', async function() {
+  describe('Staking', () => {
+    it('should stake requested funds', async() => {
       await ownerUser.stakeFunds(20);
       expect(ownerUser.staked).to.equal(35);
     });
 
-    it('should release requested funds', async function() {
+    it('should release requested funds', async() => {
       await ownerUser.releaseFunds(10);
       expect(ownerUser.staked).to.equal(5);
     });
 
-    it('should transfer staked funds to another user', async function() {
+    it('should transfer staked funds to another user', async() => {
       await ownerUser.transferStakedFunds(10, strangerUser);
     });
 
-    it('should refuse to stake more than available', function(done) {
+    it('should refuse to stake more than available', (done) => {
       ownerUser.stakeFunds(60)
         .catch((err) => {
           expect(err.status).to.be.equal(409);
@@ -505,7 +509,7 @@ describe('User', function() {
         });
     });
 
-    it('should refuse to release more than staked', function(done) {
+    it('should refuse to release more than staked', (done) => {
       ownerUser.releaseFunds(60)
         .catch((err) => {
           expect(err.status).to.be.equal(409);
@@ -513,7 +517,7 @@ describe('User', function() {
         });
     });
 
-    it('should fail transfer more than staked funds', function(done) {
+    it('should fail transfer more than staked funds', (done) => {
       ownerUser.transferStakedFunds(60, strangerUser)
         .catch((err) => {
           expect(err.status).to.be.equal(409);
@@ -521,87 +525,83 @@ describe('User', function() {
         });
     });
   });
-  describe('Daily spin', function() {
-    it('should grant 1 spin for first visit', function(done) {
+  describe('Daily spin', () => {
+    it('should grant 1 spin for first visit', (done) => {
       request
         .post(`/api/users/${accessToken.userId}/freeSpins`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(2);
-        done();
-      });
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.spins).to.be.equal(2);
+          done();
+        });
     });
 
-    it('should not grant spin for second visit', function(done) {
+    it('should not grant spin for second visit', (done) => {
       request
         .post(`/api/users/${accessToken.userId}/freeSpins`)
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(2);
-        return request
-        .post(`/api/users/${accessToken.userId}/freeSpins`)
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send();
-      })
-      .then(res=>{
-        expect(res.body.spins).to.be.equal(2);
-        done();
-      });
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.spins).to.be.equal(2);
+          return request
+            .post(`/api/users/${accessToken.userId}/freeSpins`)
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/)
+            .send();
+        })
+        .then((res) => {
+          expect(res.body.spins).to.be.equal(2);
+          done();
+        });
     });
 
-    it('should grant 1 spin for 1 day absence', function(done) {
-      let startSpins;
+    it('should grant 1 spin for 1 day absence', (done) => {
       const testStartTimestamp = Date.now();
       UserModel.findById(accessToken.userId)
-      .then(user=>{
-        return user.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 - 1);
-      })
-      .then(updatedUser =>{
-        startSpins = updatedUser.spins;
-        expect(new Date(updatedUser.lastDailySpinGrantingDate).getTime()).to.be.below(testStartTimestamp);
-        return request
-        .post(`/api/users/${accessToken.userId}/freeSpins`)
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send();
-      })
-      .then((res) => {
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(2);
-        expect(new Date(res.body.lastDailySpinGrantingDate).getTime()).to.be.above(testStartTimestamp);
-        done();
-      });
+        .then(user => user.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 - 1))
+        .then((updatedUser) => {
+          expect(new Date(updatedUser.lastDailySpinGrantingDate).getTime())
+            .to.be.below(testStartTimestamp);
+          return request
+            .post(`/api/users/${accessToken.userId}/freeSpins`)
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/)
+            .send();
+        })
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.spins).to.be.equal(2);
+          expect(new Date(res.body.lastDailySpinGrantingDate).getTime())
+            .to.be.above(testStartTimestamp);
+          done();
+        });
     });
 
-    it('should grant 1 spins for 3 day ansence', function(done) {
-      let startSpins;
+    it('should grant 1 spins for 3 day ansence', (done) => {
       const testStartTimestamp = Date.now();
       UserModel.findById(accessToken.userId)
-      .then(user=>{
-        return user.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 * 3 - 1);
-      })
-      .then(updatedUser =>{
-        startSpins = updatedUser.spins;
-        expect(new Date(updatedUser.lastDailySpinGrantingDate).getTime()).to.be.below(testStartTimestamp);
-        return request
-        .post(`/api/users/${accessToken.userId}/freeSpins`)
-        .set('Authorization', accessToken.id)
-        .expect('Content-Type', /json/)
-        .send();
-      })
-      .then((res) => {
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.spins).to.be.equal(2);
-        expect(new Date(res.body.lastDailySpinGrantingDate).getTime()).to.be.above(testStartTimestamp);
-        done();
-      });
+        .then(user => user.updateAttribute('lastDailySpinGrantingDate', Date.now() - 24 * 60 * 60 * 1000 * 3 - 1))
+        .then((updatedUser) => {
+          expect(new Date(updatedUser.lastDailySpinGrantingDate).getTime())
+            .to.be.below(testStartTimestamp);
+          return request
+            .post(`/api/users/${accessToken.userId}/freeSpins`)
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/)
+            .send();
+        })
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.spins).to.be.equal(2);
+          expect(new Date(res.body.lastDailySpinGrantingDate).getTime())
+            .to.be.above(testStartTimestamp);
+          done();
+        });
     });
   });
 });

@@ -1,4 +1,3 @@
-'use strict';
 
 module.exports = function(app) {
   if (process.env.NODE_ENV !== 'docker') return;

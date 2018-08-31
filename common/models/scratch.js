@@ -1,8 +1,8 @@
-'use strict';
+
 const Ivoire = require('ivoire');
 
 module.exports = function(Scratch) {
-  Scratch.beforeRemote('create', async function(context, modelInstance, next) {
+  Scratch.beforeRemote('create', async(context, modelInstance, next) => {
     const token = context.req.accessToken;
     const userId = token && token.userId;
     const UserModel = Scratch.app.models.user;
@@ -41,61 +41,61 @@ module.exports = function(Scratch) {
 
       case 'diamond':
         await updatedUser.updateAttribute('diamonds', updatedUser.diamonds + 1);
-        prizeDetails['diamond'] = 1;
+        prizeDetails.diamond = 1;
         break;
 
       case 'winis':
         randomWinis = Scratch.calculateRandomWinis();
         await updatedUser.updateAttribute('winis', updatedUser.winis + randomWinis);
-        prizeDetails['winis'] = randomWinis;
+        prizeDetails.winis = randomWinis;
         break;
 
       case 'scratch':
         await updatedUser.updateAttribute('scratches', updatedUser.scratches + 1);
-        prizeDetails['scratch'] = 1;
+        prizeDetails.scratch = 1;
         break;
 
       case 'present':
         randomWinis = Scratch.calculateRandomWinis();
 
         await updatedUser.updateAttributes({
-          'diamonds': updatedUser.diamonds + 1,
-          'winis': updatedUser.winis + randomWinis,
-          'scratches': updatedUser.scratches + 1,
-          'spins': updatedUser.spins + 1,
+          diamonds: updatedUser.diamonds + 1,
+          winis: updatedUser.winis + randomWinis,
+          scratches: updatedUser.scratches + 1,
+          spins: updatedUser.spins + 1,
         });
 
         prizeDetails = {
-          'diamond': 1,
-          'winis': randomWinis,
-          'scratch': 1,
-          'spin': 1,
+          diamond: 1,
+          winis: randomWinis,
+          scratch: 1,
+          spin: 1,
         };
 
         break;
       case 'spin':
         await updatedUser.updateAttribute('spins', updatedUser.spins + 1);
-        prizeDetails['spin'] = 1;
+        prizeDetails.spin = 1;
         break;
     }
 
     return {
       success: true,
       prize: this.prize,
-      prizeDetails: prizeDetails,
+      prizeDetails,
       user: updatedUser,
     };
   };
 
   Scratch.calculateRandomWinis = () => {
     const ivoire = new Ivoire();
-    return ivoire.integer({min: 20, max: 100});
+    return ivoire.integer({ min: 20, max: 100 });
   };
 
   Scratch.determinePrize = (board) => {
     let prize;
 
-    let prizeVariants = {
+    const prizeVariants = {
       diamond: 0,
       winis: 0,
       scratch: 0,
@@ -103,7 +103,7 @@ module.exports = function(Scratch) {
       spin: 0,
     };
 
-    board.forEach(element => {
+    board.forEach((element) => {
       switch (element) {
         case 'diamond': prizeVariants.diamond++; break;
         case 'winis': prizeVariants.winis++; break;
@@ -113,16 +113,16 @@ module.exports = function(Scratch) {
       }
     });
 
-    if (Object.values(prizeVariants).reduce((a, b) => a > b ? a : b) < 3) {
+    if (Object.values(prizeVariants).reduce((a, b) => (a > b ? a : b)) < 3) {
       return 'empty';
     }
 
-    return Object.keys(prizeVariants).reduce((a, b) => prizeVariants[a] > prizeVariants[b] ? a : b);
+    return Object.keys(prizeVariants).reduce((a, b) => (prizeVariants[a] > prizeVariants[b] ? a : b));
   };
 
   Scratch.calculateScratchBoard = () => {
     let board = [];
-    let prizeVariants = {
+    const prizeVariants = {
       diamond: 0,
       winis: 0,
       scratch: 0,
@@ -131,7 +131,7 @@ module.exports = function(Scratch) {
     };
     for (let i = 0; i < 6; i++) {
       let tempCell;
-      let generatedRandomNumber = Math.random();
+      const generatedRandomNumber = Math.random();
       if (generatedRandomNumber < 0.15) {
         tempCell = 'diamond';
         prizeVariants.diamond++;
@@ -150,7 +150,7 @@ module.exports = function(Scratch) {
       }
       board.push(tempCell);
     }
-    let verifier = Object.values(prizeVariants).filter(element => { return element >= 3; });
+    const verifier = Object.values(prizeVariants).filter(element => element >= 3);
     if (verifier.length == 2) {
       board = Scratch.calculateScratchBoard();
     }

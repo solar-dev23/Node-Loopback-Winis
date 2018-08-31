@@ -1,12 +1,15 @@
-'use strict';
 
 module.exports = function(HallOfFame) {
   HallOfFame.executeQuery = async function(sortBy, whereQuery) {
-    const UserModel =  HallOfFame.app.models.user;
+    const UserModel = HallOfFame.app.models.user;
 
     return await UserModel.find({
-      where: whereQuery, limit: 20, order: sortBy + ' DESC',
-      fields: {username: true, winis: true, diamonds: true, id: true, avatar: true},
+      where: whereQuery,
+      limit: 20,
+      order: `${sortBy} DESC`,
+      fields: {
+        username: true, winis: true, diamonds: true, id: true, avatar: true,
+      },
     });
   };
 
@@ -25,7 +28,7 @@ module.exports = function(HallOfFame) {
     const friendIds = user.friendIds;
     friendIds.push(userId);
 
-    const whereQuery = {id: {inq: friendIds}};
+    const whereQuery = { id: { inq: friendIds } };
     if (!sortBy) sortBy = 'winis';
 
     return await HallOfFame.executeQuery(sortBy, whereQuery);

@@ -1,4 +1,3 @@
-'use strict';
 
 const debug = require('debug')('winis:user-model');
 const request = require('request-promise-native');
@@ -18,7 +17,6 @@ module.exports = function(User) {
     ignoreCase: true,
   });
 
-
   User.authenticate = async function(method, credentials) {
     if (method !== 'accountkit') {
       throw new Error('Unknown authentication method');
@@ -30,8 +28,8 @@ module.exports = function(User) {
       json: true,
     });
 
-    if (authResponse.application
-      && authResponse.application.id !== '848472012025317') {
+    if (authResponse.application &&
+      authResponse.application.id !== '848472012025317') {
       throw new Error('Wrong application');
     }
 
@@ -54,8 +52,8 @@ module.exports = function(User) {
         phoneNumber,
       }));
 
-    if (!created
-      && ((phoneNumber !== user.phoneNumber) || (authResponse.id !== user.externalUserId))) {
+    if (!created &&
+      ((phoneNumber !== user.phoneNumber) || (authResponse.id !== user.externalUserId))) {
       await user.updateAttributes({
         externalUserId: authResponse.id,
         externalAuthMethod: method,
@@ -80,14 +78,15 @@ module.exports = function(User) {
     const user = userModel.findById(userId);
 
     const insertResult = await userContactsModel.upsertWithWhere(
-      {'user': user},
-      {'userId': userId, 'contacts': phones});
+      { user },
+      { userId, contacts: phones },
+    );
 
-    return await User.find({where: {'phoneNumber': {inq: phones}}});
+    return await User.find({ where: { phoneNumber: { inq: phones } } });
   };
 
   User.findByUsername = async(username) => {
-    const user = await User.findOne({where: {'username': {regexp: `/^${username}$/i`}}});
+    const user = await User.findOne({ where: { username: { regexp: `/^${username}$/i` } } });
     if (user === null) {
       const error = new Error('No user found');
       error.statusCode = 404;
@@ -115,7 +114,7 @@ module.exports = function(User) {
       await getContainerPm(containerName);
     } catch (err) {
       if (err.code === 'ENOENT') {
-        await createContainerPm({name: containerName});
+        await createContainerPm({ name: containerName });
       }
     } finally {
       const getFilename = (fileInfo) => {
@@ -128,7 +127,7 @@ module.exports = function(User) {
       };
 
       uploadData = await uploadPm(app.dataSources.Storage, req, res, {
-        'container': containerName, 'getFilename': getFilename,
+        container: containerName, getFilename,
       });
     }
 
@@ -138,7 +137,7 @@ module.exports = function(User) {
     return {
       success: true,
       user: userData,
-      avatarData: avatarData,
+      avatarData,
     };
   };
 
@@ -147,7 +146,8 @@ module.exports = function(User) {
     const containerName = app.get('container');
     const storage = app.models.storage;
     const writeBuffer = new streambuffer.WritableStreamBuffer();
-    const resizeWidth = parseInt(width), resizeHeight = parseInt(height);
+    const resizeWidth = parseInt(width),
+      resizeHeight = parseInt(height);
     const defaultAvatar = `${__dirname}/../../assets/avatar/avatar.jpg`;
     const next = cb;
 
@@ -164,11 +164,9 @@ module.exports = function(User) {
       const imageTransformer = sharp()
         .resize(resizeWidth, resizeHeight)
         .jpeg({
-          quality: 70
+          quality: 70,
         })
-        .toBuffer((err, data, info) => {
-          return next(null, data, 'image/jpeg', 'public, max-age=315360000');
-        });
+        .toBuffer((err, data, info) => next(null, data, 'image/jpeg', 'public, max-age=315360000'));
 
       fileStream.pipe(imageTransformer);
       fileStream.on('end', (err) => {
@@ -215,7 +213,7 @@ module.exports = function(User) {
     const textWidth = User.measureText(font, outputText);
     const textPosition = Math.floor((1764 / 2) - (textWidth / 2) * 0.85);
     await textImage.print(font, textPosition, 0, outputText);
-    jimp.prototype.getBufferAsync = util.promisify( jimp.prototype.getBuffer );
+    jimp.prototype.getBufferAsync = util.promisify(jimp.prototype.getBuffer);
     return textImage.getBufferAsync(jimp.MIME_PNG);
   };
 
@@ -229,26 +227,26 @@ module.exports = function(User) {
 
     if (type === 'instagram') {
       imageSizes = {
-        base:{
+        base: {
           raw: {
             width: 1764,
             height: 1764,
-            channels: 4
+            channels: 4,
           },
         },
         avatar: {
           size: 355,
           pos: {
             top: 880,
-            left: 715
-          }
+            left: 715,
+          },
         },
         layers: [
           [starsOverlayImage, 250, 783],
           [gameImage, 794, 78],
           [topStarsOverlayImage, 718, 90],
         ],
-        textLayerTop: 1290
+        textLayerTop: 1290,
       };
     } else {
       imageSizes = {
@@ -256,29 +254,30 @@ module.exports = function(User) {
           raw: {
             width: 1764,
             height: 1191,
-            channels: 4
+            channels: 4,
           },
         },
         avatar: {
           size: 265,
-          pos:{
+          pos: {
             top: 580,
-            left: 765
-          }
+            left: 765,
+          },
         },
         layers: [
           [starsOverlayImage, 414, 504],
           [gameImage, 790, 12],
           [topStarsOverlayImage, 539, 0],
         ],
-        textLayerTop: 880
+        textLayerTop: 880,
       };
     }
 
     const avatarImage = await sharp(avatarBuffer)
       .resize(imageSizes.avatar.size, imageSizes.avatar.size)
-      .overlayWith(avatarMaskImage, {cutout: true})
-      .png().toBuffer();
+      .overlayWith(avatarMaskImage, { cutout: true })
+      .png()
+      .toBuffer();
 
     const base = sharp(backgroundImage)
       .overlayWith(avatarImage, imageSizes.avatar.pos)
@@ -288,12 +287,10 @@ module.exports = function(User) {
     const textLayer = await User.generateShareImageText(winnerText, imageSizes.base.raw.width);
     imageSizes.layers.push([textLayer, 0, imageSizes.textLayerTop]);
 
-    const composite = imageSizes.layers.reduce( function(input, overlay) {
-      return input.then( function(data) {
-        const [layer, left, top] = overlay;
-        return sharp(data, imageSizes.base).overlayWith(layer, {left: left, top: top}).raw().toBuffer();
-      });
-    }, base);
+    const composite = imageSizes.layers.reduce((input, overlay) => input.then((data) => {
+      const [layer, left, top] = overlay;
+      return sharp(data, imageSizes.base).overlayWith(layer, { left, top }).raw().toBuffer();
+    }), base);
 
     const compositeBuffer = await composite;
     return sharp(compositeBuffer, imageSizes.base);
@@ -337,11 +334,9 @@ module.exports = function(User) {
         User.generateShareImage(type, userId, userName, buffer, game)
           .then((finalImage) => {
             finalImage
-              .jpeg({quality: 60})
+              .jpeg({ quality: 60 })
               .toBuffer()
-              .then((buffer) => {
-                return next(null, buffer, 'image/jpeg', 'public, max-age=315360000');
-              });
+              .then(buffer => next(null, buffer, 'image/jpeg', 'public, max-age=315360000'));
           });
       });
     });
@@ -360,15 +355,15 @@ module.exports = function(User) {
 
     await User.app.models.transactionLog.create({
       attribute: 'winis',
-      amount: amount,
+      amount,
       operationType: 'transfer',
       firstActor: updatedRecipient.id,
       secondActor: updatedSender.id,
     });
     return {
-      amount: amount,
-      updatedSender: updatedSender,
-      updatedRecipient: updatedRecipient,
+      amount,
+      updatedSender,
+      updatedRecipient,
     };
   };
 
@@ -379,11 +374,11 @@ module.exports = function(User) {
     const recipient = this;
     const sender = await User.findById(senderId);
 
-    const {updatedSender, updatedRecipient} = await User.transferFunds(amount, sender, recipient);
+    const { updatedSender, updatedRecipient } = await User.transferFunds(amount, sender, recipient);
 
     return {
       status: 'success',
-      amount: amount,
+      amount,
       sender: updatedSender,
       recipient: updatedRecipient,
     };
@@ -419,7 +414,7 @@ module.exports = function(User) {
     await user.updateAttribute('staked', stakedAmount);
     await User.app.models.transactionLog.create({
       attribute: 'winis',
-      amount: amount,
+      amount,
       operationType: 'stake',
       firstActor: this.id,
     });
@@ -435,7 +430,7 @@ module.exports = function(User) {
     await this.updateAttribute('staked', this.staked - amount);
     await User.app.models.transactionLog.create({
       attribute: 'winis',
-      amount: amount,
+      amount,
       operationType: 'release',
       firstActor: this.id,
     });
@@ -449,16 +444,16 @@ module.exports = function(User) {
     }
 
     await this.releaseFunds(amount);
-    const {updatedSender, updatedRecipient} = await User.transferFunds(amount, this, recipient);
+    const { updatedSender, updatedRecipient } = await User.transferFunds(amount, this, recipient);
 
     return {
-      amount: amount,
-      updatedSender: updatedSender,
-      updatedRecipient: updatedRecipient,
+      amount,
+      updatedSender,
+      updatedRecipient,
     };
   };
 
-  User.beforeRemote('prototype.__link__blocked', async (ctx) => {
+  User.beforeRemote('prototype.__link__blocked', async(ctx) => {
     const user = ctx.instance;
     const blockedId = ctx.args.fk;
 
@@ -466,14 +461,14 @@ module.exports = function(User) {
     await user.pending.remove(blockedId);
   });
 
-  User.afterRemote('prototype.__unlink__blocked', async (ctx) => {
+  User.afterRemote('prototype.__unlink__blocked', async(ctx) => {
     const user = ctx.instance;
     const unblockedId = ctx.args.fk;
 
     await user.friends.add(unblockedId);
   });
 
-  User.afterRemote('prototype.__link__friends', async (ctx) => {
+  User.afterRemote('prototype.__link__friends', async(ctx) => {
     const user = ctx.instance;
     const userId = user.id;
     const friendId = ctx.args.fk;
@@ -505,25 +500,32 @@ module.exports = function(User) {
     return currentUser;
   };
 
-  User.loginAdmin = async function({login, password}) {
-    const admins = await User.find({where: {and: [{adminLogin: login}, {adminPassword: md5(password)}, {isAdmin: true}]}});
+  User.loginAdmin = async function({ login, password }) {
+    const admins = await User.find({
+      where: { and:
+        [
+          { adminLogin: login },
+          { adminPassword: md5(password) },
+          { isAdmin: true },
+        ],
+      },
+    });
     if (admins.length == 1) {
       const accessToken = await admins[0].createAccessToken();
-      let result = admins[0];
+      const result = admins[0];
       result.accessToken = accessToken;
       return result;
-    } else {
-      return null;
     }
+    return null;
   };
 
   User.changeAdminPassword = async function(userId, newPassword) {
-    let user = await User.findById(userId);
+    const user = await User.findById(userId);
     const newUser = await user.updateAttribute('adminPassword', md5(newPassword));
     return newUser;
   };
 
-  User.observe('before save', function addRandomName(ctx, next) {
+  User.observe('before save', (ctx, next) => {
     if (ctx.instance && !ctx.instance.username) {
       ctx.instance.username = namor.generate();
     }

@@ -1,4 +1,3 @@
-'use strict';
 
 const moment = require('moment');
 const momenttz = require('moment-timezone');
@@ -14,7 +13,7 @@ module.exports = function(Competition) {
    */
   Competition.nearest = async function() {
     const startOfCurrentDay = Competition.getStartOfDay('UTC');
-    const competition = await Competition.findOne({where: {endDate: {gt: startOfCurrentDay}}});
+    const competition = await Competition.findOne({ where: { endDate: { gt: startOfCurrentDay } } });
     let status;
 
     if (competition) {
@@ -28,8 +27,8 @@ module.exports = function(Competition) {
     }
 
     return {
-      status: status,
-      competition: competition
-    }
+      status,
+      competition,
+    };
   };
 };
