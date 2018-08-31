@@ -1,4 +1,3 @@
-'use strict';
 
 const Ivoire = require('ivoire-weighted-choice');
 const debug = require('debug')('winis:spin-to-win');
@@ -22,36 +21,36 @@ module.exports = function(SpinToWin) {
   SpinToWin.handlePrize = (user, prize) => {
     debug(`Handle prize ${prize}`);
 
-    let attributes = {};
+    const attributes = {};
 
     switch (prize) {
       case 'diamond':
-        attributes['diamonds'] = user.diamonds + 1;
+        attributes.diamonds = user.diamonds + 1;
         break;
       case 'present':
       case 'present_2':
         debug('Need to handle present');
         break;
       case 'double_spin':
-        attributes['spins'] = user.spins + 2;
+        attributes.spins = user.spins + 2;
         break;
       case '100_winis':
-        attributes['winis'] = user.winis + 100;
+        attributes.winis = user.winis + 100;
         break;
       case 'double_diamond':
-        attributes['diamonds'] = user.diamonds + 2;
+        attributes.diamonds = user.diamonds + 2;
         break;
       case '50_winis':
-        attributes['winis'] = user.winis + 50;
+        attributes.winis = user.winis + 50;
         break;
       case 'double_scratch':
-        attributes['scratches'] = user.scratches + 2;
+        attributes.scratches = user.scratches + 2;
         break;
       case 'scratch':
-        attributes['scratches'] = user.scratches + 1;
+        attributes.scratches = user.scratches + 1;
         break;
       case 'spin':
-        attributes['spins'] = user.spins + 1;
+        attributes.spins = user.spins + 1;
         break;
       default:
         break;
@@ -60,7 +59,7 @@ module.exports = function(SpinToWin) {
     return attributes;
   };
 
-  SpinToWin.spin = async (options) => {
+  SpinToWin.spin = async(options) => {
     const spinResult = SpinToWin.calculateSpin();
     const token = options && options.accessToken;
     const userId = token && token.userId;
@@ -74,19 +73,18 @@ module.exports = function(SpinToWin) {
     }
 
     const spin = await SpinToWin.create({
-      spinResult: spinResult,
+      spinResult,
       userId: user.id,
     });
 
-    let userAttributes = SpinToWin.handlePrize(user, spinResult);
-    if (typeof userAttributes['spins'] === 'undefined')
-      userAttributes['spins'] = user.spins;
-    userAttributes['spins']--;
+    const userAttributes = SpinToWin.handlePrize(user, spinResult);
+    if (typeof userAttributes.spins === 'undefined') userAttributes.spins = user.spins;
+    userAttributes.spins--;
     const updatedUser = await user.updateAttributes(userAttributes);
 
     return {
-      spinResult: spinResult,
-      spin: spin,
+      spinResult,
+      spin,
       user: updatedUser,
     };
   };

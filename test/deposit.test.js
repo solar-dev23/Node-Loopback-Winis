@@ -1,16 +1,16 @@
-'use strict';
-
-const app = require('../server/server');
-const expect = require('chai').expect;
+/* eslint-disable camelcase */
+const { expect } = require('chai');
 const mute = require('mute');
-const request = require('supertest')(app);
 const md5 = require('md5');
+const app = require('../server/server');
+const request = require('supertest')(app);
 
-describe('Deposit', function() {
-  let accessToken, DepositModel;
+describe('Deposit', () => {
+  let accessToken,
+    DepositModel;
   let ownerUser;
 
-  beforeEach(async function() {
+  beforeEach(async() => {
     DepositModel = app.models.deposit;
     const UserModel = app.models.user;
     await UserModel.deleteAll();
@@ -24,24 +24,24 @@ describe('Deposit', function() {
     accessToken = await ownerUser.createAccessToken();
   });
 
-  after(async function() {
+  after(async() => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('Tapjoy', function() {
-    let grantedWinis = 25;
-    let displayMultiplier = 1.0;
-    let randomExternalId = 456;
+  describe('Tapjoy', () => {
+    const grantedWinis = 25;
+    const displayMultiplier = 1.0;
+    const randomExternalId = 456;
     const tapjoyKey = app.get('tapjoyKey');
 
-    it('should award a certain amount of winis for completing a mission', function(done) {
+    it('should award a certain amount of winis for completing a mission', (done) => {
       const params = {
-        'id': randomExternalId,
-        'snuid': ownerUser.id,
-        'currency': grantedWinis,
-        'mac_address': '00-16-41-34-2C-A6',
-        'display_multiplier': displayMultiplier,
-        'verifier': md5(`${randomExternalId}:${ownerUser.id}:${grantedWinis}:${tapjoyKey}`),
+        id: randomExternalId,
+        snuid: ownerUser.id,
+        currency: grantedWinis,
+        mac_address: '00-16-41-34-2C-A6',
+        display_multiplier: displayMultiplier,
+        verifier: md5(`${randomExternalId}:${ownerUser.id}:${grantedWinis}:${tapjoyKey}`),
       };
 
       request
@@ -55,14 +55,14 @@ describe('Deposit', function() {
         });
     });
 
-    it('should return 403 status code because of invalid userId', function(done) {
+    it('should return 403 status code because of invalid userId', (done) => {
       const params = {
-        'id': randomExternalId,
-        'snuid': ownerUser.id + '' + 1,
-        'currency': grantedWinis,
-        'mac_address': '00-16-41-34-2C-A6',
-        'display_multiplier': displayMultiplier,
-        'verifier': md5(`${randomExternalId}:${ownerUser.id + '' + 1}:${grantedWinis}:${tapjoyKey}`),
+        id: randomExternalId,
+        snuid: `${ownerUser.id}${1}`,
+        currency: grantedWinis,
+        mac_address: '00-16-41-34-2C-A6',
+        display_multiplier: displayMultiplier,
+        verifier: md5(`${randomExternalId}:${`${ownerUser.id}${1}`}:${grantedWinis}:${tapjoyKey}`),
       };
 
       const unmute = mute();
@@ -77,12 +77,12 @@ describe('Deposit', function() {
         });
     });
 
-    it('should return 403 status code because of absent param \'verifier\'', function(done) {
+    it('should return 403 status code because of absent param \'verifier\'', (done) => {
       const params = {
-        'snuid': ownerUser.id,
-        'currency': grantedWinis,
-        'mac_address': '00-16-41-34-2C-A6',
-        'display_multiplier': displayMultiplier,
+        snuid: ownerUser.id,
+        currency: grantedWinis,
+        mac_address: '00-16-41-34-2C-A6',
+        display_multiplier: displayMultiplier,
       };
 
       const unmute = mute();
@@ -97,14 +97,14 @@ describe('Deposit', function() {
         });
     });
 
-    it('should return 403 status code because of wrong param \'verifier\'', function(done) {
+    it('should return 403 status code because of wrong param \'verifier\'', (done) => {
       const params = {
-        'id': randomExternalId,
-        'snuid': ownerUser.id,
-        'currency': grantedWinis,
-        'mac_address': '00-16-41-34-2C-A6',
-        'display_multiplier': displayMultiplier,
-        'verifier': 'wrong',
+        id: randomExternalId,
+        snuid: ownerUser.id,
+        currency: grantedWinis,
+        mac_address: '00-16-41-34-2C-A6',
+        display_multiplier: displayMultiplier,
+        verifier: 'wrong',
       };
 
       const unmute = mute();
@@ -120,24 +120,24 @@ describe('Deposit', function() {
     });
   });
 
-  describe('appStore', function() {
+  describe('appStore', () => {
     app.models.Deposit.getAppStoreRewardConfiguration = async function() {
       return [
-        {productId: '2_winis', iconId: 'winis', amount: 2},
-        {productId: '5_scratches', iconId: 'scratch', amount: 5},
-        {productId: '7_diamonds', iconId: 'diamond', amount: 7},
-        {productId: '3_presents', iconId: 'present', amount: 3},
-        {productId: '12_spins', iconId: 'spin', amount: 12},
+        { productId: '2_winis', iconId: 'winis', amount: 2 },
+        { productId: '5_scratches', iconId: 'scratch', amount: 5 },
+        { productId: '7_diamonds', iconId: 'diamond', amount: 7 },
+        { productId: '3_presents', iconId: 'present', amount: 3 },
+        { productId: '12_spins', iconId: 'spin', amount: 12 },
       ];
     };
 
-    it('should return rewardConfiguration', function(done) {
+    it('should return rewardConfiguration', (done) => {
       request
         .get('/api/deposits/appStore/rewardsConfig')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
-        .then((res)=>{
+        .then((res) => {
           expect(res.body[0].productId).to.be.equal('2_winis');
           expect(res.body[0].iconId).to.be.equal('winis');
           expect(res.body[0].amount).to.be.equal(2);
@@ -145,10 +145,10 @@ describe('Deposit', function() {
         });
     });
 
-    it('should award 2 winis', function(done) {
+    it('should award 2 winis', (done) => {
       const params = {
-        'method': 'appstore',
-        'externalId': '2_winis',
+        method: 'appstore',
+        externalId: '2_winis',
       };
 
       request
@@ -156,7 +156,7 @@ describe('Deposit', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send(params)
-        .then((res)=>{
+        .then((res) => {
           expect(res.body.success).to.be.equals(true);
           expect(res.body.method).to.be.equals('appstore');
           expect(res.body.user.winis).to.be.equal(2);
@@ -167,9 +167,9 @@ describe('Deposit', function() {
         });
     });
 
-    it('should award 5 scratches', function(done) {
+    it('should award 5 scratches', (done) => {
       const params = {
-        'externalId': '5_scratches',
+        externalId: '5_scratches',
       };
 
       request
@@ -177,7 +177,7 @@ describe('Deposit', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send(params)
-        .then((res)=>{
+        .then((res) => {
           expect(res.body.success).to.be.equals(true);
           expect(res.body.method).to.be.equals('appstore');
           expect(res.body.user.winis).to.be.equal(0);
@@ -188,10 +188,10 @@ describe('Deposit', function() {
         });
     });
 
-    it('should award 7 diamonds', function(done) {
+    it('should award 7 diamonds', (done) => {
       const params = {
-        'method': 'appstore',
-        'externalId': '7_diamonds',
+        method: 'appstore',
+        externalId: '7_diamonds',
       };
 
       request
@@ -199,7 +199,7 @@ describe('Deposit', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send(params)
-        .then((res)=>{
+        .then((res) => {
           expect(res.body.success).to.be.equals(true);
           expect(res.body.method).to.be.equals('appstore');
           expect(res.body.user.winis).to.be.equal(0);
@@ -210,10 +210,10 @@ describe('Deposit', function() {
         });
     });
 
-    it('should award 3 presents', function(done) {
+    it('should award 3 presents', (done) => {
       const params = {
-        'method': 'appstore',
-        'externalId': '3_presents',
+        method: 'appstore',
+        externalId: '3_presents',
       };
 
       request
@@ -221,7 +221,7 @@ describe('Deposit', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send(params)
-        .then((res)=>{
+        .then((res) => {
           expect(res.body.success).to.be.equals(true);
           expect(res.body.method).to.be.equals('appstore');
           expect(res.body.user.winis).to.be.equal(30);
@@ -232,10 +232,10 @@ describe('Deposit', function() {
         });
     });
 
-    it('should award 12 spins', function(done) {
+    it('should award 12 spins', (done) => {
       const params = {
-        'method': 'appstore',
-        'externalId': '12_spins',
+        method: 'appstore',
+        externalId: '12_spins',
       };
 
       request
@@ -243,7 +243,7 @@ describe('Deposit', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send(params)
-        .then((res)=>{
+        .then((res) => {
           expect(res.body.success).to.be.equals(true);
           expect(res.body.method).to.be.equals('appstore');
           expect(res.body.user.winis).to.be.equal(0);
@@ -254,11 +254,11 @@ describe('Deposit', function() {
         });
     });
 
-    it('should fail award wrong externalId', function(done) {
+    it('should fail award wrong externalId', (done) => {
       const unmute = mute();
       const params = {
-        'method': 'appstore',
-        'externalId': '3_winis',
+        method: 'appstore',
+        externalId: '3_winis',
       };
 
       request
@@ -266,7 +266,7 @@ describe('Deposit', function() {
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send(params)
-        .then((res)=>{
+        .then((res) => {
           expect(res.statusCode).to.be.equals(422);
           unmute();
           done();

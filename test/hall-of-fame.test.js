@@ -1,12 +1,12 @@
-'use strict';
-
+const { expect } = require('chai');
 const app = require('../server/server');
-const expect = require('chai').expect;
 const request = require('supertest')(app);
 
-describe('Hall Of Fame', function() {
-  let accessToken, callingUser;
-  before(async () => {
+describe('Hall Of Fame', () => {
+  let accessToken;
+  let callingUser;
+
+  before(async() => {
     const UserModel = app.models.user;
     await UserModel.deleteAll();
 
@@ -43,12 +43,12 @@ describe('Hall Of Fame', function() {
     accessToken = accessTokenModel.id;
   });
 
-  after(async function() {
+  after(async() => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('Sort by Winis', function() {
-    it('should return a properly sorted by winis result from users', function(done) {
+  describe('Sort by Winis', () => {
+    it('should return a properly sorted by winis result from users', (done) => {
       request
         .get('/api/hallOfFame')
         .expect('Content-Type', /json/)
@@ -65,7 +65,7 @@ describe('Hall Of Fame', function() {
         });
     });
 
-    it('should include the calling user in the list of friends', function(done) {
+    it('should include the calling user in the list of friends', (done) => {
       request
         .post('/api/hallOfFame/friends')
         .set('Authorization', accessToken)
@@ -79,7 +79,7 @@ describe('Hall Of Fame', function() {
         });
     });
 
-    it('should return a friends result for a specific user', function(done) {
+    it('should return a friends result for a specific user', (done) => {
       request
         .post('/api/hallOfFame/friends')
         .set('Authorization', accessToken)
@@ -97,8 +97,8 @@ describe('Hall Of Fame', function() {
     });
   });
 
-  describe('Sort by Diamonds', function() {
-    it('should return the users diamond count even when sorted by winis', function(done) {
+  describe('Sort by Diamonds', () => {
+    it('should return the users diamond count even when sorted by winis', (done) => {
       request
         .get('/api/hallOffame')
         .expect('Content-Type', /json/)
@@ -115,7 +115,7 @@ describe('Hall Of Fame', function() {
         });
     });
 
-    it('should return the users sorted by diamonds', function(done) {
+    it('should return the users sorted by diamonds', (done) => {
       request
         .get('/api/hallOffame?sort=diamonds')
         .expect('Content-Type', /json/)

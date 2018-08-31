@@ -1,18 +1,17 @@
-'use strict';
 
 const moment = require('moment-timezone');
 
 module.exports = function(Dailywin) {
   Dailywin.prototype.pickReward = async function(day) {
     const UserModel = Dailywin.app.models.user;
-    let self = this.__data;
+    const self = this.__data;
 
     if (self.prizes[day].status == 'today') {
       const error = new Error('You have already picked this reward');
       error.status = 409;
       throw error;
     }
-    let prizesObject = self.prizes;
+    const prizesObject = self.prizes;
     prizesObject[day].status = 'today';
     if (day >= 2 && day <= 7) {
       prizesObject[day - 1].status = 'picked';
@@ -53,12 +52,19 @@ module.exports = function(Dailywin) {
     const UserModel = Dailywin.app.models.user;
     let user = await UserModel.findById(userId);
     const startOfCurrentDay = Dailywin.getStartOfDay(user.timezone);
-    const allActiveDailywin = await Dailywin.find({where: {and: [{userId: userId}, {resetDate: {gt: startOfCurrentDay}}]}});
+    const allActiveDailywin = await Dailywin.find({
+      where: { and:
+        [
+          { userId },
+          { resetDate: { gt: startOfCurrentDay } },
+        ],
+      },
+    });
     let currentDailyWin;
 
     if (allActiveDailywin.length == 0) {
       currentDailyWin = await Dailywin.create({
-        userId: userId,
+        userId,
       });
       await currentDailyWin.pickReward('1');
     } else if (allActiveDailywin.length == 1) {
@@ -78,7 +84,7 @@ module.exports = function(Dailywin) {
     }
 
     if (currentDailyWin.lastVisitDate.getTime() == startOfCurrentDay) {
-      let result = currentDailyWin;
+      const result = currentDailyWin;
       const user = await UserModel.findById(userId);
       result.user = user;
       return result;
@@ -91,7 +97,7 @@ module.exports = function(Dailywin) {
     if (currentDailyWin.lastAllowedDay == 7) {
       await currentDailyWin.pickReward('weekly');
     }
-    let result = currentDailyWin;
+    const result = currentDailyWin;
     user = await UserModel.findById(userId);
     result.user = user;
     return result;
@@ -101,47 +107,47 @@ module.exports = function(Dailywin) {
     return moment(new Date()).tz(timezone).startOf('day').valueOf();
   };
 
-  Dailywin.observe('before save', async function updateTimestamp(ctx, next) {
+  Dailywin.observe('before save', async(ctx, next) => {
     if (ctx.isNewInstance) {
       if (!ctx.instance.__data.userId) {
         throw new Error('userId is not set');
       }
-      let user = await ctx.Model.app.models.user.findById(ctx.instance.__data.userId);
+      const user = await ctx.Model.app.models.user.findById(ctx.instance.__data.userId);
       ctx.instance.lastVisitDate = Dailywin.getStartOfDay(user.timezone);
       ctx.instance.createdDate = Dailywin.getStartOfDay(user.timezone);
       ctx.instance.resetDate = Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1;
       ctx.instance.prizes = {
-        '1': {
+        1: {
           prize: 'winis',
           count: 5,
           status: 'allowed',
         },
-        '2': {
+        2: {
           prize: 'winis',
           count: 10,
           status: 'skipped',
         },
-        '3': {
+        3: {
           prize: 'spin',
           count: 1,
           status: 'skipped',
         },
-        '4': {
+        4: {
           prize: 'winis',
           count: 25,
           status: 'skipped',
         },
-        '5': {
+        5: {
           prize: 'present',
           count: 1,
           status: 'skipped',
         },
-        '6': {
+        6: {
           prize: 'winis',
           count: 50,
           status: 'skipped',
         },
-        '7': {
+        7: {
           prize: 'scratch',
           count: 1,
           status: 'skipped',

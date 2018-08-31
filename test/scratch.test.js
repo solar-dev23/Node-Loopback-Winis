@@ -1,16 +1,17 @@
-'use strict';
-
-const app = require('../server/server');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const mute = require('mute');
+const app = require('../server/server');
 const request = require('supertest')(app);
-const jimp = require('jimp');
 
-describe('Scratch', function() {
-  let accessToken, strangerAccessToken, UserModel, ScratchModel;
-  let ownerUser, strangerUser;
+describe('Scratch', () => {
+  let accessToken;
+  let strangerAccessToken;
+  let UserModel;
+  let ScratchModel;
+  let ownerUser;
+  let strangerUser;
 
-  beforeEach(async function() {
+  beforeEach(async() => {
     UserModel = app.models.user;
     ScratchModel = app.models.scratch;
 
@@ -26,99 +27,97 @@ describe('Scratch', function() {
     strangerAccessToken = await strangerUser.createAccessToken();
   });
 
-  after(async function() {
+  after(async() => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('Creation', function() {
-    it('should create new scratch', function(done) {
+  describe('Creation', () => {
+    it('should create new scratch', (done) => {
       request
-          .post('/api/scratches/')
-          .set('Authorization', accessToken.id)
-          .expect('Content-Type', /json/)
-          .send()
-          .then((res) => {
-            expect(res.statusCode).to.be.equal(200);
-            expect(res.body.board.length).to.be.equal(6);
-            const prize = ScratchModel.determinePrize(res.body.board);
-            expect(res.body.prize).to.be.equal(prize);
-            done();
-          });
+        .post('/api/scratches/')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body.board.length).to.be.equal(6);
+          const prize = ScratchModel.determinePrize(res.body.board);
+          expect(res.body.prize).to.be.equal(prize);
+          done();
+        });
     });
 
-    it('should reveal prize', function(done) {
+    it('should reveal prize', (done) => {
       request
-      .post('/api/scratches/')
-      .set('Authorization', accessToken.id)
-      .expect('Content-Type', /json/)
-      .send()
-      .then(res => {
-        expect(res.statusCode).to.be.equal(200);
-        return request
-          .post(`/api/scratches/${res.body.id}/reveal`)
-          .set('Authorization', accessToken.id)
-          .expect('Content-Type', /json/)
-          .send();
-      })
-      .then((res)=>{
-        expect(res.body.success).to.be.equal(true);
-        done();
-      });
+        .post('/api/scratches/')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          return request
+            .post(`/api/scratches/${res.body.id}/reveal`)
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/)
+            .send();
+        })
+        .then((res) => {
+          expect(res.body.success).to.be.equal(true);
+          done();
+        });
     });
 
-    it('should refuse to create new scratch because user has no scratches left', function(done) {
+    it('should refuse to create new scratch because user has no scratches left', (done) => {
       const unmute = mute();
       request
-      .post('/api/scratches/')
-      .set('Authorization', accessToken.id)
-      .expect('Content-Type', /json/)
-      .send()
-      .then(res => {
-        expect(res.statusCode).to.be.equal(200);
-        return request
-          .post(`/api/scratches/${res.body.id}/reveal`)
-          .set('Authorization', accessToken.id)
-          .expect('Content-Type', /json/)
-          .send();
-      })
-      .then((res)=>{
-        expect(res.statusCode).to.be.equal(200);
-        return request
-          .post('/api/scratches/')
-          .set('Authorization', accessToken.id)
-          .expect('Content-Type', /json/)
-          .send();
-      })
-      .then(res =>{
-        expect(res.statusCode).to.be.equal(409);
-        unmute();
-        done();
-      });
+        .post('/api/scratches/')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          return request
+            .post(`/api/scratches/${res.body.id}/reveal`)
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/)
+            .send();
+        })
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(200);
+          return request
+            .post('/api/scratches/')
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/)
+            .send();
+        })
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+          done();
+        });
     });
 
-    it('should refuse to reveal prize for anothe user', function(done) {
+    it('should refuse to reveal prize for anothe user', (done) => {
       const unmute = mute();
       request
-      .post('/api/scratches/')
-      .set('Authorization', accessToken.id)
-      .expect('Content-Type', /json/)
-      .send()
-      .then(res => {
-        return request
+        .post('/api/scratches/')
+        .set('Authorization', accessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then(res => request
           .post(`/api/scratches/${res.body.id}/reveal`)
           .set('Authorization', strangerAccessToken.id)
           .expect('Content-Type', /json/)
-          .send();
-      })
-      .then((res)=>{
-        expect(res.statusCode).to.be.equal(409);
-        unmute();
-        done();
-      });
+          .send())
+        .then((res) => {
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+          done();
+        });
     });
   });
 
-  describe('Prizes', function() {
+  describe('Prizes', () => {
     const board = [
       ['winis', 'winis', 'winis', 'winis', 'spin', 'spin'],
       ['diamond', 'winis', 'diamond', 'diamond', 'spin', 'spin'],
@@ -132,29 +131,28 @@ describe('Scratch', function() {
       return 30;
     };
 
-    board.forEach(function(board) {
+    board.forEach((board) => {
       const prize = app.models.scratch.determinePrize(board);
-      it(`it should update a user when the user scratches ${prize}`, function(done) {
+      it(`it should update a user when the user scratches ${prize}`, (done) => {
         let id;
         request
           .post('/api/scratches/')
           .set('Authorization', accessToken.id)
           .expect('Content-Type', /json/)
           .send()
-          .then((res)=>{
+          .then((res) => {
             id = res.body.id;
             return ScratchModel.findById(id);
           })
-          .then((scratch)=>{
-            return Promise.all([scratch.updateAttribute('board', board), scratch.updateAttribute('prize', prize)]);
-          })
-          .then((res) =>{
-            return request
-              .post(`/api/scratches/${id}/reveal/`)
-              .set('Authorization', accessToken.id)
-              .expect('Content-Type', /json/);
-          })
-          .then(res =>{
+          .then(scratch => Promise.all([
+            scratch.updateAttribute('board', board),
+            scratch.updateAttribute('prize', prize),
+          ]))
+          .then(res => request
+            .post(`/api/scratches/${id}/reveal/`)
+            .set('Authorization', accessToken.id)
+            .expect('Content-Type', /json/))
+          .then((res) => {
             expect(res.statusCode).to.be.equal(200);
             expect(res.body.success).to.be.equal(true);
             expect(res.body.prize).to.be.equal(prize);
@@ -167,7 +165,7 @@ describe('Scratch', function() {
               case 'diamond':
                 expect(prizeDetails.diamond).to.be.equal(1); break;
               case 'winis':
-                expect(prizeDetails.winis).to.be.equal(30); ; break;
+                expect(prizeDetails.winis).to.be.equal(30); break;
               case 'scratch':
                 expect(prizeDetails.scratch).to.be.equal(1); break;
               case 'spin':
@@ -182,14 +180,14 @@ describe('Scratch', function() {
 
             return UserModel.findById(accessToken.userId);
           })
-          .then((user)=>{
+          .then((user) => {
             switch (prize) {
               case 'empty':
                 break;
               case 'diamond':
-                expect(user.diamonds).to.be.equal(1); ; break;
+                expect(user.diamonds).to.be.equal(1); break;
               case 'winis':
-                expect(user.winis).to.be.equal(30); ; break;
+                expect(user.winis).to.be.equal(30); break;
               case 'scratch':
                 expect(user.scratches).to.be.equal(1); break;
               case 'spin':
