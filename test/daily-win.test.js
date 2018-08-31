@@ -30,7 +30,7 @@ describe('Daily-win', async () => {
 
   after(async () => {
     await app.dataSources.db.connector.disconnect();
-  });
+  }); 
 
   describe('Create', () => {
     it('should get new daily-win', (done) => {

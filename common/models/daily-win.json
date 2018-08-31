@@ -35,6 +35,10 @@
       "type": "date",
       "default": 0
     },
+    "version": {
+      "type": "number",
+      "default": 2
+    },
     "userId": {
       "type": "any",
       "required": false
@@ -66,6 +70,44 @@
       "description": "Check for DailyWin",
       "http": {
         "path": "/check",
+        "verb": "post"
+      }
+    },
+    "nearest": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Check for DailyWin - v2",
+      "http": {
+        "path": "/nearest",
+        "verb": "post"
+      }
+    },
+    "pick": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Check for DailyWin - v2",
+      "http": {
+        "path": "/pick",
         "verb": "post"
       }
     }
