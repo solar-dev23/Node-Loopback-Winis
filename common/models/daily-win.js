@@ -65,7 +65,7 @@ module.exports = function (Dailywin) {
     if (allActiveDailywin.length == 0) {
       currentDailyWin = await Dailywin.create({
         userId,
-        version: 1
+        version: 1,
       });
       await currentDailyWin.pickReward('1');
     } else if (allActiveDailywin.length == 1) {
@@ -206,15 +206,15 @@ module.exports = function (Dailywin) {
     return next;
   });
 
-  Dailywin.getLastDailyWin = async function (userId) {
+  Dailywin.getLastDailyWin = async (userId) => {
     const res = await Dailywin.find({
       where: { userId },
       order: 'resetDate DESC',
-      limit: 1
+      limit: 1,
     });
 
     return res;
-  }
+  };
 
   async function rewardPrize(user, prize) {
     switch (prize.prize) {
@@ -234,8 +234,8 @@ module.exports = function (Dailywin) {
           diamonds: user.diamonds + 1 * prize.count,
           winis: user.winis + 10 * prize.count,
           scratches: user.scratches + 1 * prize.count,
-          spins: user.spins + 1 * prize.count
-        })
+          spins: user.spins + 1 * prize.count,
+        });
         break;
       case 'spin':
         await user.updateAttribute('spins', user.spins + prize.count);
@@ -243,7 +243,7 @@ module.exports = function (Dailywin) {
     }
 
     return user;
-  }  
+  }
 
   Dailywin.nearest = async function(options) {
     const token = options && options.accessToken;
@@ -252,7 +252,7 @@ module.exports = function (Dailywin) {
     let user = await UserModel.findById(userId);
     const startOfCurrentDay = Dailywin.getStartOfDay(user.timezone);
     let [activeDailyWin] = await Dailywin.getLastDailyWin(userId);
-    
+
     // mark past dailywin as missed
     if (activeDailyWin && activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
       let { prizes } = activeDailyWin;
@@ -267,9 +267,9 @@ module.exports = function (Dailywin) {
     if (!activeDailyWin || activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
       activeDailyWin = await Dailywin.create({
         userId: userId,
-      });      
+      });
     }
-    
+
     let { prizes, lastAllowedDay } = activeDailyWin;
     // mark today's daily win allowed
     if (prizes[activeDailyWin.lastAllowedDay].status === 'pending') {
@@ -284,13 +284,13 @@ module.exports = function (Dailywin) {
       }
     }
     await activeDailyWin.updateAttribute('prizes', prizes);
-    
+
     activeDailyWin.user = user;
 
     return activeDailyWin;
   };
 
-  Dailywin.pick = async function (options) {
+  Dailywin.pick = async (options) => {
     let activeDailyWin = await Dailywin.nearest(options);
     let { user } = activeDailyWin;
     const startOfCurrentDay = Dailywin.getStartOfDay(user.timezone);
@@ -307,7 +307,7 @@ module.exports = function (Dailywin) {
       const error = new Error('Time error');
       error.status = 500;
       throw error;
-    }   
+    }
 
     let { prizes, lastAllowedDay } = activeDailyWin;
     if (prizes[lastAllowedDay].status !== 'allowed') {
@@ -328,11 +328,11 @@ module.exports = function (Dailywin) {
     await activeDailyWin.updateAttributes({
       prizes,
       lastAllowedDay: lastAllowedDay + 1,
-      lastVisitDate: startOfCurrentDay
+      lastVisitDate: startOfCurrentDay,
     });
 
     activeDailyWin.user = user;
 
     return activeDailyWin;
-  }
+  };
 };
