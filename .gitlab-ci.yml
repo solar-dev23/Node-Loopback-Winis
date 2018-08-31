@@ -24,7 +24,8 @@ test:
   script:
     - cd /usr/src/app
     - npm install
-    - npm test
+    - npm run lint
+    - npm run test-coverage
   only:
     - branches
 
