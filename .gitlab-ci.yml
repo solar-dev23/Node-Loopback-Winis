@@ -15,7 +15,6 @@ stages:
   - production
   - cleanup
 
-
 test:
   stage: test
   image: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
@@ -25,6 +24,7 @@ test:
     NODE_ENV: test
   script:
     - cd /usr/src/app
+    - npm install
     - npm run test-coverage
   only:
     - branches
@@ -37,6 +37,7 @@ lint:
     NODE_ENV: test
   script:
     - cd /usr/src/app
+    - npm install
     - npm run lint
   only:
     - branches
