@@ -1,55 +1,39 @@
 const moment = require('moment-timezone');
 
 module.exports = function (Dailywin) {
-  /*
-  Dailywin.prototype.pickReward = async function (day) {
-    const UserModel = Dailywin.app.models.user;
-    const self = this.__data;
-
-    if (self.prizes[day].status == 'today') {
-      const error = new Error('You have already picked this reward');
-      error.status = 409;
-      throw error;
-    }
-
-    const prizesObject = self.prizes;
-    prizesObject[day].status = 'today';
-    if (day >= 2 && day <= 7) {
-      prizesObject[day - 1].status = 'picked';
-    }
-    const updatedDailyWin = await this.updateAttribute('prizes', prizesObject);
-    const user = await UserModel.findById(self.userId);
-
-    switch (prizesObject[day].prize) {
-      case 'empty':
-        break;
-      case 'diamond':
-        await user.updateAttribute('diamonds', user.diamonds + prizesObject[day].count);
-        break;
-      case 'winis':
-        await user.updateAttribute('winis', user.winis + prizesObject[day].count);
-        break;
-      case 'scratch':
-        await user.updateAttribute('scratches', user.scratches + prizesObject[day].count);
-        break;
-      case 'present':
-        await Promise.all([
-          user.updateAttribute('diamonds', user.diamonds + 1 * prizesObject[day].count),
-          user.updateAttribute('winis', user.winis + 10 * prizesObject[day].count),
-          user.updateAttribute('scratches', user.scratches + 1 * prizesObject[day].count),
-          user.updateAttribute('spins', user.spins + 1 * prizesObject[day].count),
-        ]);
-        break;
-      case 'spin':
-        await user.updateAttribute('spins', user.spins + prizesObject[day].count);
-        break;
-    }
-    return updatedDailyWin;
-  };
-
-  */
   Dailywin.getBoardAndPickOld = async function (options) {
+    const token = options && options.accessToken;
+    const userId = token && token.userId;
+    const UserModel = Dailywin.app.models.user;
+    let user = await UserModel.findById(userId);
+    let activeBoard;
 
+    const board = await Dailywin.getBoard(options);
+    let { lastAllowedDay } = board;
+    try {
+      activeBoard = await Dailywin.pickPrize(options);
+    } catch (err) {
+      if (err.message === 'Time error') {
+        activeBoard = board;
+        lastAllowedDay--;
+      } else throw err;
+    }
+
+    let prizes = activeBoard.prizes;
+    Object.keys(prizes).map((key, index) => {
+      const prize = prizes[key];
+      if (prize.status === 'picked' && parseInt(key) === lastAllowedDay) {
+        prize.status = 'today';
+      } else if (prize.status != 'picked') {
+        prize.status = 'skipped';
+      }
+      prizes[key] = prize;
+    });
+    if (lastAllowedDay === 7) prizes['weekly'].status = 'today';
+    activeBoard.prizes = prizes;
+
+    activeBoard.lastAllowedDay--;
+    return activeBoard;
   };
 
   /*
@@ -165,24 +149,6 @@ module.exports = function (Dailywin) {
     return moment(new Date()).tz(timezone).startOf('day').valueOf();
   };
 
-  Dailywin.observe('before save', async (ctx, next) => {
-    if (ctx.isNewInstance) {
-      if (!ctx.instance.__data.userId) {
-        throw new Error('userId is not set');
-      }
-
-      const user = await ctx.Model.app.models.user.findById(ctx.instance.__data.userId);
-      if (ctx.instance.version != 2) {
-        ctx.instance.lastVisitDate = Dailywin.getStartOfDay(user.timezone);
-      }
-
-      ctx.instance.createdDate = Dailywin.getStartOfDay(user.timezone);
-      ctx.instance.resetDate = Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1;
-    }
-
-    return next;
-  });
-
   Dailywin.getLastDailyWin = async (userId) => {
     const res = await Dailywin.find({
       where: { userId },
@@ -220,7 +186,7 @@ module.exports = function (Dailywin) {
     }
 
     return user;
-  }
+  };
 
   Dailywin.getBoard = async function (options) {
     const token = options && options.accessToken;
@@ -244,7 +210,8 @@ module.exports = function (Dailywin) {
     if (!activeDailyWin || activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
       activeDailyWin = await Dailywin.create({
         userId: userId,
-        version: 2,
+        createdDate: Dailywin.getStartOfDay(user.timezone),
+        resetDate: Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1,
         prizes: {
           '1': {
             prize: 'winis',

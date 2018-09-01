@@ -35,10 +35,6 @@
       "type": "date",
       "default": 0
     },
-    "version": {
-      "type": "number",
-      "default": 2
-    },
     "userId": {
       "type": "any",
       "required": false
