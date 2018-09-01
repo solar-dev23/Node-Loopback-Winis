@@ -55,6 +55,7 @@ build:
   only:
     - branches
 
+review:
   stage: review
   variables:
     GIT_STRATEGY: fetch
