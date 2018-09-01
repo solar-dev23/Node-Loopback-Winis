@@ -44,17 +44,17 @@ lint:
 
 build:
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+  image: docker:stable-git
+  services:
+    - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
   script:
-    - mkdir -p /root/.docker
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /root/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+    - setup_docker
+    - build
   only:
     - branches
 
-review:
   stage: review
   variables:
     GIT_STRATEGY: fetch
