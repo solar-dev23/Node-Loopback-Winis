@@ -10,7 +10,9 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "check"
+        "getBoardAndPickOld",
+        "getBoard",
+        "pickPrize"
       ]
     }
   },
