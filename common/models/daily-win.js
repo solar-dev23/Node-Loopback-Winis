@@ -13,7 +13,7 @@ module.exports = function (Dailywin) {
     try {
       activeBoard = await Dailywin.pickPrize(options);
     } catch (err) {
-      if (err.message === 'Time error') {
+      if (err.status === 500 || err.status == 404) {
         activeBoard = board;
         lastAllowedDay--;
       } else throw err;
