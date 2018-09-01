@@ -1,3 +1,3 @@
-module.exports = function(Storage) {
+module.exports = function (Storage) {
 
 };

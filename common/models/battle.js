@@ -1,5 +1,5 @@
-module.exports = function(Battle) {
-  Battle.challenge = async function(opponentId, stake, gameType, options) {
+module.exports = function (Battle) {
+  Battle.challenge = async function (opponentId, stake, gameType, options) {
     const token = options && options.accessToken;
     const challengerId = token && token.userId;
     const UserModel = Battle.app.models.user;
@@ -71,7 +71,7 @@ module.exports = function(Battle) {
     return newBattle;
   };
 
-  Battle.prototype.acceptBattle = async function(options) {
+  Battle.prototype.acceptBattle = async function (options) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const opponentId = token && token.userId;
@@ -93,7 +93,7 @@ module.exports = function(Battle) {
     return updatedBattle;
   };
 
-  Battle.prototype.rejectBattle = async function(options) {
+  Battle.prototype.rejectBattle = async function (options) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const opponentId = token && token.userId;
@@ -130,7 +130,7 @@ module.exports = function(Battle) {
    * @param {Function(Error)} callback
    */
 
-  Battle.prototype.cancelBattle = async function(options) {
+  Battle.prototype.cancelBattle = async function (options) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const challengerId = token && token.userId.toString();
@@ -162,7 +162,7 @@ module.exports = function(Battle) {
     return currentBattle;
   };
 
-  Battle.prototype.won = async function(options) {
+  Battle.prototype.won = async function (options) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const callerId = token && token.userId.toString();
@@ -197,7 +197,7 @@ module.exports = function(Battle) {
     return currentBattle.updateAttribute(winnerAttribute, 'won');
   };
 
-  Battle.prototype.lost = async function(options) {
+  Battle.prototype.lost = async function (options) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const callerId = token && token.userId.toString();
@@ -233,7 +233,7 @@ module.exports = function(Battle) {
     return currentBattle.updateAttribute(winnerAttribute, 'lost');
   };
 
-  Battle.prototype.draw = async function(options) {
+  Battle.prototype.draw = async function (options) {
     const currentBattle = this;
     const token = options && options.accessToken;
     const callerId = token && token.userId.toString();
@@ -269,7 +269,7 @@ module.exports = function(Battle) {
     return currentBattle.updateAttribute(winnerAttribute, 'draw');
   };
 
-  Battle.observe('before save', async(ctx) => {
+  Battle.observe('before save', async (ctx) => {
     const UserModel = Battle.app.models.user;
 
     if (ctx.currentInstance) {

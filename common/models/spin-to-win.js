@@ -12,7 +12,7 @@ const spinWeights = [
   1, 33, 5, 10, 5,
 ];
 
-module.exports = function(SpinToWin) {
+module.exports = function (SpinToWin) {
   SpinToWin.calculateSpin = () => {
     const ivoire = new Ivoire();
     return ivoire.weighted_choice(spinOptions, spinWeights);
@@ -59,7 +59,7 @@ module.exports = function(SpinToWin) {
     return attributes;
   };
 
-  SpinToWin.spin = async(options) => {
+  SpinToWin.spin = async (options) => {
     const spinResult = SpinToWin.calculateSpin();
     const token = options && options.accessToken;
     const userId = token && token.userId;

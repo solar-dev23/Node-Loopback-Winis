@@ -10,7 +10,7 @@ describe('Deposit', () => {
     DepositModel;
   let ownerUser;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     DepositModel = app.models.deposit;
     const UserModel = app.models.user;
     await UserModel.deleteAll();
@@ -24,7 +24,7 @@ describe('Deposit', () => {
     accessToken = await ownerUser.createAccessToken();
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -121,7 +121,7 @@ describe('Deposit', () => {
   });
 
   describe('appStore', () => {
-    app.models.Deposit.getAppStoreRewardConfiguration = async function() {
+    app.models.Deposit.getAppStoreRewardConfiguration = async function () {
       return [
         { productId: '2_winis', iconId: 'winis', amount: 2 },
         { productId: '5_scratches', iconId: 'scratch', amount: 5 },

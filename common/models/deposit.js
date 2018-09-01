@@ -1,8 +1,8 @@
 
 const md5 = require('md5');
 
-module.exports = function(Deposit) {
-  Deposit.tapjoy = async function(id, snuid, currency, macAddress, displayMultiplier, verifier) {
+module.exports = function (Deposit) {
+  Deposit.tapjoy = async function (id, snuid, currency, macAddress, displayMultiplier, verifier) {
     const app = Deposit.app;
     const secretKey = app.get('tapjoyKey');
 
@@ -46,7 +46,7 @@ module.exports = function(Deposit) {
     return { result: true };
   };
 
-  Deposit.appStore = async function(externalId, options) {
+  Deposit.appStore = async function (externalId, options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Deposit.app.models.user;
@@ -92,7 +92,7 @@ module.exports = function(Deposit) {
     return result;
   };
 
-  Deposit.getAppStoreRewardConfiguration = async function() {
+  Deposit.getAppStoreRewardConfiguration = async function () {
     return [
       { productId: '10_Spins', iconId: 'spin', amount: 10 },
       { productId: '15_scratch', iconId: 'scratch', amount: 15 },

@@ -7,7 +7,7 @@ let accessToken,
   UserModel;
 
 describe('Spin To Win', () => {
-  beforeEach(async() => {
+  beforeEach(async () => {
     UserModel = app.models.user;
     await UserModel.deleteAll();
     const user = await UserModel.create({
@@ -19,7 +19,7 @@ describe('Spin To Win', () => {
     accessToken = await user.createAccessToken();
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -31,7 +31,7 @@ describe('Spin To Win', () => {
         .post('/api/spinsToWin/spin')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
-        .end(async(err, res) => {
+        .end(async (err, res) => {
           UserModel.findById(accessToken.userId)
             .then((storedUser) => {
               const resultUser = res.body.user;

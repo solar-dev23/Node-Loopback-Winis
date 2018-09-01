@@ -11,7 +11,7 @@ describe('Scratch', () => {
   let ownerUser;
   let strangerUser;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     UserModel = app.models.user;
     ScratchModel = app.models.scratch;
 
@@ -27,7 +27,7 @@ describe('Scratch', () => {
     strangerAccessToken = await strangerUser.createAccessToken();
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -127,7 +127,7 @@ describe('Scratch', () => {
       ['winis', 'present', 'present', 'present', 'present', 'spin'],
     ];
 
-    app.models.scratch.calculateRandomWinis = function() {
+    app.models.scratch.calculateRandomWinis = function () {
       return 30;
     };
 

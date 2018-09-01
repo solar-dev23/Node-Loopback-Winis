@@ -12,7 +12,7 @@ describe('User', () => {
     strangerUser,
     blockedUser;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     UserModel = app.models.user;
     await UserModel.deleteAll();
     [ownerUser, friendUser, strangerUser, blockedUser] = await UserModel.create([
@@ -31,7 +31,7 @@ describe('User', () => {
     accessToken = await ownerUser.createAccessToken();
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -133,7 +133,7 @@ describe('User', () => {
           });
       });
 
-      it('should store the users phone book for future user', async() => {
+      it('should store the users phone book for future user', async () => {
         const userContactsModel = app.models.userContacts;
         const userContactList = ['+123456789', '+97212345678'];
 
@@ -487,17 +487,17 @@ describe('User', () => {
   });
 
   describe('Staking', () => {
-    it('should stake requested funds', async() => {
+    it('should stake requested funds', async () => {
       await ownerUser.stakeFunds(20);
       expect(ownerUser.staked).to.equal(35);
     });
 
-    it('should release requested funds', async() => {
+    it('should release requested funds', async () => {
       await ownerUser.releaseFunds(10);
       expect(ownerUser.staked).to.equal(5);
     });
 
-    it('should transfer staked funds to another user', async() => {
+    it('should transfer staked funds to another user', async () => {
       await ownerUser.transferStakedFunds(10, strangerUser);
     });
 

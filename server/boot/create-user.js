@@ -1,5 +1,5 @@
 
-module.exports = function(app) {
+module.exports = function (app) {
   if (process.env.NODE_ENV !== 'docker') return;
 
   console.log('Creating a sample admin');

@@ -9,7 +9,7 @@ const jimp = require('jimp');
 const sharp = require('sharp');
 const md5 = require('md5');
 
-module.exports = function(User) {
+module.exports = function (User) {
   delete User.validations.email;
   delete User.validations.password;
   User.validatesUniquenessOf('username', {
@@ -17,7 +17,7 @@ module.exports = function(User) {
     ignoreCase: true,
   });
 
-  User.authenticate = async function(method, credentials) {
+  User.authenticate = async function (method, credentials) {
     if (method !== 'accountkit') {
       throw new Error('Unknown authentication method');
     }
@@ -68,7 +68,7 @@ module.exports = function(User) {
     };
   };
 
-  User.findByPhones = async(phones, options) => {
+  User.findByPhones = async (phones, options) => {
     const app = User.app;
     const userContactsModel = app.models.userContacts;
     const userModel = app.models.user;
@@ -85,7 +85,7 @@ module.exports = function(User) {
     return await User.find({ where: { phoneNumber: { inq: phones } } });
   };
 
-  User.findByUsername = async(username) => {
+  User.findByUsername = async (username) => {
     const user = await User.findOne({ where: { username: { regexp: `/^${username}$/i` } } });
     if (user === null) {
       const error = new Error('No user found');
@@ -95,7 +95,7 @@ module.exports = function(User) {
     return user;
   };
 
-  User.prototype.setAvatar = async function(req, res) {
+  User.prototype.setAvatar = async function (req, res) {
     const self = this;
     const app = User.app;
     const storage = app.models.storage;
@@ -141,7 +141,7 @@ module.exports = function(User) {
     };
   };
 
-  User.returnResizedImage = function(userId, timeStamp, width, height, cb) {
+  User.returnResizedImage = function (userId, timeStamp, width, height, cb) {
     const app = User.app;
     const containerName = app.get('container');
     const storage = app.models.storage;
@@ -179,21 +179,21 @@ module.exports = function(User) {
     });
   };
 
-  User.prototype.getResizedAvatar = function(timeStamp, size, next) {
+  User.prototype.getResizedAvatar = function (timeStamp, size, next) {
     const [width, height] = size.split('x');
     return User.returnResizedImage(this.id, this.avatar, width, height, next);
   };
 
-  User.prototype.getDefaultResizedAvatar = function(size, next) {
+  User.prototype.getDefaultResizedAvatar = function (size, next) {
     const [width, height] = size.split('x');
     return User.returnResizedImage(this.id, this.avatar, width, height, next);
   };
 
-  User.prototype.getDefaultAvatar = function(next) {
+  User.prototype.getDefaultAvatar = function (next) {
     return User.returnResizedImage(this.id, this.avatar, 250, 250, next);
   };
 
-  User.measureText = function(font, text) {
+  User.measureText = function (font, text) {
     let x = 0;
     for (let i = 0; i < text.length; i++) {
       if (font.chars[text[i]]) {
@@ -205,7 +205,7 @@ module.exports = function(User) {
     return x;
   };
 
-  User.generateShareImageText = async function(outputText, width) {
+  User.generateShareImageText = async function (outputText, width) {
     const titleFont = `${__dirname}/../../assets/fonts/LondonTwo.fnt`;
 
     const font = await jimp.loadFont(titleFont);
@@ -217,7 +217,7 @@ module.exports = function(User) {
     return textImage.getBufferAsync(jimp.MIME_PNG);
   };
 
-  User.generateShareImage = async function(type, userId, userName, avatarBuffer, game) {
+  User.generateShareImage = async function (type, userId, userName, avatarBuffer, game) {
     const backgroundImage = `${__dirname}/../../assets/share/${type}/smm_background.png`;
     const starsOverlayImage = `${__dirname}/../../assets/share/${type}/stars_overlay.png`;
     const topStarsOverlayImage = `${__dirname}/../../assets/share/${type}/topstar_overlay.png`;
@@ -296,7 +296,7 @@ module.exports = function(User) {
     return sharp(compositeBuffer, imageSizes.base);
   };
 
-  User.prototype.getShareImage = function(type, game, cb) {
+  User.prototype.getShareImage = function (type, game, cb) {
     const app = User.app;
     const containerName = app.get('container');
     const storage = app.models.storage;
@@ -342,7 +342,7 @@ module.exports = function(User) {
     });
   };
 
-  User.transferFunds = async function(amount, sender, recipient) {
+  User.transferFunds = async function (amount, sender, recipient) {
     debug(`Sending ${amount} winis from ${sender.id} to ${recipient.id}`);
     if (sender.winis - sender.staked < amount) {
       const error = new Error('Not enough winis');
@@ -367,7 +367,7 @@ module.exports = function(User) {
     };
   };
 
-  User.prototype.sendWinis = async function(amount, options) {
+  User.prototype.sendWinis = async function (amount, options) {
     const token = options && options.accessToken;
     const senderId = token && token.userId;
 
@@ -384,7 +384,7 @@ module.exports = function(User) {
     };
   };
 
-  User.prototype.grantWinis = async function(amount) {
+  User.prototype.grantWinis = async function (amount) {
     if (amount <= 0) {
       throw new Error('INVALID_WINIS_AMOUNT');
     }
@@ -394,7 +394,7 @@ module.exports = function(User) {
     return updatedRecipient;
   };
 
-  User.prototype.stakeFunds = async function(amount) {
+  User.prototype.stakeFunds = async function (amount) {
     const user = this;
     debug(`Staking ${amount} winis`);
 
@@ -420,7 +420,7 @@ module.exports = function(User) {
     });
   };
 
-  User.prototype.releaseFunds = async function(amount) {
+  User.prototype.releaseFunds = async function (amount) {
     if (this.staked < amount) {
       const error = new Error('Not enough staked winis');
       error.status = 409;
@@ -436,7 +436,7 @@ module.exports = function(User) {
     });
   };
 
-  User.prototype.transferStakedFunds = async function(amount, recipient) {
+  User.prototype.transferStakedFunds = async function (amount, recipient) {
     if (this.staked < amount) {
       const error = new Error('Not enough staked winis');
       error.status = 409;
@@ -453,7 +453,7 @@ module.exports = function(User) {
     };
   };
 
-  User.beforeRemote('prototype.__link__blocked', async(ctx) => {
+  User.beforeRemote('prototype.__link__blocked', async (ctx) => {
     const user = ctx.instance;
     const blockedId = ctx.args.fk;
 
@@ -461,14 +461,14 @@ module.exports = function(User) {
     await user.pending.remove(blockedId);
   });
 
-  User.afterRemote('prototype.__unlink__blocked', async(ctx) => {
+  User.afterRemote('prototype.__unlink__blocked', async (ctx) => {
     const user = ctx.instance;
     const unblockedId = ctx.args.fk;
 
     await user.friends.add(unblockedId);
   });
 
-  User.afterRemote('prototype.__link__friends', async(ctx) => {
+  User.afterRemote('prototype.__link__friends', async (ctx) => {
     const user = ctx.instance;
     const userId = user.id;
     const friendId = ctx.args.fk;
@@ -478,7 +478,7 @@ module.exports = function(User) {
     await friend.pending.add(userId);
   });
 
-  User.prototype.freeSpins = async function(options) {
+  User.prototype.freeSpins = async function (options) {
     const token = options && options.accessToken;
     const senderId = token && token.userId;
     const currentUser = await User.findById(senderId);
@@ -500,7 +500,7 @@ module.exports = function(User) {
     return currentUser;
   };
 
-  User.loginAdmin = async function({ login, password }) {
+  User.loginAdmin = async function ({ login, password }) {
     const admins = await User.find({
       where: { and:
         [
@@ -519,7 +519,7 @@ module.exports = function(User) {
     return null;
   };
 
-  User.changeAdminPassword = async function(userId, newPassword) {
+  User.changeAdminPassword = async function (userId, newPassword) {
     const user = await User.findById(userId);
     const newUser = await user.updateAttribute('adminPassword', md5(newPassword));
     return newUser;

@@ -6,7 +6,7 @@ const request = require('supertest')(app);
 let CompetitionModel;
 
 describe('Competition', () => {
-  beforeEach(async() => {
+  beforeEach(async () => {
     CompetitionModel = app.models.competition;
     await CompetitionModel.deleteAll();
     const [competition1] = await CompetitionModel.create([
@@ -19,7 +19,7 @@ describe('Competition', () => {
     ]);
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -34,7 +34,7 @@ describe('Competition', () => {
   });
 
   it('should return the currently running competition', (done) => {
-    CompetitionModel.getStartOfDay = function() {
+    CompetitionModel.getStartOfDay = function () {
       return moment(new Date()).tz('UTC').startOf('day').add(8, 'days');
     };
 
@@ -48,7 +48,7 @@ describe('Competition', () => {
   });
 
   it('should return nothing after the last competition', (done) => {
-    CompetitionModel.getStartOfDay = function() {
+    CompetitionModel.getStartOfDay = function () {
       return moment(new Date()).tz('UTC').startOf('day').add(15, 'days');
     };
 

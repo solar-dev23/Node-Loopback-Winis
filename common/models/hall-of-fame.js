@@ -1,6 +1,6 @@
 
-module.exports = function(HallOfFame) {
-  HallOfFame.executeQuery = async function(sortBy, whereQuery) {
+module.exports = function (HallOfFame) {
+  HallOfFame.executeQuery = async function (sortBy, whereQuery) {
     const UserModel = HallOfFame.app.models.user;
 
     return await UserModel.find({
@@ -13,13 +13,13 @@ module.exports = function(HallOfFame) {
     });
   };
 
-  HallOfFame.getGlobalTop = async function(sortBy) {
+  HallOfFame.getGlobalTop = async function (sortBy) {
     if (!sortBy) sortBy = 'winis';
 
     return HallOfFame.executeQuery(sortBy, {});
   };
 
-  HallOfFame.getFriendsTop = async function(sortBy, options) {
+  HallOfFame.getFriendsTop = async function (sortBy, options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = HallOfFame.app.models.user;

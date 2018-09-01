@@ -9,7 +9,7 @@ function SendBirdService() {
   const SENDBIRD_API = 'https://api.sendbird.com/';
   const SENDBIRD_AUTH = '7a50d0099c241a4a975fad55ceade7f8be020010';
 
-  this.getMessages = function(channelUrl, next) {
+  this.getMessages = function (channelUrl, next) {
     /* eslint-disable camelcase */
     request
       .post({

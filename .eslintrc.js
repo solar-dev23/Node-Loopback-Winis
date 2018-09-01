@@ -1,8 +1,8 @@
 module.exports = {
   extends: ['loopback'],
 
-  "parserOptions": {
-    "ecmaVersion": 8
+  'parserOptions': {
+    'ecmaVersion': 8
   },
 
   // add your custom rules here
@@ -12,6 +12,7 @@ module.exports = {
     'max-len': ['error', {'code': 120}],
     'object-curly-spacing': ['error', 'always'],
     'one-var': 'off',
+    'space-before-function-paren': ['error', {'anonymous': 'always', 'named': 'never', 'asyncArrow': 'always'}],
     'strict': ['error', 'never']
   }
 }

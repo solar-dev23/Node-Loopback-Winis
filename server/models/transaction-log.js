@@ -1,4 +1,4 @@
 
-module.exports = function(transactionLog) {
+module.exports = function (transactionLog) {
 
 };

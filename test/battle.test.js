@@ -14,7 +14,7 @@ describe('Battle', () => {
     opponentAccessToken,
     thirdUserAccessToken;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     UserModel = app.models.user;
     BattleModel = app.models.battle;
     await UserModel.deleteAll();
@@ -33,7 +33,7 @@ describe('Battle', () => {
     thirdUserAccessToken = await thirdUser.createAccessToken();
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -195,7 +195,7 @@ describe('Battle', () => {
 
   describe('Acception', () => {
     let freshBattle;
-    beforeEach(async() => {
+    beforeEach(async () => {
       await request
         .post('/api/battles/challenge/')
         .set('Authorization', challengerAccessToken.id)
@@ -318,7 +318,7 @@ describe('Battle', () => {
   describe('Rejection', () => {
     let freshBattle;
 
-    beforeEach(async() => {
+    beforeEach(async () => {
       await request
         .post('/api/battles/challenge/')
         .set('Authorization', challengerAccessToken.id)
@@ -449,7 +449,7 @@ describe('Battle', () => {
 
   describe('Finishing', () => {
     let freshBattle;
-    beforeEach(async() => {
+    beforeEach(async () => {
       await request
         .post('/api/battles/challenge/')
         .set('Authorization', challengerAccessToken.id)
@@ -1185,7 +1185,7 @@ describe('Battle', () => {
   describe('Cancellation', () => {
     let freshBattle;
 
-    beforeEach(async() => {
+    beforeEach(async () => {
       await request
         .post('/api/battles/challenge/')
         .set('Authorization', challengerAccessToken.id)

@@ -1,8 +1,8 @@
 
 const moment = require('moment-timezone');
 
-module.exports = function(Dailywin) {
-  Dailywin.prototype.pickReward = async function(day) {
+module.exports = function (Dailywin) {
+  Dailywin.prototype.pickReward = async function (day) {
     const UserModel = Dailywin.app.models.user;
     const self = this.__data;
 
@@ -46,7 +46,7 @@ module.exports = function(Dailywin) {
     return updatedDailyWin;
   };
 
-  Dailywin.check = async function(options) {
+  Dailywin.check = async function (options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
@@ -103,11 +103,11 @@ module.exports = function(Dailywin) {
     return result;
   };
 
-  Dailywin.getStartOfDay = function(timezone) {
+  Dailywin.getStartOfDay = function (timezone) {
     return moment(new Date()).tz(timezone).startOf('day').valueOf();
   };
 
-  Dailywin.observe('before save', async(ctx, next) => {
+  Dailywin.observe('before save', async (ctx, next) => {
     if (ctx.isNewInstance) {
       if (!ctx.instance.__data.userId) {
         throw new Error('userId is not set');

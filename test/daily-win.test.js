@@ -9,12 +9,12 @@ let accessToken,
   DailyWinModel,
   originalGetStartOfDayFunction;
 
-describe('Daily-win', async() => {
+describe('Daily-win', async () => {
   let user;
-  beforeEach(async() => {
+  beforeEach(async () => {
     UserModel = app.models.user;
     DailyWinModel = app.models.dailyWin;
-    DailyWinModel.getStartOfDay = function() {
+    DailyWinModel.getStartOfDay = function () {
       return moment(new Date()).tz(user.timezone).startOf('day').valueOf();
     };
     await UserModel.deleteAll();
@@ -28,7 +28,7 @@ describe('Daily-win', async() => {
     accessToken = await user.createAccessToken();
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
@@ -101,7 +101,7 @@ describe('Daily-win', async() => {
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000;
           };
           return request
@@ -138,7 +138,7 @@ describe('Daily-win', async() => {
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 1;
           };
           return request
@@ -148,7 +148,7 @@ describe('Daily-win', async() => {
             .send();
         })
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 2;
           };
           return request
@@ -158,7 +158,7 @@ describe('Daily-win', async() => {
             .send();
         })
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 3;
           };
           return request
@@ -168,7 +168,7 @@ describe('Daily-win', async() => {
             .send();
         })
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 4;
           };
           return request
@@ -178,7 +178,7 @@ describe('Daily-win', async() => {
             .send();
         })
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 5;
           };
           return request
@@ -188,7 +188,7 @@ describe('Daily-win', async() => {
             .send();
         })
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 6;
           };
           return request
@@ -268,7 +268,7 @@ describe('Daily-win', async() => {
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
-          DailyWinModel.getStartOfDay = function() {
+          DailyWinModel.getStartOfDay = function () {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 7;
           };
           return request
@@ -310,7 +310,7 @@ describe('Daily-win', async() => {
           .expect('Content-Type', /json/)
           .send()
           .then((res) => {
-            DailyWinModel.getStartOfDay = function() {
+            DailyWinModel.getStartOfDay = function () {
               return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 6;
             };
             return request
@@ -340,7 +340,7 @@ describe('Daily-win', async() => {
             expect(res.body.user.scratches).to.be.equal(0);
             expect(res.body.user.diamonds).to.be.equal(0);
 
-            DailyWinModel.getStartOfDay = function() {
+            DailyWinModel.getStartOfDay = function () {
               return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 24 * 60 * 60 * 1000 * 7;
             };
 

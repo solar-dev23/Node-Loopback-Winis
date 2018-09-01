@@ -6,7 +6,7 @@ describe('Hall Of Fame', () => {
   let accessToken;
   let callingUser;
 
-  before(async() => {
+  before(async () => {
     const UserModel = app.models.user;
     await UserModel.deleteAll();
 
@@ -43,7 +43,7 @@ describe('Hall Of Fame', () => {
     accessToken = accessTokenModel.id;
   });
 
-  after(async() => {
+  after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 

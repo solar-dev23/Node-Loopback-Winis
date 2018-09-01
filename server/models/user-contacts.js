@@ -1,4 +1,4 @@
 
-module.exports = function(userContacts) {
+module.exports = function (userContacts) {
 
 };

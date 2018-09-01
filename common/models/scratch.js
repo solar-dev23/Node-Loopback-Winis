@@ -1,8 +1,8 @@
 
 const Ivoire = require('ivoire');
 
-module.exports = function(Scratch) {
-  Scratch.beforeRemote('create', async(context, modelInstance, next) => {
+module.exports = function (Scratch) {
+  Scratch.beforeRemote('create', async (context, modelInstance, next) => {
     const token = context.req.accessToken;
     const userId = token && token.userId;
     const UserModel = Scratch.app.models.user;
@@ -19,7 +19,7 @@ module.exports = function(Scratch) {
     context.req.body.userId = userId;
   });
 
-  Scratch.prototype.reveal = async function(options) {
+  Scratch.prototype.reveal = async function (options) {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Scratch.app.models.user;
