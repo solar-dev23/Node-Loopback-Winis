@@ -54,7 +54,7 @@
   },
   "acls": [],
   "methods": {
-    "check": {
+    "getBoardAndPickOld": {
       "accepts": [
         {
           "arg": "options",
@@ -67,13 +67,13 @@
         "type": "object",
         "root": true
       },
-      "description": "Check for DailyWin",
+      "description": "Return a daily win board and pick a prize",
       "http": {
         "path": "/check",
         "verb": "post"
       }
     },
-    "nearest": {
+    "getBoard": {
       "accepts": [
         {
           "arg": "options",
@@ -86,13 +86,13 @@
         "type": "object",
         "root": true
       },
-      "description": "Check for DailyWin - v2",
+      "description": "Return the currnetly running daily win board",
       "http": {
-        "path": "/nearest",
+        "path": "/get-board",
         "verb": "post"
       }
     },
-    "pick": {
+    "pickPrize": {
       "accepts": [
         {
           "arg": "options",
@@ -105,7 +105,7 @@
         "type": "object",
         "root": true
       },
-      "description": "Check for DailyWin - v2",
+      "description": "Pick todays daily win from the current board",
       "http": {
         "path": "/pick",
         "verb": "post"

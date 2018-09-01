@@ -5,7 +5,7 @@ const request = require('supertest')(app);
 const moment = require('moment-timezone');
 
 let accessToken, UserModel, DailyWinModel, originalGetStartOfDayFunction;
-describe('Daily-win-V2', async () => {
+describe('Daily-win V2', async () => {
   let user;
   beforeEach(async () => {
     UserModel = app.models.user;
@@ -28,17 +28,18 @@ describe('Daily-win-V2', async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  describe('nearest', () => {
+  describe('get-board', () => {
     it('should get new daily win', (done) => {
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
           expect(res.body).to.be.contain({
             createdDate: new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString(),
-            resetDate: new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString(),
+            resetDate: new Date(moment(new Date()).tz(user.timezone).startOf('day')
+              .valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString(),
             lastAllowedDay: 1,
             lastVisitDate: 0,
             version: 2,
@@ -59,7 +60,7 @@ describe('Daily-win-V2', async () => {
 
     it('should mark last day and weekly as missed for missing days', (done) => {
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
@@ -69,7 +70,7 @@ describe('Daily-win-V2', async () => {
           };
 
           return request
-            .post('/api/v2/daily-wins/nearest')
+            .post('/api/daily-wins/get-board')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -77,7 +78,8 @@ describe('Daily-win-V2', async () => {
         .then((res) => {
           expect(res.body).to.be.contain({
             createdDate: new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString(),
-            resetDate: new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString(),
+            resetDate: new Date(moment(new Date()).tz(user.timezone).startOf('day')
+              .valueOf() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString(),
             lastAllowedDay: 1,
           });
           expect(res.body.prizes['1'].status).to.be.equal('allowed');
@@ -95,7 +97,7 @@ describe('Daily-win-V2', async () => {
           };
 
           return request
-            .post('/api/v2/daily-wins/nearest')
+            .post('/api/daily-wins/get-board')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -116,7 +118,7 @@ describe('Daily-win-V2', async () => {
 
     it('should make new daily win if a week past', (done) => {
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
@@ -126,15 +128,17 @@ describe('Daily-win-V2', async () => {
           };
 
           return request
-            .post('/api/v2/daily-wins/nearest')
+            .post('/api/daily-wins/get-board')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
         })
         .then((res) => {
           expect(res.body).to.be.contain({
-            createdDate: new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            resetDate: new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 14 * 24 * 60 * 60 * 1000 - 1).toISOString(),
+            createdDate: new Date(moment(new Date()).tz(user.timezone).startOf('day')
+              .valueOf() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            resetDate: new Date(moment(new Date()).tz(user.timezone).startOf('day')
+              .valueOf() + 14 * 24 * 60 * 60 * 1000 - 1).toISOString(),
             lastAllowedDay: 1,
           });
           expect(res.body.prizes['1'].status).to.be.equal('allowed');
@@ -155,18 +159,19 @@ describe('Daily-win-V2', async () => {
   describe('pick', () => {
     it('should reward prize if picked', (done) => {
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
         }).then((res) => {
-          expect(res.body.lastVisitDate).to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
+          expect(res.body.lastVisitDate)
+            .to.be.equal(new Date(moment(new Date()).tz(user.timezone).startOf('day').valueOf()).toISOString());
           expect(res.body.lastAllowedDay).to.be.equal(2);
           expect(res.body.prizes['1'].status).to.be.equal('picked');
           expect(res.body.prizes['2'].status).to.be.equal('allowed');
@@ -179,19 +184,19 @@ describe('Daily-win-V2', async () => {
     it('should encount error if double picked', (done) => {
       const unmute = mute();
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
         }).then((res) => {
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -204,13 +209,13 @@ describe('Daily-win-V2', async () => {
 
     it("don't reward weekly prize if there is any missed day", (done) => {
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -220,7 +225,7 @@ describe('Daily-win-V2', async () => {
           };
 
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -230,7 +235,7 @@ describe('Daily-win-V2', async () => {
           };
 
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -252,13 +257,13 @@ describe('Daily-win-V2', async () => {
 
     it('pick full week daily wins', (done) => {
       request
-        .post('/api/v2/daily-wins/nearest')
+        .post('/api/daily-wins/get-board')
         .set('Authorization', accessToken.id)
         .expect('Content-Type', /json/)
         .send()
         .then((res) => {
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -269,7 +274,7 @@ describe('Daily-win-V2', async () => {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 1 * 24 * 60 * 60 * 1000;
           };
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -284,7 +289,7 @@ describe('Daily-win-V2', async () => {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 2 * 24 * 60 * 60 * 1000;
           };
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -300,7 +305,7 @@ describe('Daily-win-V2', async () => {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 3 * 24 * 60 * 60 * 1000;
           };
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -316,7 +321,7 @@ describe('Daily-win-V2', async () => {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 4 * 24 * 60 * 60 * 1000;
           };
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -334,7 +339,7 @@ describe('Daily-win-V2', async () => {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 5 * 24 * 60 * 60 * 1000;
           };
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
@@ -352,7 +357,7 @@ describe('Daily-win-V2', async () => {
             return moment(new Date()).tz(user.timezone).startOf('day').valueOf() + 6 * 24 * 60 * 60 * 1000;
           };
           return request
-            .post('/api/v2/daily-wins/pick')
+            .post('/api/daily-wins/pick')
             .set('Authorization', accessToken.id)
             .expect('Content-Type', /json/)
             .send();
