@@ -71,6 +71,11 @@
   },
   "validations": [],
   "relations": {
+    "winner": {
+      "type": "hasMany",
+      "model": "competition",
+      "foreignKey": ""
+    },
     "spinToWins": {
       "type": "hasMany",
       "model": "spinToWin",
