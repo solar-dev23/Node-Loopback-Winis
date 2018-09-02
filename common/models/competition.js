@@ -1,10 +1,9 @@
 
-const moment = require('moment');
-const momenttz = require('moment-timezone');
+const moment = require('moment-timezone');
 
 module.exports = function (Competition) {
   Competition.getStartOfDay = function (timezone) {
-    return momenttz(new Date()).tz(timezone).startOf('day').valueOf();
+    return moment.tz(timezone).startOf('day');
   };
 
   /**
