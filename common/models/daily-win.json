@@ -10,7 +10,9 @@
     "TimeStamp": true,
     "SetupRemoteMethods": {
       "disableAllExcept": [
-        "check"
+        "getBoardAndPickOld",
+        "getBoard",
+        "pickPrize"
       ]
     }
   },
@@ -50,7 +52,7 @@
   },
   "acls": [],
   "methods": {
-    "check": {
+    "getBoardAndPickOld": {
       "accepts": [
         {
           "arg": "options",
@@ -63,9 +65,47 @@
         "type": "object",
         "root": true
       },
-      "description": "Check for DailyWin",
+      "description": "Return a daily win board and pick a prize",
       "http": {
         "path": "/check",
+        "verb": "post"
+      }
+    },
+    "getBoard": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Return the currnetly running daily win board",
+      "http": {
+        "path": "/get-board",
+        "verb": "post"
+      }
+    },
+    "pickPrize": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Pick todays daily win from the current board",
+      "http": {
+        "path": "/pick",
         "verb": "post"
       }
     }
