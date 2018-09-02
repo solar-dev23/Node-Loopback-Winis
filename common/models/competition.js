@@ -33,7 +33,7 @@ module.exports = function (Competition) {
     };
   };
 
-  Competition.pickWinner = async function () {
+  Competition.pickWinner = async () => {
     const startOfCurrentDay = Competition.getStartOfDay('UTC');
     const competition = await Competition.findOne({ where: { endDate: { lt: startOfCurrentDay } } });
     if (!competition || (competition.status && competition.status !== 'running')) {

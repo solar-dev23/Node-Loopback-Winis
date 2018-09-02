@@ -52,8 +52,8 @@ describe('Competition', () => {
   });
 
   it('should return the currently running competition', (done) => {
-    CompetitionModel.getStartOfDay = function () {
-      return moment(new Date()).tz('UTC').startOf('day').add(8, 'days');
+    CompetitionModel.getStartOfDay = () => {
+      return moment.tz('UTC').startOf('day').add(8, 'days');
     };
 
     request
@@ -66,8 +66,8 @@ describe('Competition', () => {
   });
 
   it('should return nothing after the last competition', (done) => {
-    CompetitionModel.getStartOfDay = function () {
-      return moment(new Date()).tz('UTC').startOf('day').add(15, 'days');
+    CompetitionModel.getStartOfDay = () => {
+      return moment.tz('UTC').startOf('day').add(15, 'days');
     };
 
     request
@@ -80,8 +80,8 @@ describe('Competition', () => {
   });
 
   it('should pick a winner of the competition', (done) => {
-    CompetitionModel.getStartOfDay = function () {
-      return moment(new Date()).tz('UTC').startOf('day')
+    CompetitionModel.getStartOfDay = () => {
+      return moment.tz('UTC').startOf('day')
         .add(15, 'days');
     };
     request
