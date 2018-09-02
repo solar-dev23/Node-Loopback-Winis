@@ -1,0 +1,51 @@
+{
+  "prizes" : {
+    "1" : {
+      "prize" : "winis",
+      "count" : 5,
+      "status" : "today"
+    },
+    "2" : {
+      "prize" : "winis",
+      "count" : 10,
+      "status" : "skipped"
+    },
+    "3" : {
+      "prize" : "spin",
+      "count" : 1,
+      "status" : "skipped"
+    },
+    "4" : {
+      "prize" : "winis",
+      "count" : 25,
+      "status" : "skipped"
+    },
+    "5" : {
+      "prize" : "present",
+      "count" : 1,
+      "status" : "skipped"
+    },
+    "6" : {
+      "prize" : "winis",
+      "count" : 50,
+      "status" : "skipped"
+    },
+    "7" : {
+      "prize" : "scratch",
+      "count" : 1,
+      "status" : "skipped"
+    },
+    "weekly" : {
+      "prize" : "diamond",
+      "count" : 100,
+      "status" : "skipped"
+    }
+  },
+  "user": {
+    "winis": 5,
+    "spins": 0,
+    "scratches": 0,
+    "diamonds": 0
+  },
+  "lastAllowedDay" : 1
+}
