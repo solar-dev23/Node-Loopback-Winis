@@ -292,7 +292,7 @@ module.exports = function (Dailywin) {
     }
 
     // prevent double pick
-    if (activeDailyWin.lastVisitDate.getTime() >= startOfCurrentDay) {
+    if (activeDailyWin.lastVisitDate && activeDailyWin.lastVisitDate.getTime() >= startOfCurrentDay) {
       const error = new Error('Time error');
       error.status = 500;
       throw error;
