@@ -9,27 +9,26 @@ module.exports = function (Dailywin) {
     let activeBoard;
 
     const board = await Dailywin.getBoard(options);
-    let { lastAllowedDay } = board;
     try {
       activeBoard = await Dailywin.pickPrize(options);
     } catch (err) {
       if (err.status === 500 || err.status == 404) {
         activeBoard = board;
-        lastAllowedDay--;
       } else throw err;
     }
 
+    let { lastAllowedDay } = activeBoard;
     let prizes = activeBoard.prizes;
     Object.keys(prizes).map((key, index) => {
       const prize = prizes[key];
-      if (prize.status === 'picked' && parseInt(key) === lastAllowedDay) {
+      if (prize.status === 'picked' && parseInt(key) === lastAllowedDay - 1) {
+        prizes[key] = prize;
         prize.status = 'today';
       } else if (prize.status != 'picked') {
         prize.status = 'skipped';
       }
-      prizes[key] = prize;
     });
-    if (lastAllowedDay === 7) prizes['weekly'].status = 'today';
+    if (lastAllowedDay === 8) prizes['weekly'].status = 'today';
     activeBoard.prizes = prizes;
 
     activeBoard.lastAllowedDay--;
