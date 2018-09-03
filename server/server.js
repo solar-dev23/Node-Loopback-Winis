@@ -1,7 +1,7 @@
 
 const loopback = require('loopback');
 const boot = require('loopback-boot');
-const CronJob = require('cron').CronJob;
+const { CronJob } = require('cron');
 
 const app = module.exports = loopback();
 

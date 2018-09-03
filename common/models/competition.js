@@ -37,7 +37,7 @@ module.exports = function (Competition) {
     const competition = await Competition.findOne({ where: { endDate: { lt: startOfCurrentDay } } });
     if (!competition || (competition.status && competition.status !== 'running')) {
       const error = new Error('The competition is invalid');
-      error.status = 403;
+      error.status = 404;
       throw error;
     }
     const { app } = Competition;
