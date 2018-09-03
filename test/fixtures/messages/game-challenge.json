@@ -1,0 +1,64 @@
+{
+  "category": "group_channel:message_send",
+  "sender": {
+    "nickname": "meg",
+    "user_id": "59d7c622899d3800010b7154",
+    "profile_url": "https://sendbird.com/main/img/profiles/profile_21_512px.png",
+    "metadata": {}
+  },
+  "custom_type": "gameAction",
+  "mentioned_users": [],
+  "app_id": "5D66EEA7-201A-4BF4-A931-F35F0B72C5AC",
+  "members": [
+    {
+      "is_blocking_sender": false,
+      "unread_message_count": 0,
+      "total_unread_message_count": 0,
+      "is_active": true,
+      "is_online": true,
+      "nickname": "meg",
+      "is_blocked_by_sender": false,
+      "user_id": "59d7c622899d3800010b7154",
+      "channel_unread_message_count": 0,
+      "state": "joined",
+      "push_enabled": true,
+      "profile_url": "https://sendbird.com/main/img/profiles/profile_21_512px.png",
+      "metadata": {}
+    },
+    {
+      "is_blocking_sender": false,
+      "unread_message_count": 1,
+      "total_unread_message_count": 1,
+      "is_active": true,
+      "is_online": false,
+      "nickname": "Yoo",
+      "is_blocked_by_sender": false,
+      "user_id": "59e9d29f7f53dd0001cd1467",
+      "channel_unread_message_count": 1,
+      "state": "joined",
+      "push_enabled": true,
+      "profile_url": "https://sendbird.com/main/img/profiles/profile_38_512px.png",
+      "metadata": {}
+    }
+  ],
+  "type": "MESG",
+  "payload": {
+    "custom_type": "gameAction",
+    "created_at": 1535989385744,
+    "translations": {},
+    "message": "Game Basketball",
+    "data": "{\"type\":\"challenge\",\"body\":{\"serverBattleId\":\"5b8d5689464d74197589fbf8\",\"game\":\"basketball\",\"bet\":100}}",
+    "message_id": 1804575379
+  },
+  "channel": {
+    "is_distinct": true,
+    "name": "Group Channel",
+    "custom_type": "",
+    "is_ephemeral": false,
+    "channel_url": "sendbird_group_channel_59140858_7a1f30fcdcfbfa385b68d1211b3a5eeb5d579d63",
+    "is_public": false,
+    "is_super": false,
+    "data": ""
+  },
+  "sdk": "iOS"
+}
