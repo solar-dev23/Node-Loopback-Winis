@@ -47,7 +47,7 @@
     "created_at": 1535989385744,
     "translations": {},
     "message": "Game Basketball",
-    "data": "{\"type\":\"challenge\",\"body\":{\"serverBattleId\":\"5b8d5689464d74197589fbf8\",\"game\":\"basketball\",\"bet\":100}}",
+    "data": "{\"type\":\"challenge\",\"body\":{\"serverBattleId\":\"5\",\"game\":\"basketball\",\"bet\":100}}",
     "message_id": 1804575379
   },
   "channel": {
@@ -55,7 +55,7 @@
     "name": "Group Channel",
     "custom_type": "",
     "is_ephemeral": false,
-    "channel_url": "sendbird_group_channel_59140858_7a1f30fcdcfbfa385b68d1211b3a5eeb5d579d63",
+    "channel_url": "sendbird_group_channel_61779064_6dda4ddb0b5c7ff24b14d63db854feb0490e4263",
     "is_public": false,
     "is_super": false,
     "data": ""

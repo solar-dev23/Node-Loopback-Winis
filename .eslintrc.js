@@ -2,7 +2,7 @@ module.exports = {
   extends: ['loopback'],
 
   'parserOptions': {
-    'ecmaVersion': 8
+    'ecmaVersion': 2018,
   },
 
   // add your custom rules here
