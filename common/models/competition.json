@@ -24,6 +24,10 @@
     "image": {
       "type": "string",
       "required": true
+    },
+    "status": {
+      "type": "string",
+      "required": false
     }
   },
   "validations": [],
@@ -51,6 +55,30 @@
         {
           "path": "/nearest",
           "verb": "get"
+        }
+      ]
+    },
+    "pickWinner": {
+      "accepts": [
+        {
+          "arg": "options",
+          "type": "object",
+          "http": "optionsFromRequest"
+        }
+      ],
+      "returns": [
+        {
+          "arg": "user",
+          "type": "object",
+          "root": true,
+          "description": "The winner for the current competition"
+        }
+      ],
+      "description": "Pick a winner for the current competition",
+      "http": [
+        {
+          "path": "/pickWinner",
+          "verb": "post"
         }
       ]
     }

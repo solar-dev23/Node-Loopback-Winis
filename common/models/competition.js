@@ -1,10 +1,9 @@
 
-const moment = require('moment');
-const momenttz = require('moment-timezone');
+const moment = require('moment-timezone');
 
 module.exports = function (Competition) {
   Competition.getStartOfDay = function (timezone) {
-    return momenttz(new Date()).tz(timezone).startOf('day').valueOf();
+    return moment.tz(timezone).startOf('day');
   };
 
   /**
@@ -22,6 +21,7 @@ module.exports = function (Competition) {
       } else {
         status = 'pending';
       }
+      await competition.updateAttributes({ status });
     } else {
       status = 'empty';
     }
@@ -29,6 +29,27 @@ module.exports = function (Competition) {
     return {
       status,
       competition,
+    };
+  };
+
+  Competition.pickWinner = async () => {
+    const startOfCurrentDay = Competition.getStartOfDay('UTC');
+    const competition = await Competition.findOne({ where: { endDate: { lt: startOfCurrentDay } } });
+    if (!competition || (competition.status && competition.status !== 'running')) {
+      const error = new Error('The competition is invalid');
+      error.status = 404;
+      throw error;
+    }
+    const { app } = Competition;
+    const { User } = app.models;
+    const winner = await User.findOne({ where: {}, order: 'diamonds DESC' });
+    await competition.updateAttributes({
+      userId: winner.id,
+      status: 'closed',
+    });
+    await User.updateAll({}, { diamonds: 0 });
+    return {
+      winner,
     };
   };
 };

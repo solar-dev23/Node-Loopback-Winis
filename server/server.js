@@ -1,6 +1,7 @@
 
 const loopback = require('loopback');
 const boot = require('loopback-boot');
+const { CronJob } = require('cron');
 
 const app = module.exports = loopback();
 
@@ -23,4 +24,9 @@ boot(app, __dirname, (err) => {
 
   // start the server if `$ node server.js`
   if (require.main === module) app.start();
+
+  if (process.env.NODE_ENV === 'test') return;
+  new CronJob('0 0 0 * * *', async () => {
+    await app.models.Competition.pickWinner();
+  }, null, true, 'UTC');
 });
