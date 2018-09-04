@@ -143,7 +143,7 @@ module.exports = function (Battle) {
       throw error;
     }
 
-    if (currentBattle.status !== 'pending') {
+    if (currentBattle.status !== 'pending' && !currentBattle.cancelable) {
       const error = new Error('You cannot cancel an active battle');
       error.status = 409;
       throw error;
