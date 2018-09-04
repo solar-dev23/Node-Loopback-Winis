@@ -1,25 +1,44 @@
 const chai = require('chai');
 const mute = require('mute');
-const moment = require('moment-timezone');
 const app = require('../server/server');
 const request = require('supertest')(app);
 const deepAssign = require('object-assign-deep');
 const SendBirdService = require('../common/services/SendBirdService');
+const gameAcceptedJson = require('./fixtures/messages/game-accepted.json');
+const gameActionJson = require('./fixtures/messages/game-action.json');
+const gameChallengeJson = require('./fixtures/messages/game-challenge.json');
+const messageJson = require('./fixtures/messages/message.json');
+
 const { expect } = chai;
 
 chai.use(require('chai-shallow-deep-equal'));
 
 describe('Message', async () => {
+  let battle;
+
   beforeEach(async () => {
     await app.models.Message.deleteAll();
+
+    // create battle
+    battle = await app.models.Battle.create({
+      challengerId: '5a96cbbbfc4a7d5a8b57f0e1',
+      opponentId: '5a96cbbbfc4a7d5a8b57f0e1',
+      status: 'pending',
+      game: 'baseball',
+      stake: 30,
+      challengerStatus: 'unset',
+      opponentStatus: 'unset',
+      result: 'unset',
+    });
   });
 
   after(async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  it('should encount error if x-signature is not valid', done => {
+  it('should reject webhook if x-signature is not valid', done => {
     const unmute = mute();
+    const data = { test: 'okay' };
 
     request
       .post('/api/messages/sb-webhook')
@@ -46,7 +65,6 @@ describe('Message', async () => {
   });
 
   it('should store message without problem from sendbird webhook', done => {
-    let messageJson = require('./fixtures/messages/message.json');
     request
       .post('/api/messages/sb-webhook')
       .expect('Content-Type', /json/)
@@ -63,7 +81,7 @@ describe('Message', async () => {
           ...messageJson.payload,
           data: {},
         });
-        expect(res.body.members).to.be.shallowDeepEqual([
+        expect(res.body.members).to.have.members([
           messageJson.members[0].user_id,
           messageJson.members[1].user_id,
         ]);
@@ -73,27 +91,12 @@ describe('Message', async () => {
   });
 
   it('should update last battle move from sendbird webhook', async () => {
-    const challengeJson = require('./fixtures/messages/game-challenge.json');
-    let {
-      payload: { data },
-    } = challengeJson;
-    data = JSON.parse(data);
-
-    // create battle
-    let battle = await app.models.Battle.create({
-      challengerId: '5a96cbbbfc4a7d5a8b57f0e1',
-      opponentId: '5a96cbbbfc4a7        d5a8b57f0e1',
-      status: 'pending',
-      game: 'baseball',
-      stake: 30,
-      challengerStatus: 'unset',
-      opponentStatus: 'unset',
-      result: 'unset',
-    });
+    const data = JSON.parse(gameChallengeJson.payload.data);
     data.body.serverBattleId = battle.id;
+
+    const challengeJson = deepAssign({}, gameChallengeJson);
     challengeJson.payload.data = JSON.stringify(data);
 
-    let actionJson = require('./fixtures/messages/game-action.json');
     return request
       .post('/api/messages/sb-webhook')
       .expect('Content-Type', /json/)
@@ -108,11 +111,9 @@ describe('Message', async () => {
           .expect('Content-Type', /json/)
           .set(
             'x-signature',
-            SendBirdService.createSignature(
-              JSON.stringify(require('./fixtures/messages/game-accepted.json'))
-            )
+            SendBirdService.createSignature(JSON.stringify(gameAcceptedJson))
           )
-          .send(require('./fixtures/messages/game-accepted.json'));
+          .send(gameAcceptedJson);
       })
       .then(res => {
         return request
@@ -120,28 +121,14 @@ describe('Message', async () => {
           .expect('Content-Type', /json/)
           .set(
             'x-signature',
-            SendBirdService.createSignature(
-              JSON.stringify(require('./fixtures/messages/game-action.json'))
-            )
+            SendBirdService.createSignature(JSON.stringify(gameActionJson))
           )
-          .send(require('./fixtures/messages/game-action.json'));
-      })
-      .then(res => {
-        return request
-          .post('/api/messages/sb-webhook')
-          .expect('Content-Type', /json/)
-          .set(
-            'x-signature',
-            SendBirdService.createSignature(
-              JSON.stringify(require('./fixtures/messages/message.json'))
-            )
-          )
-          .send(require('./fixtures/messages/message.json'));
+          .send(gameActionJson);
       })
       .then(async res => {
         battle = await app.models.Battle.findById(battle.id);
         expect(battle.lastMove.toString()).to.be.equal(
-          new Date(actionJson.payload.created_at).toString()
+          new Date(gameActionJson.payload.created_at).toString()
         );
       });
   });

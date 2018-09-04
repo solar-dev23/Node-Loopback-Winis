@@ -47,7 +47,7 @@
     "created_at": 1535989385744,
     "translations": {},
     "message": "Game Basketball",
-    "data": "{\"type\":\"challenge\",\"body\":{\"serverBattleId\":\"5\",\"game\":\"basketball\",\"bet\":100}}",
+    "data": "{\"type\":\"challenge\",\"body\":{\"serverBattleId\":\"5b8d5689464d74197589fbf8\",\"game\":\"basketball\",\"bet\":100}}",
     "message_id": 1804575379
   },
   "channel": {
