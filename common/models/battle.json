@@ -47,6 +47,10 @@
       "type": "string",
       "required": true,
       "default": "unset"
+    },
+    "lastMove": {
+      "type": "date",
+      "default": "$now"
     }
   },
   "validations": [],

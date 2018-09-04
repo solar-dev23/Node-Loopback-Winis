@@ -1,0 +1,68 @@
+{
+  "name": "message",
+  "plural": "messages",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "TimeStamp": true,
+    "SetupRemoteMethods": {
+      "disableAllExcept": [
+        "storeSendbirdHook"
+      ]
+    }
+  },
+  "properties": {
+    "channelUrl": {
+      "type": "string",
+      "required": true
+    },
+    "payload": {
+      "type": "object",
+      "required": false
+    },
+    "members": {
+      "type": "object",
+      "required": false,
+      "default": []
+    } ,
+    "isChallenge": {
+      "type": "Boolean",
+      "default": false
+    }   
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": ["storeSendbirdHook"]
+    }
+  ],
+  "methods": {
+    "storeSendbirdHook": {
+      "accepts": [
+        {
+          "arg": "req",
+          "type": "object",
+          "http": { "source": "req" }
+        }
+      ],
+      "returns": {
+        "arg": "result",
+        "type": "object",
+        "root": true
+      },
+      "description": "Store sendbird webhook messages",
+      "http": {
+        "path": "/sb-webhook",
+        "verb": "post"
+      }
+    }
+  }
+}

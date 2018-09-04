@@ -1,0 +1,64 @@
+{
+  "category": "group_channel:message_send",
+  "sender": {
+    "nickname": "davidtab",
+    "user_id": "59d8950d899d3800010b7155",
+    "profile_url": "https://sendbird.com/main/img/profiles/profile_02_512px.png",
+    "metadata": {}
+  },
+  "custom_type": "message",
+  "mentioned_users": [],
+  "app_id": "5D66EEA7-201A-4BF4-A931-F35F0B72C5AC",
+  "members": [
+    {
+      "is_blocking_sender": false,
+      "unread_message_count": 1,
+      "total_unread_message_count": 1,
+      "is_active": true,
+      "is_online": true,
+      "nickname": "meg",
+      "is_blocked_by_sender": false,
+      "user_id": "59d7c622899d3800010b7154",
+      "channel_unread_message_count": 1,
+      "state": "joined",
+      "push_enabled": true,
+      "profile_url": "https://sendbird.com/main/img/profiles/profile_21_512px.png",
+      "metadata": {}
+    },
+    {
+      "is_blocking_sender": false,
+      "unread_message_count": 5,
+      "total_unread_message_count": 5,
+      "is_active": true,
+      "is_online": true,
+      "nickname": "davidtab",
+      "is_blocked_by_sender": false,
+      "user_id": "59d8950d899d3800010b7155",
+      "channel_unread_message_count": 0,
+      "state": "joined",
+      "push_enabled": true,
+      "profile_url": "https://sendbird.com/main/img/profiles/profile_02_512px.png",
+      "metadata": {}
+    }
+  ],
+  "type": "MESG",
+  "payload": {
+    "custom_type": "message",
+    "created_at": 1535989566280,
+    "translations": {},
+    "message": "your turn",
+    "data": "",
+    "message_id": 1804581900
+  },
+  "channel": {
+    "is_distinct": true,
+    "name": "Group Channel",
+    "custom_type": "",
+    "is_ephemeral": false,
+    "channel_url": "sendbird_group_channel_61779064_6dda4ddb0b5c7ff24b14d63db854feb0490e4263",
+    "is_public": false,
+    "is_super": false,
+    "data": ""
+  },
+  "sdk": "iOS"
+}
