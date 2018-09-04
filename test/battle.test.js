@@ -1,6 +1,7 @@
 const expect = require('chai').expect;
 const mute = require('mute');
 const async = require('async');
+const moment = require('moment');
 const app = require('../server/server');
 const request = require('supertest')(app);
 
@@ -1276,6 +1277,40 @@ describe('Battle', () => {
           unmute();
           done();
         });
+    });
+  });
+
+  describe('Cancelable', async () => {
+    it('cancelable property should be false if last move is in 3 hours', async () => {
+      let battle = await BattleModel.create({
+        challengerId: '5a96cbbbfc4a7d5a8b57f0e1',
+        opponentId: '5a96cbbbfc4a7d5a8b57f0e1',
+        status: 'pending',
+        game: 'baseball',
+        stake: 30,
+        challengerStatus: 'unset',
+        opponentStatus: 'unset',
+        result: 'unset',
+        lastMove: moment().subtract(2, 'hours').toDate(),
+      });
+      battle = await BattleModel.findById(battle.id);
+      expect(battle.cancelable).to.be.equal(false);
+    });
+
+    it('cancelable property should be true if last move is out of 3 hours', async () => {
+      let battle = await BattleModel.create({
+        challengerId: '5a96cbbbfc4a7d5a8b57f0e1',
+        opponentId: '5a96cbbbfc4a7d5a8b57f0e1',
+        status: 'pending',
+        game: 'baseball',
+        stake: 30,
+        challengerStatus: 'unset',
+        opponentStatus: 'unset',
+        result: 'unset',
+        lastMove: moment().subtract(4, 'hours').toDate(),
+      });
+      battle = await BattleModel.findById(battle.id);
+      expect(battle.cancelable).to.be.equal(true);
     });
   });
 });

@@ -1,3 +1,4 @@
+const moment = require('moment');
 module.exports = function (Battle) {
   Battle.challenge = async function (opponentId, stake, gameType, options) {
     const token = options && options.accessToken;
@@ -342,4 +343,8 @@ module.exports = function (Battle) {
       }
     }
   });
+
+  Battle.isCancelable = battle => {
+    return moment().diff(moment(battle.lastMove), 'hours') > 3;
+  };
 };
