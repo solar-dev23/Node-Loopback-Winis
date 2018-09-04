@@ -17,6 +17,11 @@
         "prototype.lost",
         "prototype.draw"
       ]
+    },
+    "Computed": {
+      "properties": {
+          "cancelable": "isCancelable"
+      }
     }
   },
   "properties": {
@@ -51,7 +56,8 @@
     "lastMove": {
       "type": "date",
       "default": "$now"
-    }
+    },
+    "cancelable": "boolean"
   },
   "validations": [],
   "relations": {
