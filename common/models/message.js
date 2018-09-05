@@ -3,10 +3,14 @@ const SendBirdService = require('../services/SendBirdService');
 
 module.exports = Message => {
   Message.storeSendbirdHook = async req => {
-    if (req.headers['x-signature'] !==
-      SendBirdService.createSignature(JSON.stringify(req.body))) {
-      const error = new Error('Unauthorized request');
-      error.status = 401;
+    if (
+      req.headers['x-signature'] !==
+      SendBirdService.createSignature(JSON.stringify(req.body))
+    ) {
+      const error = new Error(
+        `Invalid signature: ${req.headers['x-signature']}`
+      );
+      error.status = 403;
       throw error;
     }
 

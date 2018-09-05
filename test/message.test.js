@@ -45,7 +45,7 @@ describe('Message', async () => {
       .expect('Content-Type', /json/)
       .send({ test: 'okay' })
       .then(res => {
-        expect(res.statusCode).to.be.equal(401);
+        expect(res.statusCode).to.be.equal(403);
         unmute();
         done();
       });
