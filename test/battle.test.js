@@ -1237,8 +1237,31 @@ describe('Battle', () => {
         });
     });
 
-    it('should cancel a battle started more than 3 hours ago', (done) => {
-      request
+    it('should reject battle cancel if it is not pending and lastMove is in 3 hours', async () => {
+      const unmute = mute();
+      const battle = await BattleModel.findById(freshBattle.id);
+      console.log(battle);
+      await battle.updateAttribute('status', 'active');
+
+      return request
+        .post(`/api/battles/${freshBattle.id}/cancel`)
+        .set('Authorization', challengerAccessToken.id)
+        .expect('Content-Type', /json/)
+        .send()
+        .then(async (res) => {
+          expect(res.statusCode).to.be.equal(409);
+          unmute();
+        });
+    });
+
+    it('should cancel a battle started more than 3 hours ago though its status is not pending', async () => {
+      const battle = await BattleModel.findById(freshBattle.id);
+      await battle.updateAttributes({
+        status: 'active',
+        lastMove: moment().subtract(4, 'hours').toDate(),
+      });
+
+      return request
         .post(`/api/battles/${freshBattle.id}/cancel`)
         .set('Authorization', challengerAccessToken.id)
         .expect('Content-Type', /json/)
@@ -1261,7 +1284,6 @@ describe('Battle', () => {
         })
         .then((opponent) => {
           expect(opponent.staked).to.be.equal(0);
-          done();
         });
     });
 
