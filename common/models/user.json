@@ -87,26 +87,17 @@
     "friends": {
       "type": "referencesMany",
       "model": "user",
-      "foreignKey": "friendIds",
-      "options": {
-        "nestRemoting": true
-      }
+      "foreignKey": "friendIds"
     },
     "pending": {
       "type": "referencesMany",
       "model": "user",
-      "foreignKey": "pendingIds",
-      "options": {
-        "nestRemoting": true
-      }
+      "foreignKey": "pendingIds"
     },
     "blocked": {
       "type": "referencesMany",
       "model": "user",
-      "foreignKey": "blockedIds",
-      "options": {
-        "nestRemoting": true
-      }
+      "foreignKey": "blockedIds"
     }
   },
   "acls": [

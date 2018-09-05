@@ -64,18 +64,12 @@
     "challenger": {
       "type": "hasOne",
       "model": "user",
-      "foreignKey": "challengerId",
-      "options": {
-        "nestRemoting": true
-      }
+      "foreignKey": "challengerId"
     },
     "opponent": {
       "type": "hasOne",
       "model": "user",
-      "foreignKey": "opponentId",
-      "options": {
-        "nestRemoting": true
-      }
+      "foreignKey": "opponentId"
     }
   },
   "acls": [],
