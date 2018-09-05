@@ -541,7 +541,7 @@ describe('Daily-win', async () => {
               require('./fixtures/daily-win/daily-win.v2.json'),
               {
                 prizes: {
-                  1: { status: 'picked' },
+                  1: { status: 'today' },
                   2: { status: 'allowed' },
                 },
                 lastAllowedDay: 2,
@@ -631,7 +631,7 @@ describe('Daily-win', async () => {
                 prizes: {
                   1: { status: 'picked' },
                   2: { status: 'picked' },
-                  3: { status: 'picked' },
+                  3: { status: 'today' },
                   4: { status: 'missed' },
                   5: { status: 'missed' },
                   6: { status: 'missed' },
@@ -681,7 +681,7 @@ describe('Daily-win', async () => {
               .send();
           }).then((res) => {
             expect(res.body.lastAllowedDay).to.be.equal(3);
-            expect(res.body.prizes['2'].status).to.be.equal('picked');
+            expect(res.body.prizes['2'].status).to.be.equal('today');
             expect(res.body.prizes['3'].status).to.be.equal('allowed');
             expect(res.body.prizes['weekly'].status).to.be.equal('pending');
             expect(res.body.user.winis).to.be.equal(15);
@@ -694,7 +694,7 @@ describe('Daily-win', async () => {
               .send();
           }).then((res) => {
             expect(res.body.lastAllowedDay).to.be.equal(4);
-            expect(res.body.prizes['3'].status).to.be.equal('picked');
+            expect(res.body.prizes['3'].status).to.be.equal('today');
             expect(res.body.prizes['4'].status).to.be.equal('allowed');
             expect(res.body.prizes['weekly'].status).to.be.equal('pending');
             expect(res.body.user.winis).to.be.equal(15);
@@ -708,7 +708,7 @@ describe('Daily-win', async () => {
               .send();
           }).then((res) => {
             expect(res.body.lastAllowedDay).to.be.equal(5);
-            expect(res.body.prizes['4'].status).to.be.equal('picked');
+            expect(res.body.prizes['4'].status).to.be.equal('today');
             expect(res.body.prizes['5'].status).to.be.equal('allowed');
             expect(res.body.prizes['weekly'].status).to.be.equal('pending');
             expect(res.body.user.winis).to.be.equal(40);
@@ -722,7 +722,7 @@ describe('Daily-win', async () => {
               .send();
           }).then((res) => {
             expect(res.body.lastAllowedDay).to.be.equal(6);
-            expect(res.body.prizes['5'].status).to.be.equal('picked');
+            expect(res.body.prizes['5'].status).to.be.equal('today');
             expect(res.body.prizes['6'].status).to.be.equal('allowed');
             expect(res.body.prizes['weekly'].status).to.be.equal('pending');
             expect(res.body.user.winis).to.be.equal(50);
@@ -738,7 +738,7 @@ describe('Daily-win', async () => {
               .send();
           }).then((res) => {
             expect(res.body.lastAllowedDay).to.be.equal(7);
-            expect(res.body.prizes['6'].status).to.be.equal('picked');
+            expect(res.body.prizes['6'].status).to.be.equal('today');
             expect(res.body.prizes['7'].status).to.be.equal('allowed');
             expect(res.body.prizes['weekly'].status).to.be.equal('pending');
             expect(res.body.user.winis).to.be.equal(100);
@@ -754,8 +754,8 @@ describe('Daily-win', async () => {
               .send();
           }).then((res) => {
             expect(res.body.lastAllowedDay).to.be.equal(8);
-            expect(res.body.prizes['7'].status).to.be.equal('picked');
-            expect(res.body.prizes['weekly'].status).to.be.equal('picked');
+            expect(res.body.prizes['7'].status).to.be.equal('today');
+            expect(res.body.prizes['weekly'].status).to.be.equal('today');
             expect(res.body.user.winis).to.be.equal(100);
             expect(res.body.user.diamonds).to.be.equal(101);
             expect(res.body.user.spins).to.be.equal(2);

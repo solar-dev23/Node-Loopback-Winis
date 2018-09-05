@@ -1,7 +1,7 @@
 const moment = require('moment-timezone');
 
-module.exports = function (Dailywin) {
-  Dailywin.getBoardAndPickOld = async function (options) {
+module.exports = Dailywin => {
+  Dailywin.getBoardAndPickOld = async options => {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
@@ -21,14 +21,10 @@ module.exports = function (Dailywin) {
     let prizes = activeBoard.prizes;
     Object.keys(prizes).map((key, index) => {
       const prize = prizes[key];
-      if (prize.status === 'picked' && parseInt(key) === lastAllowedDay - 1) {
-        prizes[key] = prize;
-        prize.status = 'today';
-      } else if (prize.status != 'picked') {
+      if (prize.status !== 'picked' && prize.status !== 'today') {
         prize.status = 'skipped';
       }
     });
-    if (lastAllowedDay === 8) prizes['weekly'].status = 'today';
     activeBoard.prizes = prizes;
 
     activeBoard.lastAllowedDay--;
@@ -144,11 +140,14 @@ module.exports = function (Dailywin) {
   };
   */
 
-  Dailywin.getStartOfDay = function (timezone) {
-    return moment(new Date()).tz(timezone).startOf('day').valueOf();
+  Dailywin.getStartOfDay = timezone => {
+    return moment(new Date())
+      .tz(timezone)
+      .startOf('day')
+      .valueOf();
   };
 
-  Dailywin.getLastDailyWin = async (userId) => {
+  Dailywin.getLastDailyWin = async userId => {
     const res = await Dailywin.find({
       where: { userId },
       order: 'resetDate DESC',
@@ -187,7 +186,20 @@ module.exports = function (Dailywin) {
     return user;
   };
 
-  Dailywin.getBoard = async function (options) {
+  Dailywin.applyToday = dailywin => {
+    const { prizes, lastAllowedDay } = dailywin;
+
+    if (lastAllowedDay > 1 && prizes[lastAllowedDay - 1].status === 'picked') {
+      prizes[lastAllowedDay - 1].status = 'today';
+    }
+    if (prizes['weekly'].status === 'picked') {
+      prizes['weekly'].status = 'today';
+    }
+
+    return dailywin;
+  };
+
+  Dailywin.getActiveDailywin = async options => {
     const token = options && options.accessToken;
     const userId = token && token.userId;
     const UserModel = Dailywin.app.models.user;
@@ -196,7 +208,10 @@ module.exports = function (Dailywin) {
     let [activeDailyWin] = await Dailywin.getLastDailyWin(userId);
 
     // mark past dailywin as missed
-    if (activeDailyWin && activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
+    if (
+      activeDailyWin &&
+      activeDailyWin.resetDate.getTime() < startOfCurrentDay
+    ) {
       let { prizes } = activeDailyWin;
       Object.keys(prizes).forEach(key => {
         if (prizes[key].status !== 'picked') {
@@ -206,11 +221,15 @@ module.exports = function (Dailywin) {
       await activeDailyWin.updateAttribute('prizes', prizes);
     }
 
-    if (!activeDailyWin || activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
+    if (
+      !activeDailyWin ||
+      activeDailyWin.resetDate.getTime() < startOfCurrentDay
+    ) {
       activeDailyWin = await Dailywin.create({
         userId: userId,
         createdDate: Dailywin.getStartOfDay(user.timezone),
-        resetDate: Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1,
+        resetDate:
+          Dailywin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1,
         prizes: {
           '1': {
             prize: 'winis',
@@ -263,7 +282,11 @@ module.exports = function (Dailywin) {
     }
 
     // check if there is any missed day
-    const dayNumber = moment(startOfCurrentDay).diff(moment(activeDailyWin.createdDate), 'days') + 1;
+    const dayNumber =
+      moment(startOfCurrentDay).diff(
+        moment(activeDailyWin.createdDate),
+        'days'
+      ) + 1;
     if (dayNumber > lastAllowedDay) {
       prizes['weekly'].status = 'missed';
       for (let i = 0; i < dayNumber - lastAllowedDay; i += 1) {
@@ -278,20 +301,32 @@ module.exports = function (Dailywin) {
     return activeDailyWin;
   };
 
-  Dailywin.pickPrize = async (options) => {
-    let activeDailyWin = await Dailywin.getBoard(options);
+  Dailywin.getBoard = async options => {
+    const activeDailyWin = await Dailywin.getActiveDailywin(options);
+
+    return Dailywin.applyToday(activeDailyWin);
+  };
+
+  Dailywin.pickPrize = async options => {
+    let activeDailyWin = await Dailywin.getActiveDailywin(options);
     let { user } = activeDailyWin;
     const startOfCurrentDay = Dailywin.getStartOfDay(user.timezone);
 
     // check if valid daily win exists
-    if (!activeDailyWin || activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
+    if (
+      !activeDailyWin ||
+      activeDailyWin.resetDate.getTime() < startOfCurrentDay
+    ) {
       const error = new Error('Please check daily win first');
       error.status = 404;
       throw error;
     }
 
     // prevent double pick
-    if (activeDailyWin.lastVisitDate && activeDailyWin.lastVisitDate.getTime() >= startOfCurrentDay) {
+    if (
+      activeDailyWin.lastVisitDate &&
+      activeDailyWin.lastVisitDate.getTime() >= startOfCurrentDay
+    ) {
       const error = new Error('Time error');
       error.status = 500;
       throw error;
@@ -321,6 +356,6 @@ module.exports = function (Dailywin) {
 
     activeDailyWin.user = user;
 
-    return activeDailyWin;
+    return Dailywin.applyToday(activeDailyWin);
   };
 };
