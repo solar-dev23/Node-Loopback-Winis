@@ -3,16 +3,16 @@ const SendBirdService = require('../services/SendBirdService');
 
 module.exports = Message => {
   Message.storeSendbirdHook = async req => {
-    if (
-      req.headers['x-signature'] !==
-      SendBirdService.createSignature(JSON.stringify(req.body))
-    ) {
-      const error = new Error(
-        `Invalid signature: ${req.headers['x-signature']}`
-      );
-      error.status = 403;
-      throw error;
-    }
+    // if (
+    //   req.headers['x-signature'] !==
+    //   SendBirdService.createSignature(JSON.stringify(req.body))
+    // ) {
+    //   const error = new Error(
+    //     `Invalid signature: ${req.headers['x-signature']}`
+    //   );
+    //   error.status = 403;
+    //   throw error;
+    // }
 
     const { body } = req;
     if (body.category !== 'group_channel:message_send') {

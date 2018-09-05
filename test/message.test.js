@@ -36,20 +36,20 @@ describe('Message', async () => {
     await app.dataSources.db.connector.disconnect();
   });
 
-  it('should reject webhook if x-signature is not valid', done => {
-    const unmute = mute();
-    const data = { test: 'okay' };
+  // it('should reject webhook if x-signature is not valid', done => {
+  //   const unmute = mute();
+  //   const data = { test: 'okay' };
 
-    request
-      .post('/api/messages/sb-webhook')
-      .expect('Content-Type', /json/)
-      .send({ test: 'okay' })
-      .then(res => {
-        expect(res.statusCode).to.be.equal(403);
-        unmute();
-        done();
-      });
-  });
+  //   request
+  //     .post('/api/messages/sb-webhook')
+  //     .expect('Content-Type', /json/)
+  //     .send({ test: 'okay' })
+  //     .then(res => {
+  //       expect(res.statusCode).to.be.equal(403);
+  //       unmute();
+  //       done();
+  //     });
+  // });
 
   it('should reject webhook if category is not equal to group_channel:message_send', done => {
     const data = { test: 'okay' };
