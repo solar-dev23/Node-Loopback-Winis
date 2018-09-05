@@ -1,0 +1,37 @@
+{
+  "category": "group_channel:message_read",
+  "members": [
+    {
+      "unread_message_count": 0,
+      "user_id": "59d7c622899d3800010b7154",
+      "channel_unread_message_count": 0,
+      "total_unread_message_count": 0,
+      "is_active": true,
+      "push_enabled": true,
+      "state": "joined",
+      "is_online": true,
+      "nickname": "meg",
+      "profile_url": "https://sendbird.com/main/img/profiles/profile_21_512px.png",
+      "metadata": {}
+    }
+  ],
+  "app_id": "5D66EEA7-201A-4BF4-A931-F35F0B72C5AC",
+  "channel": {
+    "is_super": false,
+    "is_distinct": true,
+    "name": "Group Channel",
+    "custom_type": "",
+    "is_ephemeral": false,
+    "data": "",
+    "channel_url": "sendbird_group_channel_59085602_3ba109e0b55a79ba3544dd8f99d78ad0d1bc5492",
+    "is_public": false
+  },
+  "read_updates": [
+    {
+      "read_ts": 1536139873770,
+      "user_id": "59d7c622899d3800010b7154",
+      "channel_unread_message_count": 0,
+      "total_unread_message_count": 0
+    }
+  ]
+}
