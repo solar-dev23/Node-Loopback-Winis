@@ -3,18 +3,20 @@
   "version": "1.0.0",
   "main": "server/server.js",
   "engines": {
-    "node": ">=4"
+    "node": ">=8"
   },
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
     "check": "npm run lint && npm audit",
     "test": "cross-env NODE_ENV=test mocha",
-    "test-coverage": "cross-env NODE_ENV=test nyc mocha"
+    "test-coverage": "cross-env NODE_ENV=test nyc mocha",
+    "postinstall": "bower install --allow-root --config.interactive=false"
   },
   "dependencies": {
     "admin-lte": "^3.0.0-alpha.2",
     "bcryptjs": "^2.4.3",
+    "bower": "^1.8.4",
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.3",

@@ -1,7 +1,7 @@
 {
   "db": {
     "database": "winis",
-    "url": "mongodb://winis-mongodb-mongodb-replicaset-0.winis-mongodb-mongodb-replicaset,winis-mongodb-mongodb-replicaset-1.winis-mongodb-mongodb-replicaset,winis-mongodb-mongodb-replicaset-2.winis-mongodb-mongodb-replicaset/winis?replicaSet=rs0",
+    "url": "mongodb://winis:VWM2hiD6G5cHXGcK@winis-db-shard-00-00-ozhaj.gcp.mongodb.net:27017,winis-db-shard-00-01-ozhaj.gcp.mongodb.net:27017,winis-db-shard-00-02-ozhaj.gcp.mongodb.net:27017/winis?ssl=true&replicaSet=winis-db-shard-0&authSource=admin&retryWrites=true",
     "connector": "mongodb"
   },
   "storage": {
