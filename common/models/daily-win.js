@@ -344,8 +344,6 @@ module.exports = DailyWin => {
     if (lastAllowedDay >= 7) {
       prizes['weekly'].status = 'picked';
       await DailyWin.rewardPrize(user, prizes['weekly']);
-    } else if (prizes[lastAllowedDay + 1].status === 'pending') {
-      prizes[lastAllowedDay + 1].status = 'allowed';
     }
 
     await activeDailyWin.updateAttributes({
