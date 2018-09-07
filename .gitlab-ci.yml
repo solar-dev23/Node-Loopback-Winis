@@ -5,6 +5,9 @@ stages:
   - production
   - cleanup
 
+variables:
+  GCLOUD_PROJECT: winis-be
+
 test:
   stage: test
   image: node:8
@@ -51,11 +54,11 @@ review:
     - build:assets
   script:
     - init_gcloud
-    - gcloud app deploy --version $CI_COMMIT_REF_NAME --no-promote
+    - gcloud app deploy --version $GCLOUD_SLUG --no-promote --quiet
     - persist_environment_url
   environment:
     name: review/$CI_COMMIT_REF_NAME
-    url: https://$CI_COMMIT_REF_NAME-dot-winis-be.appspot.com
+    url: https://$GCLOUD_SLUG-dot-winis-be.appspot.com
     on_stop: stop_review
   artifacts:
     paths: [environment_url.txt]
@@ -73,7 +76,7 @@ stop_review:
     GIT_STRATEGY: none
   script:
     - init_gcloud
-    - gcloud app versions delete $CI_COMMIT_REF_NAME
+    - gcloud app versions delete $GCLOUD_SLUG
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
@@ -95,7 +98,7 @@ production:
     GIT_STRATEGY: fetch
   script:
     - init_gcloud
-    - gcloud app deploy
+    - gcloud app deploy --quiet
     - persist_environment_url
   environment:
     name: production
@@ -116,13 +119,21 @@ production:
   function init_gcloud() {
     echo $GOOGLE_APP_ENGINE_KEY > /tmp/$CI_PIPELINE_ID.json
     gcloud auth activate-service-account --key-file /tmp/$CI_PIPELINE_ID.json
-    gcloud config set project winis-be
+    gcloud config set project $GCLOUD_PROJECT
     gcloud info
   }
 
-  function persist_environment_url() {
-    echo "https://$CI_COMMIT_REF_NAME-dot-winis-be.appspot.com" > environment_url.txt
+  function get_version_slug() {
+    let max_len=58-"${#GCLOUD_PROJECT}"
+    echo $CI_COMMIT_REF_SLUG | cut -c1-$max_len
   }
+
+  GCLOUD_SLUG=$(get_version_slug)
+
+  function persist_environment_url() {
+    echo "https://$GCLOUD_SLUG-dot-$GCLOUD_PROJECT.appspot.com" > environment_url.txt
+  }
+
 
 before_script:
   - *auto_devops

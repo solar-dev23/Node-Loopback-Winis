@@ -1,5 +1,6 @@
 *~
 .gcloudignore
+.gitlab-ci.yml
 .git
 .gitignore
 #!include:.gitignore
