@@ -651,6 +651,69 @@ describe('Daily-win', async () => {
           });
       });
 
+      it('should return the proper board value when doing 2 calls day after day', done => {
+        const today = moment.tz(user.timezone).startOf('day');
+
+        DailyWinModel.getStartOfDay = () => {
+          return today;
+        };
+
+        request
+          .post('/api/daily-wins/get-board')
+          .set('Authorization', accessToken.id)
+          .expect('Content-Type', /json/)
+          .send()
+          .then((res) => {
+            expect(res.body.lastAllowedDay).to.be.equal(1);
+            expect(res.body.prizes['1'].status).to.be.equal('allowed');
+
+            return request
+              .post('/api/daily-wins/pick')
+              .set('Authorization', accessToken.id)
+              .expect('Content-Type', /json/)
+              .send();
+          }).then((res) => {
+            expect(res.body.prizes['1'].status).to.be.equal('today');
+            expect(res.body.prizes['2'].status).to.be.equal('pending');
+            // expect(res.body.lastAllowedDay).to.be.equal(1);
+            expect(res.body.user.winis).to.be.equal(5);
+
+            return request
+              .post('/api/daily-wins/get-board')
+              .set('Authorization', accessToken.id)
+              .expect('Content-Type', /json/)
+              .send();
+          }).then((res) => {
+            // expect(res.body.lastAllowedDay).to.be.equal(1);
+            expect(res.body.prizes['1'].status).to.be.equal('today');
+            expect(res.body.prizes['2'].status).to.be.equal('pending');
+
+            today.add(1, 'day');
+            return request
+              .post('/api/daily-wins/get-board')
+              .set('Authorization', accessToken.id)
+              .expect('Content-Type', /json/)
+              .send();
+          }).then((res) => {
+            expect(res.body.lastAllowedDay).to.be.equal(2);
+            expect(res.body.prizes['1'].status).to.be.equal('picked');
+            expect(res.body.prizes['2'].status).to.be.equal('allowed');
+
+            return request
+              .post('/api/daily-wins/pick')
+              .set('Authorization', accessToken.id)
+              .expect('Content-Type', /json/)
+              .send();
+          }).then(res => {
+            expect(res.body.lastAllowedDay).to.be.equal(2);
+            expect(res.body.prizes['1'].status).to.be.equal('picked');
+            expect(res.body.prizes['2'].status).to.be.equal('today');
+            expect(res.body.prizes['2'].status).to.be.equal('pending');
+
+            done();
+          });
+      });
+
       it('pick full week daily wins', (done) => {
         const today = moment.tz(user.timezone).startOf('day');
 
@@ -664,6 +727,9 @@ describe('Daily-win', async () => {
           .expect('Content-Type', /json/)
           .send()
           .then((res) => {
+            expect(res.body.lastAllowedDay).to.be.equal(1);
+            expect(res.body.prizes['1'].status).to.be.equal('allowed');
+
             return request
               .post('/api/daily-wins/pick')
               .set('Authorization', accessToken.id)
