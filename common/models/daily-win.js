@@ -187,11 +187,19 @@ module.exports = DailyWin => {
   };
 
   DailyWin.applyToday = dailywin => {
-    const { prizes, lastAllowedDay } = dailywin;
+    const { prizes, lastAllowedDay, lastVisitDate } = dailywin;
+    const startOfCurrentDay = DailyWin.getStartOfDay(dailywin.user.timezone);
 
-    if (lastAllowedDay > 1 && prizes[lastAllowedDay - 1].status === 'picked') {
+    if (startOfCurrentDay > lastVisitDate && prizes[lastAllowedDay].status === 'picked') {
+      prizes[lastAllowedDay - 1].status = 'today';
+    } else if (
+      startOfCurrentDay <= lastVisitDate &&
+      lastAllowedDay > 1 &&
+      prizes[lastAllowedDay - 1].status === 'picked'
+    ) {
       prizes[lastAllowedDay - 1].status = 'today';
     }
+
     if (prizes['weekly'].status === 'picked') {
       prizes['weekly'].status = 'today';
     }
@@ -208,10 +216,7 @@ module.exports = DailyWin => {
     let [activeDailyWin] = await DailyWin.getLastDailyWin(userId);
 
     // mark past dailywin as missed
-    if (
-      activeDailyWin &&
-      activeDailyWin.resetDate.getTime() < startOfCurrentDay
-    ) {
+    if (activeDailyWin && activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
       let { prizes } = activeDailyWin;
       Object.keys(prizes).forEach(key => {
         if (prizes[key].status !== 'picked') {
@@ -221,15 +226,11 @@ module.exports = DailyWin => {
       await activeDailyWin.updateAttribute('prizes', prizes);
     }
 
-    if (
-      !activeDailyWin ||
-      activeDailyWin.resetDate.getTime() < startOfCurrentDay
-    ) {
+    if (!activeDailyWin || activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
       activeDailyWin = await DailyWin.create({
         userId: userId,
         createdDate: DailyWin.getStartOfDay(user.timezone),
-        resetDate:
-          DailyWin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1,
+        resetDate: DailyWin.getStartOfDay(user.timezone) + 7 * 24 * 60 * 60 * 1000 - 1,
         prizes: {
           '1': {
             prize: 'winis',
@@ -275,18 +276,15 @@ module.exports = DailyWin => {
       });
     }
 
-    let { prizes, lastAllowedDay } = activeDailyWin;
-    // mark today's daily win allowed
-    if (prizes[activeDailyWin.lastAllowedDay].status === 'pending') {
+    let { prizes, lastAllowedDay, lastVisitDate } = activeDailyWin;
+
+    // mark daily win allowed if available
+    if (startOfCurrentDay > lastVisitDate && prizes[activeDailyWin.lastAllowedDay].status === 'pending') {
       prizes[activeDailyWin.lastAllowedDay].status = 'allowed';
     }
 
     // check if there is any missed day
-    const dayNumber =
-      moment(startOfCurrentDay).diff(
-        moment(activeDailyWin.createdDate),
-        'days'
-      ) + 1;
+    const dayNumber = moment(startOfCurrentDay).diff(moment(activeDailyWin.createdDate), 'days') + 1;
     if (dayNumber > lastAllowedDay) {
       prizes['weekly'].status = 'missed';
       for (let i = 0; i < dayNumber - lastAllowedDay; i += 1) {
@@ -313,20 +311,14 @@ module.exports = DailyWin => {
     const startOfCurrentDay = DailyWin.getStartOfDay(user.timezone);
 
     // check if valid daily win exists
-    if (
-      !activeDailyWin ||
-      activeDailyWin.resetDate.getTime() < startOfCurrentDay
-    ) {
+    if (!activeDailyWin || activeDailyWin.resetDate.getTime() < startOfCurrentDay) {
       const error = new Error('Please check daily win first');
       error.status = 404;
       throw error;
     }
 
     // prevent double pick
-    if (
-      activeDailyWin.lastVisitDate &&
-      activeDailyWin.lastVisitDate.getTime() >= startOfCurrentDay
-    ) {
+    if (activeDailyWin.lastVisitDate && activeDailyWin.lastVisitDate.getTime() >= startOfCurrentDay) {
       const error = new Error('Time error');
       error.status = 500;
       throw error;
