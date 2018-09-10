@@ -54,11 +54,11 @@ review:
     - build:assets
   script:
     - init_gcloud
-    - gcloud app deploy --version $CI_ENVIRONMENT_SLUG --no-promote --quiet
+    - gcloud app deploy --version $CI_COMMIT_REF_SLUG --no-promote --quiet
     - persist_environment_url
   environment:
-    name: review/$CI_ENVIRONMENT_NAME
-    url: https://$CI_ENVIRONMENT_SLUG-dot-winis-be.appspot.com
+    name: review/$CI_COMMIT_REF_SLUG
+    url: https://$CI_COMMIT_REF_SLUG-dot-winis-be.appspot.com
     on_stop: stop_review
   artifacts:
     paths: [environment_url.txt]
@@ -76,9 +76,9 @@ stop_review:
     GIT_STRATEGY: none
   script:
     - init_gcloud
-    - gcloud app versions delete $CI_ENVIRONMENT_SLUG
+    - gcloud app versions delete $CI_COMMIT_REF_SLUG
   environment:
-    name: review/$CI_ENVIRONMENT_NAME
+    name: review/$CI_COMMIT_REF_SLUG
     action: stop
   when: manual
   allow_failure: true
@@ -125,7 +125,7 @@ production:
 
   function get_version_slug() {
     let max_len=58-"${#GCLOUD_PROJECT}"
-    echo $CI_ENVIRONMENT_SLUG | cut -c1-$max_len
+    echo $CI_COMMIT_REF_SLUG | cut -c1-$max_len
   }
 
   GCLOUD_SLUG=$(get_version_slug)
