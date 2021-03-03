@@ -49,7 +49,7 @@
     "namor": "^1.0.1",
     "passport-accountkit-token": "^1.0.0",
     "phone": "^2.1.0",
-    "pug": "^2.0.3",
+    "pug": "^3.0.1",
     "request-promise-native": "^1.0.5",
     "serve-favicon": "^2.5.0",
     "sharp": "^0.20.8",
