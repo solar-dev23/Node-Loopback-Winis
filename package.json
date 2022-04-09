@@ -44,7 +44,7 @@
     "loopback-ds-timestamp-mixin": "^3.4.1",
     "loopback-setup-remote-methods-mixin": "^1.2.0",
     "md5": "^2.2.1",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.21",
     "namor": "^1.0.1",
     "passport-accountkit-token": "^1.0.0",
